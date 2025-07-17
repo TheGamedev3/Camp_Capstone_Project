@@ -1,4 +1,7 @@
 
+
+Part 1:
+
 Aaron Binay
 11/11/2024
 
@@ -48,3 +51,18 @@ Come up with a capstone project that puts together all the fullstack skills we'v
     API: would have to be a custom API most likely, would return to dos, and take in custom to dos
     Save Data: the tasks you completed
     Real World Applications: Sorting and finding a big data set
+
+
+
+Final Chosen Idea:
+
+Crafting Site:
+- Gather Materials
+- Store Materials in an inventory
+- Trade with other Users
+- View Inventory in sorted styles
+
+MVC: The Mechanics/logic, the Site, the Interactions
+API: The crafting and interacting routes
+Save Data: Inventory Info
+Real World Applications: Managing complex data from databases, and sorting them in helpful ways
