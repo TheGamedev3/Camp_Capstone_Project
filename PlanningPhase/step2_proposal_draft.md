@@ -84,7 +84,7 @@ I have chosen a non-relation database (mongo_db) because it handles storing comp
 
 ## 📊 Here's a chart of the entire database schema:
 <p align="center">
-  <img src="./step2_resources/databaseSchema.png" alt="Database Schema" width="400"/>
+  <img src="./resources/databaseSchema.png" alt="Database Schema" width="400"/>
 </p>
 (the only database object is the Users, as items will be handled as regular JSON objects in the users' inventory array)
 
