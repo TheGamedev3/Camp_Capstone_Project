@@ -10,6 +10,8 @@ PAGE, CREATE, DELETE, RESPOND, FETCH, EDIT
 (GET, POST, DELETE, GET, GET, PATCH)
 
 
+## User Profile
+
 CREATE /signup
 body: {username, email, password, profilePicture}
 *(server verifies...)*
