@@ -19,7 +19,9 @@
       }
     ],
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@MongooseSys": ["./src/lib/models/mongooseSys/Mongoose.ts"],
+      "@Chemicals": ["./src/lib/models/DB_Objects/Collection.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
