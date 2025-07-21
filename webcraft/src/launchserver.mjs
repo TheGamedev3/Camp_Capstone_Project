@@ -10,5 +10,5 @@ setTimeout(() => {
   .on('error', err => {
     console.error('❌ Startup ping failed:', err.message);
   });
-}, 1100); // wait 1.1 seconds for the server to launch
+}, 2000); // wait 2 seconds for the server to launch
 

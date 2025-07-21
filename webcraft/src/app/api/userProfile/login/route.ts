@@ -1,13 +1,17 @@
 
 
 
-// PLACEHOLDER! UNFINISHED!
 
-// /app/api/obtain/route.ts
-import { NextResponse } from 'next/server';
+import { User } from "@Chemicals";
 
 export async function POST(req: Request) {
-  const body = await req.json();
-  // do something with body
-  return NextResponse.json({ message: 'Obtained!', added: 5 });
+  const{email, password} = await req.json();
+  console.log("POSTING LOGIN",email,password)
+  const result = await User.findOne({ email });
+  // DONT FORGET TO HASH THE PASSWORD LATER
+  if(!result)return Response.json({ success:false, err:{email:'invalid email!'} });
+
+  if(result?.password === password){return Response.json({ success:true, result })}
+  else{return Response.json({ success:false, err:{password:'incorrect password!'} })}
+
 }
