@@ -3,6 +3,8 @@
 "use client"
 
 import { useState, createContext, useContext, useRef } from 'react';
+import { TextField } from '../TextField';
+import { ImageField } from '../ImageField';
 
 type ForumContextType = {
   errors: Record<string, string>;
@@ -21,7 +23,7 @@ export function useForumContext() {
 import { getRoute } from '@/utils/request';
 
 export function Forum({
-    request, bodyConstructor, children, onSuccess }: { children: React.ReactNode }
+    request, bodyConstructor, fields, above, below, onSuccess }: { above?: React.ReactNode, below?: React.ReactNode }
 ){
     const [errors, setErrors] = useState({});
 
@@ -39,15 +41,40 @@ export function Forum({
                         body: bodyArgs.current
                     });
                     console.log('SUBMITTING....', success, result, err)
+                    setErrors(err || {});
                     if(success){
                         onSuccess?.();
-                    }else{
-                        setErrors(err);
                     }
                 }
             }
         }>
-            {children}
+            <div className="flex flex-col gap-4">
+                {above}
+                {
+                    fields.map(({ field, inputType, placeholder, defaultText }, i) => {
+                        if (inputType === 'image') {
+                        return (
+                            <ImageField
+                                key={i}
+                                bodyField={field}
+                                placeholderText={placeholder}
+                                defaultText={defaultText}
+                            />
+                        );
+                        }
+                        return (
+                        <TextField
+                            key={i}
+                            bodyField={field}
+                            inputType={inputType || 'text'}
+                            placeholderText={placeholder}
+                            defaultText={defaultText}
+                        />
+                        );
+                    })
+                }
+                {below}
+            </div>
         </ForumContext.Provider>
     );
 }

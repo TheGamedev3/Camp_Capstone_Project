@@ -22,7 +22,7 @@ export const User = (db_object<UserSchema>(
     {
         username: {
             type: String,
-            required: [true, "username can't be blank!"],
+            required: [true, "Username can't be blank!"],
             unique: false
         },
         email: {

@@ -1,7 +1,26 @@
+import { Forum } from "@/components/Forum";
+import { TextField } from "@/components/TextField";
+import { SubmitBtn } from "@/components/SubmitBtn";
 
-
-
-export default function TestPage() {
-  return <h1>UNFINISHED</h1>;
+export default function SignupPage() {
+  return (
+    <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+      <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
+        <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">SIGNUP</h1>
+        <Forum
+          request="POST /api/userProfile/signup"
+          fields={[
+            {field:'username', placeholder:'username'},
+            {field:'profile', placeholder:'[paste profileURL image here]', defaultText:'https://th.bing.com/th/id/R.eba7a5674add29aeb5265590c3c1bb5e?rik=cBys5futD%2fdkQQ&pid=ImgRaw&r=0', inputType:'image'},
+            {field:'email', placeholder:'email'},
+            {field:'password', inputType:'password', placeholder:'password'}
+          ]}
+          below={
+            <SubmitBtn text="Submit" styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" />
+          }
+        />
+      </div>
+    </div>
+  );
+  // requires a client validator thingy too!
 }
-
