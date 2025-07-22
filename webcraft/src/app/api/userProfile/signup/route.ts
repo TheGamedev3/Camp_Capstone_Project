@@ -1,12 +1,18 @@
+
 import { User } from "@Chemicals";
+import { ValidateSession } from "@/lib/Validator";
 
 export async function POST(req: Request) {
   const { username, profile, email, password } = await req.json();
-  console.log("POSTING LOGIN", email, password);
 
   try {
-    const result = await User.create({ username, profile, email, password });
-    return Response.json({ success: Boolean(result), result });
+    const user = await User.create({ username, profile, email, password });
+    const success = Boolean(user);
+
+    // give the session cookie
+    if(success)await ValidateSession(user._id);
+    
+    return Response.json({ success, result:user }); // ✅
   } catch (err: any) {
     const message = err.message?.toLowerCase?.() || "";
     const errObject: Record<string, string> = {};

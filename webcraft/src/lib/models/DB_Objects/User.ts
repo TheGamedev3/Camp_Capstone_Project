@@ -20,7 +20,7 @@ interface UserModel extends Model<UserSchema>{
 export const User = (db_object<UserSchema>(
     'User',
     {
-        username: {
+        userId: {
             type: String,
             required: [true, "Username can't be blank!"],
             unique: false
@@ -28,7 +28,7 @@ export const User = (db_object<UserSchema>(
         email: {
             type: String,
             required: [true, 'Please enter an email'],
-            unique: true,
+            unique: [true, 'Email already taken!'],
             lowercase: true,
             validate: [isEmail, 'Please enter a valid email']
         },
