@@ -1,3 +1,6 @@
+
+"use client";
+
 import { Forum } from "@/components/Forum";
 import { TextField } from "@/components/TextField";
 import { SubmitBtn } from "@/components/SubmitBtn";
@@ -9,32 +12,23 @@ export default function LoginPage() {
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">LOGIN</h1>
         <Forum
           request="POST /api/userProfile/login"
+          onSuccess={({redirect})=>{redirect('/user/myProfile')}}
+
           fields={[
             {field:'email', placeholder:'email'},
             {field:'password', inputType:'password', placeholder:'password'}
           ]}
           below={
-            <SubmitBtn text="Submit" styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" />
+            <SubmitBtn
+              text="Submit"
+              styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+            />
           }
         />
       </div>
     </div>
   );
-  // requires a client validator thingy too!
 }
 
-
-/*
-- make the signup page
-- learn tailwind and css better
-- image url edit display
-- "password" dot field thingy
-- confirm password, and username logic
-- possibly edit profile logic
-
-- give cookie thingy
-- reroute logic
-- middleware stuff
-*/
 
 

@@ -5,6 +5,7 @@
 import { useState, createContext, useContext, useRef } from 'react';
 import { TextField } from '../TextField';
 import { ImageField } from '../ImageField';
+import { redirect } from "next/navigation";
 
 type ForumContextType = {
   errors: Record<string, string>;
@@ -23,7 +24,11 @@ export function useForumContext() {
 import { getRoute } from '@/utils/request';
 
 export function Forum({
-    request, bodyConstructor, fields, above, below, onSuccess }: { above?: React.ReactNode, below?: React.ReactNode }
+    request, bodyConstructor, fields, above, below, onSuccess }:
+    {
+        above?: React.ReactNode, below?: React.ReactNode,
+        onSuccess?: (tools: { redirect: typeof redirect }) => void | Promise<void>;
+    }
 ){
     const [errors, setErrors] = useState({});
 
@@ -42,8 +47,8 @@ export function Forum({
                     });
                     console.log('SUBMITTING....', success, result, err)
                     setErrors(err || {});
-                    if(success){
-                        onSuccess?.();
+                    if(success && onSuccess){
+                        await onSuccess({ redirect });
                     }
                 }
             }

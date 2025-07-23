@@ -9,6 +9,8 @@ export default function SignupPage() {
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">SIGNUP</h1>
         <Forum
           request="POST /api/userProfile/signup"
+          onSuccess={({redirect})=>{redirect('/user/myProfile')}}
+          
           fields={[
             {field:'username', placeholder:'username'},
             {field:'profile', placeholder:'[paste profileURL image here]', defaultText:'https://th.bing.com/th/id/R.eba7a5674add29aeb5265590c3c1bb5e?rik=cBys5futD%2fdkQQ&pid=ImgRaw&r=0', inputType:'image'},

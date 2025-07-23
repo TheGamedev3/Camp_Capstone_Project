@@ -9,17 +9,15 @@ type SubmitBtnProps = {
   styling?: string; // Tailwind or className string
 };
 
-export function SubmitBtn({ text, styling }: SubmitBtnProps) {
+export function SubmitBtn({ text, styling, onSuccess }: SubmitBtnProps) {
   const { submit } = useForumContext();
   const [disabled, setDisabled] = useState(false);
 
   const handleClick = async () => {
     setDisabled(true);
-    try {
-      await submit();
-    } finally {
-      setDisabled(false);
-    }
+    let success = false;
+    try {await submit()}
+    finally {setDisabled(false)}
   };
 
   return (
