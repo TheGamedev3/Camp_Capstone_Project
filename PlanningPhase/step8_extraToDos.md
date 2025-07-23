@@ -10,9 +10,13 @@
 
 ✅ - give cookie thingy
 ✅ - reroute logic
-- middleware stuff
-- logout logic/route
-- submit button disables on success by default
+🚧 - middleware stuff
+✅ - requester vrs forum
+✅ - logout logic/route
+✅ - logout button request sender
+✅ - submit button disables on success by default
+
+- group common components together under a "Requests" Category
 
 - better mongoose field error detection, maybe use error codes?
 */

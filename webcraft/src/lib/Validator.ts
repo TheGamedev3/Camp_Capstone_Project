@@ -40,3 +40,21 @@ export async function getSession() {
     if(!sid)return null;
     return await Session.fetchUser(sid);
 }
+
+export async function deleteSession() {
+  const cookieStore = await cookies();
+  const sid = cookieStore.get("sid")?.value;
+  if (!sid) return false;
+
+  // Remove session from DB
+  await Session.deleteOne({ sid });
+
+  // Clear the cookie
+  cookieStore.set("sid", "", {
+    path: "/",
+    httpOnly: true,
+    sameSite: "lax",
+    maxAge: 0, // ← expire immediately
+  });
+  return true;
+}

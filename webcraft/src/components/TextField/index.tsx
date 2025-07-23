@@ -1,6 +1,6 @@
 "use client";
 
-import { useForumContext } from "../Forum";
+import { useRequesterContext } from "../Requester";
 
 type TextFieldProps = {
   bodyField: string;
@@ -17,7 +17,7 @@ export function TextField({
   placeholderText = "",
   inputType='text'
 }: TextFieldProps) {
-  const { errors, setField } = useForumContext();
+  const { errors, setField } = useRequesterContext();
 
   return (
     <div className="w-full">

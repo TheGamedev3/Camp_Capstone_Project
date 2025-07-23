@@ -7,7 +7,7 @@ const PUBLIC_PATHS = ['/login', '/signup', '/'];
 export function middleware(req: NextRequest) {
   const isPublic = PUBLIC_PATHS.includes(req.nextUrl.pathname);
 
-  const token = req.cookies.get('sessionToken')?.value;
+  const token = req.cookies.get('sid')?.value;
 
   // 🔒 Block non-public pages without session
   if (!token && !isPublic) {

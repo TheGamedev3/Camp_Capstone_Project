@@ -1,6 +1,6 @@
 "use client";
 
-import { useForumContext } from "../Forum";
+import { useRequesterContext } from "../Requester";
 import { useState, useEffect } from "react";
 
 type ImageFieldProps = {
@@ -16,7 +16,7 @@ export function ImageField({
   defaultText = "",
   placeholderText = "",
 }: ImageFieldProps) {
-  const { errors, setField } = useForumContext();
+  const { errors, setField } = useRequesterContext();
   const [url, setUrl] = useState(defaultText);
   const [isValidImage, setIsValidImage] = useState(false);
 

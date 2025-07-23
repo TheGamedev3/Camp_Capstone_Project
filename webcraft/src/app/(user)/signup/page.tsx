@@ -1,15 +1,22 @@
+
+"use client"
+
 import { Forum } from "@/components/Forum";
 import { TextField } from "@/components/TextField";
 import { SubmitBtn } from "@/components/SubmitBtn";
+import { useSession } from "@/components/UserSession";
+import { redirect } from "next/navigation";
 
 export default function SignupPage() {
+  const user = useSession();
+  if(user){redirect('/myProfile')}
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">SIGNUP</h1>
         <Forum
           request="POST /api/userProfile/signup"
-          onSuccess={({redirect})=>{redirect('/user/myProfile')}}
+          goTo='/myProfile'
           
           fields={[
             {field:'username', placeholder:'username'},
