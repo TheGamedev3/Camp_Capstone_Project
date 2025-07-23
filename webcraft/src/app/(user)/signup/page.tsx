@@ -1,15 +1,15 @@
 
 "use client"
 
-import { Forum } from "@/components/Forum";
-import { TextField } from "@/components/TextField";
-import { SubmitBtn } from "@/components/SubmitBtn";
 import { useSession } from "@/components/UserSession";
+import { Forum, SubmitBtn } from "@Req";
+
 import { redirect } from "next/navigation";
 
 export default function SignupPage() {
   const user = useSession();
-  if(user){redirect('/myProfile')}
+  if(user)return redirect('/myProfile');
+
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center">
       <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">

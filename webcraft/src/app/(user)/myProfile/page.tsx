@@ -1,15 +1,14 @@
 
 "use client";
 
-import { getSession } from "@/lib/Validator";
-import { Requester } from "@/components/Requester";
-import { SubmitBtn } from "@/components/SubmitBtn";
-import { redirect } from "next/navigation";
+import { Requester, SubmitBtn } from "@Req";
 import { useSession } from "@/components/UserSession";
+
+import { redirect } from "next/navigation";
 
 export default function myProfile() {
   const user = useSession();
-  if(!user){redirect('/login')}
+  if(!user)return redirect('/login');
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold">Welcome, {user.username} 👋</h1>

@@ -1,6 +1,6 @@
 "use client";
 
-import { useRequesterContext } from "../Requester";
+import { useRequesterContext } from "./Requester";
 import { useState, useEffect } from "react";
 
 type ImageFieldProps = {

@@ -3,8 +3,8 @@
 "use client"
 
 import { useState, createContext, useContext, useRef } from 'react';
-import { TextField } from '../TextField';
-import { ImageField } from '../ImageField';
+import { TextField } from './TextField';
+import { ImageField } from './ImageField';
 
 type RequesterContextType = {
   errors: Record<string, string>;
