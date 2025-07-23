@@ -2,13 +2,11 @@
 "use client";
 
 import { Requester, SubmitBtn } from "@Req";
-import { useSession } from "@/components/UserSession";
-
+import { useSession } from "@/components/RootType/UserSession";
 import { redirect } from "next/navigation";
 
 export default function myProfile() {
-  const user = useSession();
-  if(!user)return redirect('/login');
+  const user = useSession(); if(!user)return redirect("/login");
   return (
     <div className="p-8">
       <h1 className="text-3xl font-bold">Welcome, {user.username} 👋</h1>
