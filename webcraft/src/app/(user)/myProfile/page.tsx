@@ -12,7 +12,7 @@ export default function myProfile() {
       <h1 className="text-3xl font-bold">Welcome, {user.username} 👋</h1>
       <p>Your email is: {user.email}</p>
       <Requester
-        request="POST /api/userProfile/logout"
+        request="POST /api/logout"
         goTo='/login'
       >
         <SubmitBtn

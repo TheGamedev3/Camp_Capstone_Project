@@ -9,7 +9,7 @@ export default function LoginPage() {
       <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
         <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">LOGIN</h1>
         <Forum
-          request="POST /api/userProfile/login"
+          request="POST /api/login"
           goTo='/myProfile'
 
           fields={[

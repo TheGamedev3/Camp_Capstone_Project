@@ -20,7 +20,7 @@
 
 ✅ - somehow give the mongoose db an actual initial name that isn't "Test" (I have to edit the mongodb_URI)
 ✅ - better mongoose field error detection, maybe use error codes?
-- group the api routes
+✅ - group the api routes
 
 - possibly edit profile logic
 - confirm password on editing email/password

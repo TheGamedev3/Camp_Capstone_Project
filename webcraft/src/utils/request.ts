@@ -1,7 +1,7 @@
 type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 type GetRouteArgs = {
-  route: string; // e.g. "POST /userProfile/login"
+  route: string; // e.g. "POST /login"
   body?: any;
 };
 
