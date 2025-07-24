@@ -1,6 +1,6 @@
 
 
-import { db_object, Types, Model } from "@MongooseSys";
+import { db_object, Types, Model, mongoErr } from "@MongooseSys";
 import { isEmail } from "validator";
 
 interface UserSchema {
@@ -22,20 +22,20 @@ export const User = (db_object<UserSchema>(
     {
         username: {
             type: String,
-            required: [true, "Username can't be blank!"],
+            required: [true, mongoErr('username', "Username can't be blank!")],
             unique: false
         },
         email: {
             type: String,
-            required: [true, 'Please enter an email'],
-            unique: [true, 'Email already taken!'],
+            required: [true, mongoErr('email', "Please enter an email")],
+            unique: [true, mongoErr('email', "Email already taken!")],
             lowercase: true,
-            validate: [isEmail, 'Please enter a valid email']
+            validate: [isEmail, mongoErr('email', "Please enter a valid email")]
         },
         password: {
             type: String,
-            required: [true, 'Please enter a password'],
-            minlength: [6, 'Minimum password length is 6 characters'],
+            required: [true, mongoErr('password', "Please enter a password")],
+            minlength: [6, mongoErr('password', "Minimum password length is 6 characters")],
         },
         profile: {
             type: String,

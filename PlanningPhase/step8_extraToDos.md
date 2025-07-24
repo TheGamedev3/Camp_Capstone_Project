@@ -4,13 +4,13 @@
 ✅ - image url edit display
 ✅ - "password" dot field thingy
 
-- possibly edit profile logic
-- forum client validator side for forum, and login & signup
-- confirm password on signup or edit email/password, and username logic
+✅ - forum client validator side for forum, and login & signup
+✅ - confirm password on signup
+✅ - iron out client validators, and custom body constructors to handle things like 'passwords match'
 
 ✅ - give cookie thingy
 ✅ - reroute logic
-🚧 - middleware stuff
+✅ - middleware stuff
 ✅ - requester vrs forum
 ✅ - logout logic/route
 ✅ - logout button request sender
@@ -18,12 +18,25 @@
 
 ✅ - group common components together under a "Requests" Category
 
-- better mongoose field error detection, maybe use error codes?
+✅ - somehow give the mongoose db an actual initial name that isn't "Test" (I have to edit the mongodb_URI)
+✅ - better mongoose field error detection, maybe use error codes?
+- group the api routes
+
+- possibly edit profile logic
+- confirm password on editing email/password
 
 - refine the typescript of everything
 - get a testing package
-- iron out client validators, and custom body constructors to handle things like 'passwords match'
 */
+
+
+
+
+
+
+
+
+
 
 
 /*
