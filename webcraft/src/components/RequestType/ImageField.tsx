@@ -47,7 +47,7 @@ export function ImageField({
       )}
       {isValidImage && (
         <div className="mt-2">
-          <img src={url} alt="Preview" className="max-w-full max-h-64 rounded shadow" />
+          <img src={url || null} alt="Preview" className="max-w-full max-h-64 rounded shadow" />
         </div>
       )}
     </div>

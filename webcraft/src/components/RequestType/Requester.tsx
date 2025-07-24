@@ -20,15 +20,19 @@ export function useRequesterContext() {
   return ctx;
 }
 
+export type RequesterType = {
+    clientValidation?: () => void | Promise<void>;
+    body?: () => any;
+    goTo?: string,
+    children: React.ReactNode,
+    onSuccess?: () => void | Promise<void>;
+}
+
 import { getRoute } from '@/utils/request';
 
 export function Requester({
-    request, bodyConstructor, fields, goTo, children, onSuccess }:
-    {
-        goTo?: string,
-        children: React.ReactNode,
-        onSuccess?: () => void | Promise<void>;
-    }
+    clientValidation, request, body, fields, goTo, children, onSuccess
+}: RequesterType
 ){
     const bodyArgs = useRef({});
     const [errors, setErrors] = useState({});
@@ -41,9 +45,27 @@ export function Requester({
                     bodyArgs.current[field] = value;
                 },
                 async submit(){
+                    if(clientValidation){
+                        let success2 = true;
+                        let err2 = {};
+                        function err(field, reason){
+                            success2 = false;
+                            err2[field] = reason;
+                        }
+                        await clientValidation({ ...bodyArgs.current, err });
+                        setErrors(err2);
+                        if(!success2){return}
+                    }
+
+                    // chooses to process/ what to send in the body args of the request
+                    let sendBody = bodyArgs.current;
+                    console.log("A",sendBody)
+                    if(body)sendBody = body(sendBody);
+                    console.log("B",sendBody)
+
                     const{success, result, err} = await getRoute({
                         route: request,
-                        body: bodyArgs.current
+                        body: sendBody
                     });
                     setErrors(err || {});
                     if(success){
@@ -57,7 +79,7 @@ export function Requester({
                         if(goTo)window.location.href = goTo;
 
                     }
-                    console.log(request, success, result, goTo)
+                    console.log(request, success, success ? result : err, goTo)
                     return success;
                 }
             }
