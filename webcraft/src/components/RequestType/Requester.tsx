@@ -25,7 +25,7 @@ export type RequesterType = {
     body?: () => any;
     goTo?: string,
     children: React.ReactNode,
-    onSuccess?: () => void | Promise<void>;
+    onSuccess?: (result:any) => void | Promise<void>;
 }
 
 import { getRoute } from '@/utils/request';
@@ -69,7 +69,7 @@ export function Requester({
                     });
                     setErrors(err || {});
                     if(success){
-                        if(onSuccess)await onSuccess();
+                        if(onSuccess)await onSuccess(result);
 
                         // NOTE: We use window.location.href instead of router.push() here to navigate
                         // because router.push() is a client-side navigation and won't trigger

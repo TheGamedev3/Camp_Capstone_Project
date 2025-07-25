@@ -23,7 +23,11 @@
 ✅ - group the api routes
 
 - possibly edit profile logic
+- edit profile page
+- separate user profile page
+- shared navigation headers
 - confirm password on editing email/password
+- pagnate all the players (possibly a logged in session thing?)
 
 - refine the typescript of everything
 - get a testing package

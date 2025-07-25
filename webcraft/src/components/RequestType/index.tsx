@@ -9,3 +9,5 @@ export * from "./TextField";
 export * from "./ImageField";
 
 export * from "./SubmitBtn";
+
+export * from "./Editable";
