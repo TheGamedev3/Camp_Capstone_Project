@@ -26,10 +26,15 @@
     ✅ - edit email or password w/ oldpassword
 - edit profile page
     ✅ - edit username
-    - edit profile
+    ✅ - edit profile
     - edit email
     - edit password
 - separate user profile page
+
+- handle going to the next field on submit
+- handle sending the request when on the last field
+- handle reselecting the earliest field that errored
+- handling going back to view mode on success
 
 - shared navigation headers
 

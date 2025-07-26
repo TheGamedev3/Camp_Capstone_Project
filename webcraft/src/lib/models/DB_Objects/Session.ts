@@ -1,5 +1,6 @@
 import { db_object, Types, Model } from "@MongooseSys";
 import { User } from "./User";
+import { profile } from "console";
 
 export interface SessionSchema {
   _id: Types.ObjectId;
@@ -42,6 +43,7 @@ export const Session = (db_object<SessionSchema>(
       // sanitize
       return {
         _id: user._id.toString(),
+        profile: user.profile,
         username: user.username,
         email: user.email,
         created: user.created?.toISOString?.() ?? null

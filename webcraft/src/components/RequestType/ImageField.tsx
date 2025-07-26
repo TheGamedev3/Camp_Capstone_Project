@@ -2,6 +2,7 @@
 
 import { useRequesterContext } from "./Requester";
 import { useState, useEffect } from "react";
+import { CustomProfile } from "./CustomProfile";
 
 type ImageFieldProps = {
   bodyField: string;
@@ -18,19 +19,10 @@ export function ImageField({
 }: ImageFieldProps) {
   const { errors, setField } = useRequesterContext();
   const [url, setUrl] = useState(defaultText);
-  const [isValidImage, setIsValidImage] = useState(false);
-
-  // Check if the URL is a valid image
-  useEffect(() => {
-    if (!url) return setIsValidImage(false);
-    const img = new Image();
-    img.onload = () => setIsValidImage(true);
-    img.onerror = () => setIsValidImage(false);
-    img.src = url;
-  }, [url]);
 
   return (
     <div className="w-full">
+      <CustomProfile url={url}/>
       <input
         type="text"
         defaultValue={defaultText}
@@ -44,11 +36,6 @@ export function ImageField({
       />
       {errors[bodyField] && (
         <div className="mt-1 text-sm text-red-500">{errors[bodyField]}</div>
-      )}
-      {isValidImage && (
-        <div className="mt-2">
-          <img src={url || null} alt="Preview" className="max-w-full max-h-64 rounded shadow" />
-        </div>
       )}
     </div>
   );

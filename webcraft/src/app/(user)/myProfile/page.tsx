@@ -5,7 +5,7 @@ import { Requester, SubmitBtn } from "@Req";
 import { useSession } from "@/components/RootType/UserSession";
 import { redirect } from "next/navigation";
 
-import { EditArea, Editable, EditBtn, Forum } from "@Req";
+import { EditArea, Editable, EditBtn, Forum, CustomProfile } from "@Req";
 
 export default function myProfile() {
   const{user, updateUser} = useSession(); if(!user)return redirect("/login");
@@ -25,6 +25,39 @@ export default function myProfile() {
 
       <EditArea>
         <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
+
+          <CustomProfile url={user.profile}/>
+          <Editable
+            view={
+              <>
+                <EditBtn text="✏️"/>
+              </>
+            }
+            edit={
+              <>
+                <Forum
+                  clientValidation={({username, profile, email, password, retype_password, err})=>{
+                    if(!profile)err('profile',"profile can't be blank!");
+                    if(profile === user.profile)err('profile',"profile isn't changed!");
+                  }}
+                  request="PATCH /api/editProfile"
+                  onSuccess={(newUser)=>updateUser(newUser)}
+                  fields={[
+                    {field:'profile', placeholder:'[change profile url!]', defaultText:user.profile},
+                  ]}
+                  below={
+                    <SubmitBtn
+                      text="Submit"
+                      styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                      disableOnSuccess={false}
+                    />
+                  }
+                />
+                <EditBtn text="✅"/>
+              </>
+            }
+          />
+
           <Editable
             view={
               <>
@@ -33,24 +66,24 @@ export default function myProfile() {
             }
             edit={
               <>
-                  <Forum
-                    clientValidation={({username, profile, email, password, retype_password, err})=>{
-                      if(!username)err('username',"username can't be blank!");
-                      if(username === user.username) err('username',"username isn't changed!");
-                    }}
-                    request="PATCH /api/editProfile"
-                    onSuccess={(newUser)=>updateUser(newUser)}
-                    fields={[
-                      {field:'username', placeholder:'[change username!]', defaultText:user.username},
-                    ]}
-                    below={
-                      <SubmitBtn
-                        text="Submit"
-                        styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                        disableOnSuccess={false}
-                      />
-                    }
-                  />
+                <Forum
+                  clientValidation={({username, profile, email, password, retype_password, err})=>{
+                    if(!username)err('username',"username can't be blank!");
+                    if(username === user.username) err('username',"username isn't changed!");
+                  }}
+                  request="PATCH /api/editProfile"
+                  onSuccess={(newUser)=>updateUser(newUser)}
+                  fields={[
+                    {field:'username', placeholder:'[change username!]', defaultText:user.username},
+                  ]}
+                  below={
+                    <SubmitBtn
+                      text="Submit"
+                      styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                      disableOnSuccess={false}
+                    />
+                  }
+                />
                 <EditBtn text="✅"/>
               </>
             }
