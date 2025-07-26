@@ -29,14 +29,18 @@
     ✅ - edit profile
     ✅ - edit email
     ✅ - edit password
-- custom styling for the edit button
-- separate user profile page
+✅ - custom styling for the edit button
 
 ✅ - handling going back to view mode on success (use the edit hooks)
 
-- handle going to the next field on submit
+✅ - style the edit buttons
+✅ - separate user profile page
+
+- handle going to the next field on submit/enter
 - handle sending the request when on the last field
 - handle reselecting the earliest field that errored
+
+- fully style the settings
 
 - shared navigation headers
 

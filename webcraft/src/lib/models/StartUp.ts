@@ -7,7 +7,7 @@ let started = false;
 export async function StartServer(){
     if(started)return; started=true;
     await onConnect();
-    console.log('🎩 hosted at: http://localhost:3000')
+    console.log('🎩 hosted at: http://localhost:3000/login')
 }
 
 
