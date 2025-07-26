@@ -7,7 +7,7 @@ import { redirect } from "next/navigation";
 
 import { EditArea, Editable, EditBtn, Forum, CustomProfile } from "@Req";
 
-export default function myProfile() {
+export default function MyProfile() {
   const{user, updateUser} = useSession(); if(!user)return redirect("/login");
   return (
     <div className="p-8">
@@ -26,10 +26,10 @@ export default function myProfile() {
       <EditArea>
         <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
 
-          <CustomProfile url={user.profile}/>
           <Editable
             view={
               <>
+                <CustomProfile url={user.profile}/>
                 <EditBtn text="✏️"/>
               </>
             }
@@ -43,7 +43,7 @@ export default function myProfile() {
                   request="PATCH /api/editProfile"
                   onSuccess={(newUser)=>updateUser(newUser)}
                   fields={[
-                    {field:'profile', placeholder:'[change profile url!]', defaultText:user.profile},
+                    {field:'profile', placeholder:'[change profile url!]', defaultText:user.profile, inputType:'image'},
                   ]}
                   below={
                     <SubmitBtn
