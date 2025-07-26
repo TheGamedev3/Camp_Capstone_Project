@@ -1,17 +1,23 @@
+import { error } from "console";
 
 // Store error codes
-type MongoErrorCode = { field: string; message: string; id: number };
-const codes: MongoErrorCode[] = [];
+type MongoErrorCode = { field: string; message: string; id: string; int_id: number };
+const codes: Record<string, MongoErrorCode> = {};
 
 let uniqueId = 0;
 
 /**
  * Create and store a unique mongo error code
  */
-export function mongoErr(field: string, message: string): string {
-  uniqueId++;
-  codes.push({ field, message, id: uniqueId });
-  return `[mongoErr${uniqueId}]`;
+export function mongoErr(field: string, message: string): MongoErrorCode {
+  const index = field+'_'+message;
+  let errObject = codes[field+'_'+message];
+  if(!errObject){
+    uniqueId++;
+    errObject = { field, message, int_id: uniqueId, id: `[mongoErr${uniqueId}]` };
+    codes[index] = errObject;
+  }
+  return errObject;
 }
 
 type ErrorResult = Record<string, string> & { matches: number };
@@ -25,8 +31,8 @@ export function getErrs(errMsg: string): Record<string, string> {
   // Find all `[mongoErr<number>]` tags in the errMsg
   const matcher = errMsg.matchAll(/\[mongoErr(\d+)\]/g);
   for (const match of matcher) {
-    const id = parseInt(match[1], 10);
-    const code = codes.find(c => c.id === id);
+    const int_id = parseInt(match[1], 10);
+    const code = Object.values(codes).find(c => c.int_id === int_id);
     if(code){result[code.field] = code.message; result.matches++}
   }
   return result;

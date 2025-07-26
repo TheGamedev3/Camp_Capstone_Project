@@ -59,9 +59,7 @@ export function Requester({
 
                     // chooses to process/ what to send in the body args of the request
                     let sendBody = bodyArgs.current;
-                    console.log("A",sendBody)
                     if(body)sendBody = body(sendBody);
-                    console.log("B",sendBody)
 
                     const{success, result, err} = await getRoute({
                         route: request,

@@ -22,12 +22,20 @@
 ✅ - better mongoose field error detection, maybe use error codes?
 ✅ - group the api routes
 
-- possibly edit profile logic
+✅ - possibly edit profile logic
+    ✅ - edit email or password w/ oldpassword
 - edit profile page
+    ✅ - edit username
+    - edit profile
+    - edit email
+    - edit password
 - separate user profile page
+
 - shared navigation headers
-- confirm password on editing email/password
+
 - pagnate all the players (possibly a logged in session thing?)
+
+- remember to hash the passwords on signup/creation!
 
 - refine the typescript of everything
 - get a testing package

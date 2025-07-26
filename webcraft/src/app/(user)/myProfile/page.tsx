@@ -24,40 +24,38 @@ export default function myProfile() {
       </Requester>
 
       <EditArea>
-        <Editable
-          id='usernameChange'
-          view={
-            <>
-              <h1>{user.username}</h1> <EditBtn editText="✏️" targetId='usernameChange'/>
-            </>
-          }
-          edit={
-            <>
-              <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
-                <h1 className="text-2xl font-bold text-center mb-6 text-gray-800">LOGIN</h1>
-                <Forum
-                  clientValidation={({username, profile, email, password, retype_password, err})=>{
-                    if(!username)err('username',"username can't be blank!");
-                    if(username === user.username) err('username',"username isn't changed!");
-                  }}
-                  request="PATCH /api/editProfile"
-                  onSuccess={(newUser)=>updateUser(newUser)}
-                  fields={[
-                    {field:'username', placeholder:'[change username!]', defaultText:user.username},
-                  ]}
-                  below={
-                    <SubmitBtn
-                      text="Submit"
-                      styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
-                      disableOnSuccess={false}
-                    />
-                  }
-                />
-              </div>
-              <EditBtn viewText="✅" targetId='usernameChange'/>
-            </>
-          }
-        />
+        <div className="bg-white p-8 rounded shadow-lg w-full max-w-md">
+          <Editable
+            view={
+              <>
+                <h1 className="text-black">{user.username}</h1> <EditBtn text="✏️"/>
+              </>
+            }
+            edit={
+              <>
+                  <Forum
+                    clientValidation={({username, profile, email, password, retype_password, err})=>{
+                      if(!username)err('username',"username can't be blank!");
+                      if(username === user.username) err('username',"username isn't changed!");
+                    }}
+                    request="PATCH /api/editProfile"
+                    onSuccess={(newUser)=>updateUser(newUser)}
+                    fields={[
+                      {field:'username', placeholder:'[change username!]', defaultText:user.username},
+                    ]}
+                    below={
+                      <SubmitBtn
+                        text="Submit"
+                        styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600"
+                        disableOnSuccess={false}
+                      />
+                    }
+                  />
+                <EditBtn text="✅"/>
+              </>
+            }
+          />
+        </div>
       </EditArea>
     </div>
   );

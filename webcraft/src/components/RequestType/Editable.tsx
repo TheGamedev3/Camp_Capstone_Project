@@ -18,12 +18,6 @@ type EditAreaCtx = {
 
 const EditAreaContext = createContext<EditAreaCtx | null>(null);
 
-export function useEditArea() {
-  const ctx = useContext(EditAreaContext);
-  if (!ctx) throw new Error("useEditArea must be used inside <EditAreaProvider>");
-  return ctx;
-}
-
 export function EditArea({ children }: { children: ReactNode }) {
   const [selected, setSelected] = useState<string | null>(null);
 
@@ -48,42 +42,60 @@ type EditableProps = {
   edit: ReactNode;
 };
 
+type EditableCxt = {
+  stableId: string;
+};
+
+const EditableContext = createContext<EditableCxt | null>(null);
+
 export function Editable({ id, view, edit }: EditableProps) {
   const generated = useId();
   const stableId = id ?? generated;
   const { isEditing } = useEditArea();
 
-  return <>{isEditing(stableId) ? edit : view}</>;
+  return(
+    <EditableContext.Provider value={{stableId}}>
+        {isEditing(stableId) ? edit : view}
+    </EditableContext.Provider>
+  );
 }
+
+/* -------------------- Edit Hook -------------------- */
+
+export function useEditArea() {
+  const selectionArea = useContext(EditAreaContext);
+  if (!selectionArea) throw new Error("useEditArea must be used inside <EditAreaProvider>");
+  
+  const editParent = useContext(EditableContext);
+  return { ...selectionArea, stableId: editParent?.stableId }
+}
+
 
 /* -------------------- Edit button -------------------- */
 
 type EditBtnProps = {
-  targetId: string;
-  editText?: string;
-  viewText?: string;
+  targetId?: string;
+  text?: string;
   className?: string;
-  toggle?: boolean; // allow deselect on second click
 };
 
 export function EditBtn({
   targetId,
-  editText = "Edit",
-  viewText = "Done",
+  text = "Edit",
   className,
-  toggle = true,
 }: EditBtnProps) {
-  const { isEditing, select } = useEditArea();
-  const editing = isEditing(targetId);
+  const { isEditing, select, stableId } = useEditArea();
+  if(!stableId && !targetId){throw new Error("No target parent for the EditBtn!")}
+  const editing = isEditing(targetId || stableId);
 
   const onClick = () => {
-    if (editing && toggle) select(null);
-    else select(targetId);
+    if (editing) select(null);
+    else select(targetId || stableId);
   };
 
   return (
     <button className={className} onClick={onClick}>
-      {editing ? viewText : editText}
+      {text}
     </button>
   );
 }

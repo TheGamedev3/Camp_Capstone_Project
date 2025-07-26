@@ -23,20 +23,20 @@ export const User = (db_object<UserSchema>(
     {
         username: {
             type: String,
-            required: [true, mongoErr('username', "Username can't be blank!")],
+            required: [true, mongoErr('username', "Username can't be blank!").id],
             unique: false
         },
         email: {
             type: String,
-            required: [true, mongoErr('email', "Please enter an email")],
-            unique: [true, mongoErr('email', "Email already taken!")],
+            required: [true, mongoErr('email', "Please enter an email").id],
+            unique: [true, mongoErr('email', "Email already taken!").id],
             lowercase: true,
-            validate: [isEmail, mongoErr('email', "Please enter a valid email")]
+            validate: [isEmail, mongoErr('email', "Please enter a valid email").id]
         },
         password: {
             type: String,
-            required: [true, mongoErr('password', "Please enter a password")],
-            minlength: [6, mongoErr('password', "Minimum password length is 6 characters")],
+            required: [true, mongoErr('password', "Please enter a password").id],
+            minlength: [6, mongoErr('password', "Minimum password length is 6 characters").id],
         },
         profile: {
             type: String,
@@ -54,28 +54,26 @@ export const User = (db_object<UserSchema>(
         async makeTestUser({ username, email, password }: { username: string, email: string, password: string }) {
             return (this as Model<UserSchema>).create({ username, email, password });
         },
+        async verifyPassword(userId, password){
+
+        },
         async editProfile(userId, edits){
             const user = await this.findOne({ _id: userId });
             if(!user){throw new Error('User does not exist')}
-            //if(!user)throw new FieldError('userId', 'User does not exist');
 
             const cantModify = ['_id'];
             const keys = Object.keys(edits);
             const notAllowed = cantModify.filter(item=>keys.includes(item));
-            //if(notAllowed.length > 0)throw new FieldError(edits, `Attempted to modify: ${notAllowed.join(', ')} under User!`);
             if(notAllowed.length > 0){throw new Error(`Attempted to modify: ${notAllowed.join(', ')} under User!`)}
-            /*
+            
+            // *when changing the email or password, the old password is required!
             if(edits.password !== undefined || edits.email !== undefined){
                 const oldPassword = edits.oldPassword;
-                if(oldPassword === undefined)throw new FieldError('oldPassword', 'must retype old password to change email or password!');
-                const auth = await bcrypt.compare(oldPassword, user.password);
-                if(!auth)throw new FieldError('oldPassword', 'incorrect old password!');
+                if(!oldPassword){throw new Error(mongoErr('oldPassword', "Password required!").id)}
+                if(user.password !== oldPassword){throw new Error(mongoErr('oldPassword', "Incorrect password!").id)}
                 delete edits.oldPassword;
-
-                if(edits.password){
-                    edits.password = await this.processPassword(edits.password);
-                }
-            }*/
+                if(edits.password){}// REENCRYPT IT
+            }
             
             Object.assign(user, edits);
             return await user.save();
