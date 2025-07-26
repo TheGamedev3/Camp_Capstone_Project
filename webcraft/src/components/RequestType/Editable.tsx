@@ -64,7 +64,7 @@ export function Editable({ id, view, edit }: EditableProps) {
 
 export function useEditArea() {
   const selectionArea = useContext(EditAreaContext);
-  if (!selectionArea) throw new Error("useEditArea must be used inside <EditAreaProvider>");
+  if (!selectionArea) return null; // throw new Error("useEditArea must be used inside <EditAreaProvider>");
   
   const editParent = useContext(EditableContext);
   return { ...selectionArea, stableId: editParent?.stableId }

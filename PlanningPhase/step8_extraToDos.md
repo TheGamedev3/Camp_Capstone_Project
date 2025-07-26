@@ -32,7 +32,7 @@
 - custom styling for the edit button
 - separate user profile page
 
-- handling going back to view mode on success (use the edit hooks)
+✅ - handling going back to view mode on success (use the edit hooks)
 
 - handle going to the next field on submit
 - handle sending the request when on the last field

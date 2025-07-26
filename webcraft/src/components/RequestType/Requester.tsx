@@ -26,16 +26,21 @@ export type RequesterType = {
     goTo?: string,
     children: React.ReactNode,
     onSuccess?: (result:any) => void | Promise<void>;
+    exitEditField: boolean;
 }
 
 import { getRoute } from '@/utils/request';
+import { useEditArea } from './Editable';
 
 export function Requester({
-    clientValidation, request, body, fields, goTo, children, onSuccess
+    clientValidation, request, body, fields, goTo, children, onSuccess,
+    exitEditField=true
 }: RequesterType
 ){
     const bodyArgs = useRef({});
     const [errors, setErrors] = useState({});
+
+    const editCtx = useEditArea();
 
     return(
         <RequesterContext.Provider value={
@@ -75,7 +80,14 @@ export function Requester({
                         // won't see the updated cookie immediately. This ensures the server sees
                         // the new login state on the next page load.
                         if(goTo)window.location.href = goTo;
-
+                        else{
+                            if(editCtx && exitEditField){
+                                const { isEditing, select, stableId } = editCtx;
+                                if(stableId && isEditing(stableId)){
+                                    select(null);
+                                }
+                            }
+                        }
                     }
                     console.log(request, success, success ? result : err, goTo)
                     return success;
