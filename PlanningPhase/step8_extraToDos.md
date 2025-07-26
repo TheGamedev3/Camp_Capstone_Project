@@ -24,17 +24,19 @@
 
 ✅ - possibly edit profile logic
     ✅ - edit email or password w/ oldpassword
-- edit profile page
+✅ - edit profile page
     ✅ - edit username
     ✅ - edit profile
-    - edit email
-    - edit password
+    ✅ - edit email
+    ✅ - edit password
+- custom styling for the edit button
 - separate user profile page
+
+- handling going back to view mode on success (use the edit hooks)
 
 - handle going to the next field on submit
 - handle sending the request when on the last field
 - handle reselecting the earliest field that errored
-- handling going back to view mode on success
 
 - shared navigation headers
 

@@ -3,7 +3,7 @@
 import { useRequesterContext } from "./Requester";
 import { useState, useEffect } from "react";
 
-// const loadingURL = "https://th.bing.com/th/id/R.af911bc3b93f9ab53a3cae65e5c00bb9?rik=LHE9neaaNi%2bKPg&pid=ImgRaw&r=0";
+const loadingURL = "https://th.bing.com/th/id/R.af911bc3b93f9ab53a3cae65e5c00bb9?rik=LHE9neaaNi%2bKPg&pid=ImgRaw&r=0";
 const unavalibleURL = "https://cdn1.iconfinder.com/data/icons/users-and-avatars/32/user_male_block_ban_disabled_unavailable_profile-512.png";
 
 type CustomProfileProps = {
