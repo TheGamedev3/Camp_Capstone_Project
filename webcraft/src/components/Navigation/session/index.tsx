@@ -1,16 +1,18 @@
 "use client";
 
-import { Users, Globe, Backpack, BookOpen, Settings } from "lucide-react";
+import { Users, Globe, Backpack, BookOpen, Settings, BadgeDollarSign, ShoppingCart } from "lucide-react";
 import { Tab } from "../shared/Tab";
 import { SettingsTab } from "./SettingsTab";
 
 export function SessionLinks() {
   return (
     <>
-        <Tab icon={<Users size={18}/>} span="Players" href="/players"/>
-        <Tab icon={<Globe size={18}/>} span="World" href="/world"/>
+        <Tab icon={<Globe size={18}/>} span="World" href="/forest"/>
+        <Tab icon={<BookOpen size={18}/>} span="How To" href="/info"/>
         <Tab icon={<Backpack size={18}/>} span="Inventory" href="/myProfile"/>
-        <Tab icon={<BookOpen size={18}/>} span="How To" href="/howto"/>
+        <Tab icon={<BadgeDollarSign size={18}/>} span="Post Trade" href="/makeTrades"/>
+        <Tab icon={<Users size={18}/>} span="Players" href="/players"/>
+        <Tab icon={<ShoppingCart size={18}/>} span="All Trades" href="/trades"/>
         <SettingsTab/>
     </>
   );

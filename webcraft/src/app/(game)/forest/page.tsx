@@ -1,7 +1,14 @@
 
+import PageHeader from "@/components/PageHeader";
 
-
-export default function TestPage() {
-  return <h1>UNFINISHED</h1>;
+export default function PlayersPage() {
+  return (
+    <div className="p-8">
+      <PageHeader
+        title="🌲 FOREST"
+        subtitle="Gather wood! 🪵"
+      />
+      {/* ...content */}
+    </div>
+  );
 }
-

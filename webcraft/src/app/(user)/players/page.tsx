@@ -1,12 +1,12 @@
 
 import PageHeader from "@/components/PageHeader";
 
-export default function AllTrades() {
+export default function PlayersPage() {
   return (
     <div className="p-8">
       <PageHeader
-        title="Trades"
-        subtitle="All avaliable Trades!"
+        title="Players"
+        subtitle="All registered players in the world"
       />
       {/* ...content */}
     </div>
