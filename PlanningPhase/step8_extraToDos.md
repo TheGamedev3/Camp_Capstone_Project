@@ -50,10 +50,11 @@
 ✅ - fully style the settings
 
 ✅ - shared navigation headers
-- distinct entry headers
-- dummy info, world, & users pagnation page
+✅ - distinct entry headers (signup, login, players, how to)
 
 - center site content more in the middle, looks ugly stretching across the whole screen
+- optional adjust screen stretch hook
+- dummy info, world, & users pagnation page
 
 - pagnate all the players (possibly a logged in session thing?)
 

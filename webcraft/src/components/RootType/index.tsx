@@ -11,6 +11,7 @@ This element is added in at "app/layout.tsx"
 
 import { UserSession } from "./UserSession";
 import { getSession } from "@/lib/Validator";
+import { NavBar } from "@/components/Navigation/shared/NavBar";
 
 export async function Root({
   children,
@@ -20,6 +21,7 @@ export async function Root({
   const session = await getSession();
   return (
     <UserSession session={session}>
+        <NavBar/>
         {children}
     </UserSession>
   );

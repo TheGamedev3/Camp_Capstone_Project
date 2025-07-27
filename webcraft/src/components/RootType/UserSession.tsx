@@ -1,5 +1,5 @@
 "use client";
-import { createContext, useContext, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 
 export const SessionContext = createContext(null);
 export const useSession = () => useContext(SessionContext);
