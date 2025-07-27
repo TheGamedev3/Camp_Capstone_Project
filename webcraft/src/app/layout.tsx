@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { Root } from "@/components/RootType";
+import { NavBar } from "@/components/NavBar";
 
 export default async function RootLayout({
   children,
@@ -29,6 +30,7 @@ export default async function RootLayout({
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
+        <NavBar/>
         <Root>{children}</Root>
       </body>
     </html>

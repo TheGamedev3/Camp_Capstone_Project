@@ -49,7 +49,11 @@
 
 ✅ - fully style the settings
 
-- shared navigation headers
+✅ - shared navigation headers
+- distinct entry headers
+- dummy info, world, & users pagnation page
+
+- center site content more in the middle, looks ugly stretching across the whole screen
 
 - pagnate all the players (possibly a logged in session thing?)
 

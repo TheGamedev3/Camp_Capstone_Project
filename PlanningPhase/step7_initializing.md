@@ -21,3 +21,5 @@ npm install dotenv
 npm install validator # for validating email strings
 
 npm install --save-dev concurrently # for doing npm run dev, then triggering the start route in "src/launchserver.mjs"
+
+npm install lucide-react # for some fancy icons
