@@ -13,8 +13,8 @@ export default function LoginPage() {
           goTo='/myProfile'
 
           fields={[
-            {field:'email', placeholder:'email'},
-            {field:'password', inputType:'password', placeholder:'password'}
+            {label: 'Email:', field:'email', placeholder:'email'},
+            {label: 'Password:', field:'password', inputType:'password', placeholder:'password'}
           ]}
           below={
             <SubmitBtn

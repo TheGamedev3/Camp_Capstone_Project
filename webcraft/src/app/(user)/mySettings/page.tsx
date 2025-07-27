@@ -46,6 +46,7 @@ export default function MySettings() {
                     onSuccess={(newUser) => updateUser(newUser)}
                     fields={[
                       {
+                        label: 'Edit Profile URL:', 
                         field: "profile",
                         placeholder: "[change profile url!]",
                         defaultText: user.profile,
@@ -97,6 +98,7 @@ export default function MySettings() {
                       onSuccess={(newUser) => updateUser(newUser)}
                       fields={[
                         {
+                          label: 'Edit Username:', 
                           field: "username",
                           placeholder: "[change username!]",
                           defaultText: user.username,
@@ -146,11 +148,13 @@ export default function MySettings() {
                       onSuccess={(newUser) => updateUser(newUser)}
                       fields={[
                         {
+                          label: 'Change Email:', 
                           field: "email",
                           placeholder: "[change email!]",
                           defaultText: user.email,
                         },
                         {
+                          label: 'Password:', 
                           field: "oldPassword",
                           placeholder: "[retype password...]",
                           defaultText: "",
@@ -197,12 +201,14 @@ export default function MySettings() {
                       onSuccess={(newUser) => updateUser(newUser)}
                       fields={[
                         {
+                          label: 'New Password:', 
                           field: "password",
                           placeholder: "[new password]",
                           defaultText: "",
                           inputType: "password",
                         },
                         {
+                          label: 'Password:', 
                           field: "oldPassword",
                           placeholder: "[retype old password...]",
                           defaultText: "",

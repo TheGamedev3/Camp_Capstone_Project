@@ -36,11 +36,18 @@
 ✅ - style the edit buttons
 ✅ - separate user profile page
 
-- handle going to the next field on submit/enter
-- handle sending the request when on the last field
-- handle reselecting the earliest field that errored
+✅ - add a header to the text and image fields
+✅ - handle going to the next field on submit/enter
+✅ - handle sending the request when on the last field
+✅ - handle reselecting the earliest field that errored
 
-- fully style the settings
+/*
+✅ - how to add a mini header over the textfield
+✅ - how to detect when a textfield is "entered"/"submitted" but not simply unfocused like clicking elsewhere
+✅ - how to reselect the next text field
+*/
+
+✅ - fully style the settings
 
 - shared navigation headers
 

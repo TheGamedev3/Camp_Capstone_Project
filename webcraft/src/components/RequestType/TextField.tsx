@@ -3,24 +3,31 @@
 import { useRequesterContext } from "./Requester";
 
 type TextFieldProps = {
+  label?: string;
   bodyField: string;
   process?: (value: string) => any;
   defaultText?: string;
   placeholderText?: string;
   inputType?: string;
+  inputRef?: (el: HTMLInputElement | null) => void; // optional ref function
+  onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void; // optional key handler
 };
 
 export function TextField({
+  label = "",
   bodyField,
   process,
   defaultText = "",
   placeholderText = "",
-  inputType='text'
+  inputType='text',
+  inputRef, onKeyDown
 }: TextFieldProps) {
   const { errors, setField } = useRequesterContext();
 
   return (
     <div className="w-full">
+      {/* Field Label */}
+      <div className="mb-1 text-sm font-medium text-gray-700"> {label} </div>
       <input
         type={inputType}
         defaultValue={defaultText}
@@ -29,6 +36,10 @@ export function TextField({
         onChange={(e) => {
           setField(bodyField, e.target.value);
         }}
+
+        // for selecting the next field:
+        ref={inputRef}
+        onKeyDown={onKeyDown}
       />
       {errors[bodyField] && (
         <div className="mt-1 text-sm text-red-500">{errors[bodyField]}</div>

@@ -7,10 +7,14 @@ import { TextField } from './TextField';
 import { ImageField } from './ImageField';
 
 type RequesterContextType = {
-  errors: Record<string, string>;
+  submit: () => Promise<boolean>;
   setField: (field: string, value: any) => void;
-  submit: () => Promise<void>;
+  errors: Record<string, string>;
+
+  registerSubmitBtn: (ref: HTMLButtonElement | null) => void;
+  getSubmitBtn: () => HTMLButtonElement | null;
 };
+
 
 export const RequesterContext = createContext<RequesterContextType | null>(null);
 
@@ -41,6 +45,16 @@ export function Requester({
     const [errors, setErrors] = useState({});
 
     const editCtx = useEditArea();
+
+    //////////////
+    const submitBtnRef = useRef<HTMLButtonElement | null>(null);
+
+    const registerSubmitBtn = (ref: HTMLButtonElement | null) => {
+    submitBtnRef.current = ref;
+    };
+
+    const getSubmitBtn = () => submitBtnRef.current;
+    //////////////
 
     return(
         <RequesterContext.Provider value={
@@ -91,7 +105,9 @@ export function Requester({
                     }
                     console.log(request, success, success ? result : err, goTo)
                     return success;
-                }
+                },
+
+                getSubmitBtn, registerSubmitBtn
             }
         }>
             {children}

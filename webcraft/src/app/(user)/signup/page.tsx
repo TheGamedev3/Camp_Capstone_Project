@@ -23,11 +23,11 @@ export default function SignupPage() {
           goTo='/myProfile'
           
           fields={[
-            {field:'username', placeholder:'username'},
-            {field:'profile', placeholder:'[paste profileURL image here]', defaultText:'https://th.bing.com/th/id/R.eba7a5674add29aeb5265590c3c1bb5e?rik=cBys5futD%2fdkQQ&pid=ImgRaw&r=0', inputType:'image'},
-            {field:'email', placeholder:'email'},
-            {field:'password', inputType:'password', placeholder:'password'},
-            {field:'retype_password', inputType:'password', placeholder:'[retype password]'}
+            {label: 'Username:', field:'username', placeholder:'username'},
+            {label: 'Profile URL:', field:'profile', placeholder:'[paste profileURL image here]', defaultText:'https://th.bing.com/th/id/R.eba7a5674add29aeb5265590c3c1bb5e?rik=cBys5futD%2fdkQQ&pid=ImgRaw&r=0', inputType:'image'},
+            {label: 'Email:', field:'email', placeholder:'email'},
+            {label: 'Password:', field:'password', inputType:'password', placeholder:'password'},
+            {label: 'Retype Password:', field:'retype_password', inputType:'password', placeholder:'[retype password]'}
           ]}
           below={
             <SubmitBtn text="Submit" styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" />
