@@ -52,8 +52,8 @@
 ✅ - shared navigation headers
 ✅ - distinct entry headers (signup, login, players, how to)
 
-- center site content more in the middle, looks ugly stretching across the whole screen
-- optional adjust screen stretch hook
+✅ - center site content more in the middle, looks ugly stretching across the whole screen
+✅ - optional adjust screen stretch hook
 - dummy info, world, & users pagnation page
 
 - pagnate all the players (possibly a logged in session thing?)

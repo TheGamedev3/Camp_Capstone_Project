@@ -12,6 +12,7 @@ This element is added in at "app/layout.tsx"
 import { UserSession } from "./UserSession";
 import { getSession } from "@/lib/Validator";
 import { NavBar } from "@/components/Navigation/shared/NavBar";
+import { Aspect } from "../Aspect";
 
 export async function Root({
   children,
@@ -22,7 +23,7 @@ export async function Root({
   return (
     <UserSession session={session}>
         <NavBar/>
-        {children}
+        <Aspect>{children}</Aspect>
     </UserSession>
   );
 }

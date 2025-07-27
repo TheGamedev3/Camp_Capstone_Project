@@ -16,7 +16,6 @@ import {
 export default function MySettings() {
   const { user, updateUser } = useSession();
   if (!user) return redirect("/login");
-
   return (
     <div className="p-8">
       <EditArea>
