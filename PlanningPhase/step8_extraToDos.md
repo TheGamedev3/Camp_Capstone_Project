@@ -58,8 +58,8 @@
 
 ✅ - possibly create dummy player data on database initialization?
 
-- logic pagnate all the players (possibly a logged in session thing for 'online' players?)
-- sorting logic (alphabetical, accountAge, acsending decsending, online/offline/all)
+✅ - logic pagnate all the players (possibly a logged in session thing for 'online' players?)
+✅ - sorting logic (alphabetical, accountAge, acsending decsending, online/offline/all)
 - render the player profile icon stuff
 - finally render the result of the pagnation
 - player trades next

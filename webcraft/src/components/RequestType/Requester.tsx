@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, createContext, useContext, useRef } from 'react';
+import { useState, createContext, useContext, useRef, useEffect } from 'react';
 import { TextField } from './TextField';
 import { ImageField } from './ImageField';
 
@@ -30,15 +30,16 @@ export type RequesterType = {
     goTo?: string,
     children: React.ReactNode,
     onSuccess?: (result:any) => void | Promise<void>;
-    exitEditField: boolean;
+    onFinish?: (success:boolean, result:any) => void | Promise<void>;
+    exitEditField: boolean; triggerOnStart: boolean;
 }
 
 import { getRoute } from '@/utils/request';
 import { useEditArea } from './Editable';
 
 export function Requester({
-    clientValidation, request, body, fields, goTo, children, onSuccess,
-    exitEditField=true
+    clientValidation, request, body, fields, goTo, children, onSuccess, onFinish,
+    exitEditField=true, triggerOnStart=false
 }: RequesterType
 ){
     const bodyArgs = useRef({});
@@ -56,6 +57,54 @@ export function Requester({
     const getSubmitBtn = () => submitBtnRef.current;
     //////////////
 
+    const submit = async()=>{
+        if(clientValidation){
+            let success2 = true;
+            let err2 = {};
+            function err(field, reason){
+                success2 = false;
+                err2[field] = reason;
+            }
+            await clientValidation({ ...bodyArgs.current, err });
+            setErrors(err2);
+            if(!success2){return}
+        }
+
+        // chooses to process/ what to send in the body args of the request
+        let sendBody = bodyArgs.current;
+        if(body)sendBody = body(sendBody);
+
+        const{success, result, err} = await getRoute({
+            route: request,
+            body: sendBody
+        });
+        setErrors(err || {});
+        if(success){
+            if(onSuccess)await onSuccess(result);
+
+            // NOTE: We use window.location.href instead of router.push() here to navigate
+            // because router.push() is a client-side navigation and won't trigger
+            // a full page reload — which means server-side session checks (like getSession())
+            // won't see the updated cookie immediately. This ensures the server sees
+            // the new login state on the next page load.
+            if(goTo)window.location.href = goTo;
+            else{
+                if(editCtx && exitEditField){
+                    const { isEditing, select, stableId } = editCtx;
+                    if(stableId && isEditing(stableId)){
+                        select(null);
+                    }
+                }
+            }
+        }
+        if(onFinish)await onFinish(success, result);
+        console.log(request, success, success ? result : err, goTo)
+        return success;
+    }
+    useEffect(()=>{
+        if(triggerOnStart){submit()}
+    },[])
+
     return(
         <RequesterContext.Provider value={
             {
@@ -63,49 +112,7 @@ export function Requester({
                 setField(field, value){
                     bodyArgs.current[field] = value;
                 },
-                async submit(){
-                    if(clientValidation){
-                        let success2 = true;
-                        let err2 = {};
-                        function err(field, reason){
-                            success2 = false;
-                            err2[field] = reason;
-                        }
-                        await clientValidation({ ...bodyArgs.current, err });
-                        setErrors(err2);
-                        if(!success2){return}
-                    }
-
-                    // chooses to process/ what to send in the body args of the request
-                    let sendBody = bodyArgs.current;
-                    if(body)sendBody = body(sendBody);
-
-                    const{success, result, err} = await getRoute({
-                        route: request,
-                        body: sendBody
-                    });
-                    setErrors(err || {});
-                    if(success){
-                        if(onSuccess)await onSuccess(result);
-
-                        // NOTE: We use window.location.href instead of router.push() here to navigate
-                        // because router.push() is a client-side navigation and won't trigger
-                        // a full page reload — which means server-side session checks (like getSession())
-                        // won't see the updated cookie immediately. This ensures the server sees
-                        // the new login state on the next page load.
-                        if(goTo)window.location.href = goTo;
-                        else{
-                            if(editCtx && exitEditField){
-                                const { isEditing, select, stableId } = editCtx;
-                                if(stableId && isEditing(stableId)){
-                                    select(null);
-                                }
-                            }
-                        }
-                    }
-                    console.log(request, success, success ? result : err, goTo)
-                    return success;
-                },
+                submit,
 
                 getSubmitBtn, registerSubmitBtn
             }
