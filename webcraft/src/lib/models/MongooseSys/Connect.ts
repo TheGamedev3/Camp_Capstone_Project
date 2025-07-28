@@ -1,5 +1,9 @@
 import mongoose from 'mongoose';
 import dotenv from 'dotenv';
+import User from '../DB_Objects/User'
+
+import { SeedData } from '../SeedData';
+import { seedDummyPlayers } from './Seeder';
 
 dotenv.config(); // ensures process.env is loaded
 
@@ -23,17 +27,11 @@ export async function onConnect(): Promise<void> {
   try {
     await mongoose.connect(uri);
     console.log('✅ Mongoose DB Connected')
-    if (!testMode) {
-      // TO DO: Add seeding logic here if needed in future
-      /*
-      const { DB_Info } = await import('@Chemicals');
-      const singleton = await DB_Info.fetchSingleton();
-      if (singleton.seeded === false) {
-        const { seedDatabase } = await import('@MongooseAPI');
-        await seedDatabase();
-        await DB_Info.modify({ seeded: true });
-      }
-      */
+    const collections = await mongoose.connection.db.collections();
+    if(!collections.map(c => c.collectionName).includes('users')){
+      // this means the database hasn't been initialized yet
+      // seed the test data in...
+      await seedDummyPlayers(SeedData);
     }
   } catch (err) {
     console.error('Mongo connection failed:', err);

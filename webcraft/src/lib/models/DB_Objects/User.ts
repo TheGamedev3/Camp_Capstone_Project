@@ -51,8 +51,8 @@ export const User = (db_object<UserSchema>(
         async fetchUser(id: string){
             return await (this as Model<UserSchema>).findOne({ _id:id });
         },
-        async makeTestUser({ username, email, password }: { username: string, email: string, password: string }) {
-            return (this as Model<UserSchema>).create({ username, email, password });
+        async makeTestUser({ profile, username, email, password, created }: { profile: string, username: string, email: string, password: string, created: Date }) {
+            return (this as Model<UserSchema>).create({ profile, username, email, password, created });
         },
         async verifyPassword(userId, password){
 

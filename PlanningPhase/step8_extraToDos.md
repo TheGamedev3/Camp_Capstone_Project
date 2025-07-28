@@ -56,7 +56,7 @@
 ✅ - optional adjust screen stretch hook
 ✅ - dummy info, world, & users pagnation page
 
-- possibly create dummy player data on database initialization?
+✅ - possibly create dummy player data on database initialization?
 
 - logic pagnate all the players (possibly a logged in session thing for 'online' players?)
 - sorting logic (alphabetical, accountAge, acsending decsending, online/offline/all)
