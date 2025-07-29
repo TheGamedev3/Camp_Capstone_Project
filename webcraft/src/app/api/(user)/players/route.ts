@@ -12,7 +12,7 @@ export async function GET(req: Request) {
     
     const { searchParams } = new URL(req.url);
 
-    const page = parseInt(searchParams.get("page") || "0");
+    const page = parseInt(searchParams.get("page") || "1");
     const sortStyle = searchParams.get("sortStyle") || "newest";
     const onlineOnly = searchParams.get("onlineOnly") === "true";
     const search = searchParams.get("search")?.trim();
@@ -41,15 +41,20 @@ export async function GET(req: Request) {
     })();
 
     const totalCount = await User.countDocuments(userFilter);
-    const totalPages = Math.ceil(totalCount / PerPage);
+    const totalPages = Math.max(0, Math.ceil(totalCount / PerPage));
 
-    const skip = page * PerPage;
+    let users = [];
+    if(totalCount === 0){
+      users = [];
+    }else{
+      const skip = (page-1) * PerPage;
 
-    const users = await User.find(userFilter)
-      .sort(sortGroup)
-      .skip(skip)
-      .limit(PerPage)
-      .lean();
+      users = await User.find(userFilter)
+        .sort(sortGroup)
+        .skip(skip)
+        .limit(PerPage)
+        .lean();
+    }
 
     return{
       success:true,

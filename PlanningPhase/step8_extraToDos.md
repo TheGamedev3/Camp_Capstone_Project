@@ -60,8 +60,17 @@
 
 ✅ - logic pagnate all the players (possibly a logged in session thing for 'online' players?)
 ✅ - sorting logic (alphabetical, accountAge, acsending decsending, online/offline/all)
-- render the player profile icon stuff
-- finally render the result of the pagnation
+
+✅ - render the player profile icon stuff
+✅ - finally render the result of the pagnation
+✅ - search bar
+✅ - add debounce to searching so it doesnt get halted while typing
+✅ - sort controls/drop downs
+✅ - user icons
+✅ - user grid
+- ironed out player profiles/:id
+- route user icons to player profiles/:id
+
 - player trades next
 
 - remember to hash the passwords on signup/creation!
