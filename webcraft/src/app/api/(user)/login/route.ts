@@ -8,17 +8,12 @@ import { attemptRequest } from "@MongooseSys";
 export async function POST(req: Request) {
   return Response.json(await attemptRequest(async()=>{
     const{email, password} = await req.json();
-    const user = await User.findOne({ email });
-    // DONT FORGET TO HASH THE PASSWORD LATER
-    if(!user)return{ success:false, err:{email:'invalid email!'} };
+    const user = await User.login({ email, password });
+    if(!user){return{success:false, err:{server:'failed to fetch user'}}}
 
-    if(user?.password === password){
+    // give the session cookie
+    await ValidateSession(user._id);
 
-      // give the session cookie
-      await ValidateSession(user._id);
-
-      return{ success:true, result:user }; // ✅
-    }
-    else{return{success:false, err:{password:'incorrect password!'}}}
+    return{ success:true, result:user }; // ✅
   }));
 }

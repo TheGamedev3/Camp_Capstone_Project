@@ -13,9 +13,23 @@ interface UserSchema {
 }
 
 interface UserModel extends Model<UserSchema>{
+    signup({ profile: string, username: string, email: string, password: string }): Promise<UserSchema>;
+    login({ email: string, password: string}): Promise<UserSchema>;
     fetchUser( id:string ): Promise<UserSchema>;
     makeTestUser({ username: string, email: string, password: string }): Promise<UserSchema>;
     editProfile(userId: string, edits: Record<string, string>): Promise<UserSchema>;
+}
+
+import bcrypt from 'bcryptjs'; // or 'bcrypt'
+
+export async function hashPassword(plain: string): Promise<string> {
+  const saltRounds = 10;
+  const hash = await bcrypt.hash(plain, saltRounds);
+  return hash;
+}
+
+export async function verifyPassword(attempt: string, hashed: string): Promise<boolean> {
+  return await bcrypt.compare(attempt, hashed);
 }
 
 export const User = (db_object<UserSchema>(
@@ -51,11 +65,26 @@ export const User = (db_object<UserSchema>(
         async fetchUser(id: string){
             return await (this as Model<UserSchema>).findOne({ _id:id });
         },
-        async makeTestUser({ profile, username, email, password, created }: { profile: string, username: string, email: string, password: string, created: Date }) {
-            return (this as Model<UserSchema>).create({ profile, username, email, password, created });
+        async signup({ username, profile, email, password }: { profile: string, username: string, email: string, password: string }){
+            return await User.create({
+                username, profile,
+                // ENCRYPT PASSWORD
+                email, password: await hashPassword(password)
+            });
         },
-        async verifyPassword(userId, password){
-
+        async login({ email, password }: { email: string, password: string}){
+            const user = await User.findOne({ email });
+            if(!user){throw new Error(mongoErr('email', "invalid email!").id)}
+            if(!(await verifyPassword(password, user.password))){throw new Error(mongoErr('password', "Incorrect password!").id)}
+            return user;
+        },
+        async makeTestUser({ profile, username, email, password, created }: { profile: string, username: string, email: string, password: string, created: Date }) {
+            return (this as Model<UserSchema>).create({
+                profile, username,
+                // ENCRYPT PASSWORD
+                email, password: await hashPassword(password),
+                created
+            });
         },
         async editProfile(userId, edits){
             const user = await this.findOne({ _id: userId });
@@ -70,9 +99,11 @@ export const User = (db_object<UserSchema>(
             if(edits.password !== undefined || edits.email !== undefined){
                 const oldPassword = edits.oldPassword;
                 if(!oldPassword){throw new Error(mongoErr('oldPassword', "Password required!").id)}
-                if(user.password !== oldPassword){throw new Error(mongoErr('oldPassword', "Incorrect password!").id)}
+                if(!(await verifyPassword(oldPassword, user.password))){throw new Error(mongoErr('oldPassword', "Incorrect password!").id)}
                 delete edits.oldPassword;
-                if(edits.password){}// REENCRYPT IT
+
+                // REENCRYPT IT
+                if(edits.password){edits.password = await hashPassword(edits.password)}
             }
             
             Object.assign(user, edits);

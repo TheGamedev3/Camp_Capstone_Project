@@ -73,7 +73,9 @@
 ✅ - route user icons to player profiles/:id
 ✅ - make a fetch profile api route
 
-- remember to hash the passwords on signup/creation!
+✅ - remember to hash the passwords on signup/creation!
+✅ - hash on signup/seed creation
+✅ - verify hash!
 
 - refine the typescript of everything
 - get a testing package
