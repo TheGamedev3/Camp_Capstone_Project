@@ -77,7 +77,7 @@ function PageNavigator() {
   const { PageData } = usePageData();
 
   const totalPages = PageData?.totalPages || 1;
-  const currentPage = parseInt(getParam("page") || "0");
+  const currentPage = parseInt(getParam("page") || "1");
 
   const goTo = (page: number) => {
     const clamped = Math.max(1, Math.min(totalPages, page));

@@ -68,15 +68,18 @@
 ✅ - sort controls/drop downs
 ✅ - user icons
 ✅ - user grid
-- ironed out player profiles/:id
-- route user icons to player profiles/:id
 
-- player trades next
+✅ - ironed out player profiles/:id
+✅ - route user icons to player profiles/:id
+✅ - make a fetch profile api route
 
 - remember to hash the passwords on signup/creation!
 
 - refine the typescript of everything
 - get a testing package
+
+- trade db schema object & item logic eventually
+
 */
 
 
