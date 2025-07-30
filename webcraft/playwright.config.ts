@@ -1,3 +1,4 @@
+
 import { defineConfig } from '@playwright/test';
 
 export default defineConfig({
@@ -8,9 +9,5 @@ export default defineConfig({
         headless: true,
         viewport: { width: 1280, height: 720 },
         ignoreHTTPSErrors: true,
-    },
-    webServer: {
-        command: 'npm run dev & sleep 3',
-        port: 0,
     }
 });

@@ -77,13 +77,23 @@
 ✅ - hash on signup/seed creation
 ✅ - verify hash!
 
-- refine the typescript of everything
-- refine route protection more
-- get a testing package
+✅ - get a testing package
     ✅ - create the first test
-    - on running the command, set env to test mode
-    - in test mode, clear the mongodb test db, and reseed it each time
-    - list why i chose playwright over cypress, and what E2E testing is
+    ✅ - on running the command, set env to test mode
+    ✅ - in test mode, clear the mongodb test db, and reseed it each time
+    ✅ - list why i chose playwright over cypress, and what E2E testing is
+
+"
+Why I chose playwright for the testing framework?
+My requirements I wanted to test my site were:
+-testing the UI and detecting whats on the page
+-interacting with the server indirectly through the webpages, not the routes directly
+-multiple sessions active at once, in case i wnat to handle trading
+
+I needed an End 2 End tester to test everything as if a user would be using the site, and narrowed it down to Playwright and Cypress.
+Both were free and E2E, but unlike Cypress, Playwright had more features, and even allowed for multiple sessions at once.
+"
+
     - create test helpers like logging into accounts, filling in fields, and clicking buttons
 
 - tests:
@@ -94,6 +104,9 @@
     - navigating pages logged in
     - pagnating players
     - viewing user profiles
+
+- refine the typescript of everything
+- refine route protection more
 
 - trade db schema object & item logic eventually
 

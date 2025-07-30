@@ -17,7 +17,7 @@ export async function onConnect(): Promise<void> {
     throw new Error("ENV NOT CONFIGURED WITH A MONGO_DB URI!\nRun with 'npm run mini' to run the preview version instead");
   }
 
-  const testMode = process.env.NODE_ENV === 'test';
+  const testMode = process.env.TestMode === 'true';
 
   // Swap to test DB if in test mode
   uri = testMode
@@ -26,9 +26,23 @@ export async function onConnect(): Promise<void> {
 
   try {
     await mongoose.connect(uri);
-    console.log('✅ Mongoose DB Connected')
-    const collections = await mongoose.connection.db.collections();
-    if(!collections.map(c => c.collectionName).includes('users')){
+    console.log('✅ Mongoose DB Connected');
+
+    const db = mongoose.connection.db;
+    const collections = await db.collections();
+    
+    if (testMode) {
+      // always re-initialize on test mode
+      console.log('🧪 TestMode enabled → Clearing all collections');
+      const collections = await db.collections();
+      for (const collection of collections) {
+        await collection.deleteMany({});
+        console.log(`🧹 Cleared collection: ${collection.collectionName}`);
+      }
+
+      console.log('🌱 Seeding dummy test data...');
+      await seedDummyPlayers(SeedData);
+    }else if(!collections.map(c => c.collectionName).includes('users')){
       // this means the database hasn't been initialized yet
       // seed the test data in...
       await seedDummyPlayers(SeedData);

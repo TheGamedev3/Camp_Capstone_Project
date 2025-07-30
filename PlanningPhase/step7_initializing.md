@@ -30,5 +30,7 @@ npx playwright install # E2E testing framework
 npm i -D @playwright/test@latest
 npx playwright test --init # creates the config file
 
+npm i -D concurrently wait-on cross-env # for a special playwright command to start the server and tester concurrently
+
 # to run all tests
 npx playwright test
