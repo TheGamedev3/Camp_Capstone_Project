@@ -78,7 +78,22 @@
 ✅ - verify hash!
 
 - refine the typescript of everything
+- refine route protection more
 - get a testing package
+    ✅ - create the first test
+    - on running the command, set env to test mode
+    - in test mode, clear the mongodb test db, and reseed it each time
+    - list why i chose playwright over cypress, and what E2E testing is
+    - create test helpers like logging into accounts, filling in fields, and clicking buttons
+
+- tests:
+    - signup
+    - login
+    - logout
+    - navigating pages
+    - navigating pages logged in
+    - pagnating players
+    - viewing user profiles
 
 - trade db schema object & item logic eventually
 

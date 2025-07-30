@@ -25,3 +25,10 @@ npm install --save-dev concurrently # for doing npm run dev, then triggering the
 npm install lucide-react # for some fancy icons
 
 npm install bcryptjs # for password hashing
+
+npx playwright install # E2E testing framework
+npm i -D @playwright/test@latest
+npx playwright test --init # creates the config file
+
+# to run all tests
+npx playwright test
