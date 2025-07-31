@@ -5,6 +5,7 @@ const Routes={
     // doesn't require a session to view
     public:[
         '/',
+        '/players',
         '/profile/:userId'
     ],
 
@@ -18,6 +19,7 @@ const Routes={
     // protected routes require a session
     // and if no session is found, it redirects to login
     protected:[
+        '/mySettings',
         '/myProfile'
     ]
 }
@@ -38,7 +40,7 @@ function protType(pathname: string): 'public' | 'entrance' | 'protected' | null 
   for (const type of ['public', 'entrance', 'protected'] as const) {
     if (arrayCompare(type)) return type;
   }
-  console.warn(`ROUTE "${pathname}" NOT FOUND!`);
+  console.warn(`ROUTE "${pathname}" NOT FOUND OR IS UNDEFINED IN MIDDLEWARE ROUTES!`);
   return null;
 }
 
