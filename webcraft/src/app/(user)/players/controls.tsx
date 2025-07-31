@@ -32,6 +32,7 @@ export function SearchControls() {
       <div>
         <label>🔍 Search</label>
         <input
+          name="player search"
           type="text"
           value={localSearch}
           onChange={(e) => setLocalSearch(e.target.value)}
@@ -43,6 +44,7 @@ export function SearchControls() {
       <div>
         <label>
           <input
+            name="online only"
             type="checkbox"
             checked={onlineOnly}
             onChange={paramSetter("onlineOnly", 'checked')}
@@ -55,8 +57,9 @@ export function SearchControls() {
       <div>
         <label>🫗Sort</label>
         <select
+          name="sort style"
           value={sortStyle}
-          onChange={paramSetter("sortStyle", 'value')}
+          onChange={(e)=>setParams({ page: "1", sortStyle: e.target.value })}
           className="w-full border p-1 rounded"
         >
           <option value="newest">Newest</option>
@@ -66,7 +69,6 @@ export function SearchControls() {
         </select>
       </div>
 
-      <div>{`${parseInt(page)} of ${PageData?.totalPages || 'X'}`}</div>
       <PageNavigator />
     </div>
   );
@@ -87,6 +89,7 @@ function PageNavigator() {
   return (
     <div className="flex justify-between items-center mt-6 px-2">
       <button
+        name="back a page"
         onClick={() => goTo(currentPage - 1)}
         disabled={currentPage <= 1}
         className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"
@@ -94,11 +97,12 @@ function PageNavigator() {
         ◀
       </button>
 
-      <div className="text-sm text-gray-600">
+      <div name="pages" className="text-sm text-gray-600">
         Page <strong>{currentPage}</strong> of {totalPages}
       </div>
 
       <button
+        name="forward a page"
         onClick={() => goTo(currentPage + 1)}
         disabled={currentPage >= totalPages}
         className="px-3 py-1 rounded bg-gray-200 hover:bg-gray-300 disabled:opacity-50"

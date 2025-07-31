@@ -5,7 +5,7 @@ import { CustomProfile } from "@Req";
 
 export function PlayerIcon({ profile, username, _id, created }) {
   return (
-    <Link href={`/profile/${_id}`}>
+    <Link name={`${username}-icon`} href={`/profile/${_id}`}>
       <div className="cursor-pointer bg-white rounded-2xl shadow p-4 border border-gray-300 hover:shadow-lg hover:bg-gray-50 transition">
         <CustomProfile url={profile} />
         <div className="text-black text-2xl">👤 {username}</div>

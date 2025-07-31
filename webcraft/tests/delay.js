@@ -1,7 +1,9 @@
+const { execSync } = require('child_process');
 
-// waits to startup the tests, to let the server connect to mongodb
+const testPath = process.env.TEST_PATH || '';
+const cmd = ['npx playwright test', testPath].filter(Boolean).join(' ');
+console.log('[delay.js] Running:', cmd);
 
 setTimeout(() => {
-  const { execSync } = require('child_process');
-  execSync('npx playwright test', { stdio: 'inherit' });
+  execSync(cmd, { stdio: 'inherit' });
 }, 3000);

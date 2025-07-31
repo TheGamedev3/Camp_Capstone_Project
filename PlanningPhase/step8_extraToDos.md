@@ -100,16 +100,22 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - and clicking buttons
     ✅ - clicking nav links
     ✅ - outline the "TestHelpers" requirements more thoroughly
-    - typing in search bar
-    - clicking checkmarks
-    - searching for tests
+
+    ✅ - setting text in search bar
+    ✅ - setting checkmarks
+    ✅ - selecting dropdown options
+    ✅ - labeling things like user profile buttons
+    ✅ - outline the pagnation controls test
+    - create the pagnation controls test
+    - break down helpers into separate scripts (checks, sets, forum filling, setups)
+    - see what nav links are avalialbe
+    - searching for  w/ a short hand command
+
     - better errors and checking for elements
         - wrap in trycatch
         - trace stack where assumption was called
         - custom error data
-    - labeling things like user profile buttons
-    - selecting dropdown options
-    - see what nav links are avalialbe
+
 
 - tests:
     - signup
