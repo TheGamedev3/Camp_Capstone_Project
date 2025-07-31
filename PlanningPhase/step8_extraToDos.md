@@ -114,19 +114,26 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
         - wrap in trycatch
         - trace stack where assumption was called
         - custom error data
+    
+    - wait fors
+        - wait for url to match route
+        - wait for text element to be present
+        - delay
+        - wait until match, w/ timeout
+    
+    - make the assumptions in the SiteEnv functions themselves
 
 
 - tests:
     - signup
-    - login
+    ✅ - login
     - logout
     - navigating pages
     - navigating pages logged in
-    - pagnating players
-    - viewing user profiles
+    ✅ - pagnating players
+    ✅ - viewing user profiles
 
 - refine the typescript of everything
-- refine route protection more
 
 - trade db schema object & item logic eventually
 

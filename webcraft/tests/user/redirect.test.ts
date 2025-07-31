@@ -1,7 +1,7 @@
 import { expect, TEST } from '@SiteEnv';
 
 TEST('unauthenticated user gets redirected to login page',
-  async ({ page, HasText, ClickNav }) => {
+  async ({ page, HasText, ClickNav, briefPause }) => {
 
     // Go to a protected page
     await page.goto('/myProfile');
@@ -16,6 +16,7 @@ TEST('unauthenticated user gets redirected to login page',
     console.log('login:', await HasText('LOGIN'));
 
     await ClickNav('Signup');
+    await briefPause();
 
     console.log('signup page:', await HasText('SIGNUP'), await HasText('LOGIN', false))
   }

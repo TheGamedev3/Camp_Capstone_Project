@@ -1,35 +1,47 @@
 import { useSearchParams, useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { useCallback, useRef } from "react";
 
 export function useQueryParams() {
   const searchParams = useSearchParams();
   const router = useRouter();
 
-  const setParams = (updates: Record<string, string | boolean | number | null>) => {
-    const current = new URLSearchParams(searchParams.toString());
-    const preString = current.toString();
-    for (const [key, value] of Object.entries(updates)) {
+  const updateQueue = useRef<Record<string, string | boolean | number | null>>({});
+  const updateTimer = useRef<NodeJS.Timeout | null>(null);
+
+  const flushParams = () => {
+    const url = new URL(window.location.href);                  // ✅ live URL
+    const current = new URLSearchParams(url.search);            // ✅ accurate, up-to-date
+
+    for (const [key, value] of Object.entries(updateQueue.current)) {
       if (value === null || value === "") current.delete(key);
       else current.set(key, String(value));
     }
-    if(preString === current){return}
-    router.push(`?${current.toString()}`, { scroll: false });
+
+    updateQueue.current = {}; // clear queue
+
+    const newSearch = current.toString();
+    if (url.search === `?${newSearch}`) return;
+
+    url.search = newSearch;
+    router.push(url.toString(), { scroll: false });
   };
 
   const setParam = useCallback(
     (key: string, value: string | boolean | number | null) => {
-      const current = new URLSearchParams(searchParams.toString());
-      const preString = current.toString();
-
-      if (value === null || value === "") current.delete(key);
-      else current.set(key, String(value));
-
-      if(preString === current){return}
-      const newQuery = current.toString();
-      router.push(`?${newQuery}`, { scroll: false });
+      updateQueue.current[key] = value;
+      if (updateTimer.current) clearTimeout(updateTimer.current);
+      updateTimer.current = setTimeout(flushParams, 10);
     },
-    [searchParams, router]
+    [router]
   );
+
+  const setParams = (updates: Record<string, string | boolean | number | null>) => {
+    for (const [key, value] of Object.entries(updates)) {
+      updateQueue.current[key] = value;
+    }
+    if (updateTimer.current) clearTimeout(updateTimer.current);
+    updateTimer.current = setTimeout(flushParams, 10);
+  };
 
   const paramSetter = (param: string, kind: "value" | "checked" = "value") => {
     return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
@@ -44,7 +56,8 @@ export function useQueryParams() {
   return {
     getParam: (key: string) => searchParams.get(key),
     queryString: searchParams.toString(),
-
-    setParam, setParams, paramSetter,
+    setParam,
+    setParams,
+    paramSetter,
   };
 }
