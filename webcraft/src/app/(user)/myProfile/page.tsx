@@ -31,8 +31,9 @@ export default function MyProfile() {
             ✏️ Edit Profile
           </Link>
           <Requester
-              request="POST /api/logout"
-              goTo='/login'
+            forumName="logout"
+            request="POST /api/logout"
+            goTo='/login'
           >
               <LogoutLink/>
           </Requester>

@@ -16,6 +16,7 @@ export default function SignupPage() {
             if(!password) err('password',"password can't be blank!");
             if(password !== retype_password) err('retype_password', "password doesn't match!");
           }}
+          forumName="signup"
           request="POST /api/signup"
           body={({username, profile, email, password})=>{
             return{username, profile, email, password}

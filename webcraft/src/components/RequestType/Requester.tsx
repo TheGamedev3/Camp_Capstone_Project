@@ -7,6 +7,7 @@ import { TextField } from './TextField';
 import { ImageField } from './ImageField';
 
 type RequesterContextType = {
+  forumName: string;
   submit: () => Promise<boolean>;
   setField: (field: string, value: any) => void;
   errors: Record<string, string>;
@@ -25,6 +26,7 @@ export function useRequesterContext() {
 }
 
 export type RequesterType = {
+    forumName: string;
     clientValidation?: () => void | Promise<void>;
     body?: () => any;
     goTo?: string,
@@ -38,6 +40,7 @@ import { getRoute } from '@/utils/request';
 import { useEditArea } from './Editable';
 
 export function Requester({
+    forumName,
     clientValidation, request, body, fields, goTo, children, onSuccess, onFinish,
     exitEditField=true, triggerOnStart=false
 }: RequesterType
@@ -108,6 +111,7 @@ export function Requester({
     return(
         <RequesterContext.Provider value={
             {
+                forumName,
                 errors,
                 setField(field, value){
                     bodyArgs.current[field] = value;
@@ -117,7 +121,7 @@ export function Requester({
                 getSubmitBtn, registerSubmitBtn
             }
         }>
-            {children}
+            <div data-forum={forumName}>{children}</div>
         </RequesterContext.Provider>
     );
 }

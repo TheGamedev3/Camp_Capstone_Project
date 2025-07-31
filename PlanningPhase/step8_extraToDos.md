@@ -94,7 +94,22 @@ I needed an End 2 End tester to test everything as if a user would be using the 
 Both were free and E2E, but unlike Cypress, Playwright had more features, and even allowed for multiple sessions at once.
 "
 
-    - create test helpers like logging into accounts, filling in fields, and clicking buttons
+- create test helpers:
+    ✅ - like logging into accounts/creating sessions
+    ✅ - filling in forum fields
+    ✅ - and clicking buttons
+    ✅ - clicking nav links
+    ✅ - outline the "TestHelpers" requirements more thoroughly
+    - typing in search bar
+    - clicking checkmarks
+    - searching for tests
+    - better errors and checking for elements
+        - wrap in trycatch
+        - trace stack where assumption was called
+        - custom error data
+    - labeling things like user profile buttons
+    - selecting dropdown options
+    - see what nav links are avalialbe
 
 - tests:
     - signup

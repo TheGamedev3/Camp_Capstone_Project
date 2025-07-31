@@ -41,6 +41,7 @@ export default function MySettings() {
                       if (profile === user.profile)
                         err("profile", "profile isn't changed!");
                     }}
+                    forumName="editProfile"
                     request="PATCH /api/editProfile"
                     onSuccess={(newUser) => updateUser(newUser)}
                     fields={[

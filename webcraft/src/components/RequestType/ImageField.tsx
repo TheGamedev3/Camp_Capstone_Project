@@ -31,6 +31,7 @@ export function ImageField({
       {/* Field Label */}
       <div className="mb-1 text-sm font-medium text-gray-700"> {label} </div>
       <input
+        name={bodyField}
         type="text"
         defaultValue={defaultText}
         placeholder={placeholderText}

@@ -22,7 +22,8 @@
       "@/*": ["./src/*"],
       "@MongooseSys": ["./src/lib/models/mongooseSys/Mongoose.ts"],
       "@Chemicals": ["./src/lib/models/DB_Objects/Collection.ts"],
-      "@Req": ["./src/components/RequestType/index.tsx"]
+      "@Req": ["./src/components/RequestType/index.tsx"],
+      "@SiteEnv": ["./tests/SiteEnv.ts"]
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],

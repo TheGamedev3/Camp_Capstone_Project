@@ -12,7 +12,7 @@ type SubmitBtnProps = {
 
 export const SubmitBtn = forwardRef<HTMLButtonElement, SubmitBtnProps>(
   ({ text, styling, disableOnSuccess = true }, ref) => {
-    const { submit, registerSubmitBtn } = useRequesterContext();
+    const { forumName, submit, registerSubmitBtn } = useRequesterContext();
     const [disabled, setDisabled] = useState(false);
 
     const handleClick = async () => {
@@ -36,6 +36,7 @@ export const SubmitBtn = forwardRef<HTMLButtonElement, SubmitBtnProps>(
 
     return (
       <button
+        name={`${forumName}-submit`}
         ref={ref || localRef}
         onClick={handleClick}
         disabled={disabled}
