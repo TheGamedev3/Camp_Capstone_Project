@@ -2,7 +2,8 @@
 import { test } from '@playwright/test';
 export { expect } from '@playwright/test';
 
-import * as checks from './checks'
+import * as expectors from './expectors'
+import * as checks from './checks' // ❌
 import * as forum from './forum'
 import * as interact from './interact'
 import * as setters from './setters'
@@ -11,6 +12,7 @@ import * as setups from './setups'
 function Helpers({ page }){
     const toolbox = {
         page,
+        ...expectors,
         ...checks,
         ...forum,
         ...interact,

@@ -9,7 +9,7 @@ export async function IsRoute(path: string | RegExp, success: boolean) {
   return matches === success;
 }
 
-export async function Batch(promises: Promise<any>[]) {
+export async function Batch(...promises: Promise<any>[]) {
   await Promise.all(promises);
 }
 

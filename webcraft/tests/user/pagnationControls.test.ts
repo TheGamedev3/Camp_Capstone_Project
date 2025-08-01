@@ -2,24 +2,27 @@
 
 import { expect, TEST } from '@SiteEnv';
 
+// REMOVE briefPause
+
 TEST('Test pagination', async ({
   page, IsRoute, HasText, Click, ClickNav, Forum,
-  briefPause,
-  Submit, SetOption, SetText, SetCheckbox
+  Submit, SetOption, SetText, SetCheckbox,
+  Batch,
+  ExpectElement, ExpectUrl, ExpectHeader, ExpectRouteToChange
 }) => {
 
   await page.goto('/myProfile');
   await page.waitForLoadState('networkidle');
-  await expect(page).toHaveURL(/\/login$/);
+  await ExpectUrl(/\/login$/);
 
   // Login
   await Forum('login', { email: "Aaron@gmail.com", password: "aaron1234" });
   await Submit('login');
-  await expect(page).toHaveURL(/\/myProfile$/); // optional guard
+  await ExpectUrl(/\/myProfile$/);
 
   // Navigate to Players
   await ClickNav('Players');
-  await expect(page).toHaveURL(/\/players$/);
+  await ExpectUrl(/\/players$/);
 
   // Smarter page wait
   const onPage = async (x: string) => {
@@ -49,28 +52,40 @@ TEST('Test pagination', async ({
 
   // Search for Ry (gary, ryan)
   await SetText({ 'player search': 'Ry' });
-  await expect(page.locator('text=Gary')).toBeVisible();
-  await expect(page.locator('text=Ryan')).toBeVisible();
+  await ExpectElement('text=Ryan');
+  await ExpectElement('text=Gary');
   await onPage("1 of 1");
 
   // Search for Rya (only Ryan)
   await SetText({ 'player search': 'Rya' });
-  await expect(page.locator('text=Ryan')).toBeVisible();
-  await expect(page.locator('text=Gary')).toHaveCount(0);
+  await ExpectElement('text=Ryan');
+  await ExpectElement('text=Gary', false);
 
   // Navigate to Ryan's profile
-  await briefPause();
   await ClickNav('Ryan-icon');
-  await page.waitForURL(/\/profile\/[^\/]+$/);
-  await expect(page.getByRole('heading', { name: 'Ryan' })).toBeVisible();
+  await ExpectUrl(/\/profile\/[^\/]+$/);
+  await ExpectHeader('Ryan');
 
   // Back to pagination
-  await page.goBack();
-  await page.waitForURL(/\/players(\?.*)?$/);
+  await Batch(
+    ExpectRouteToChange(),
+    page.goBack(),
+  );
 
   // Online only toggle + sort
   await SetText({ 'player search': '' });
   await SetCheckbox("online only", true);
   await SetOption('sort style', 'A-Z');
-  await expect(page.locator('text=Aaron')).toBeVisible();
+
+  await ExpectUrl(/\/players(\?.*)?$/,{search:'', onlineOnly:true, sortStyle:'A-Z'});
+  await ExpectElement('text=Aaron');
+
+  // element is shown
+  // has text
+  // repeat check until timeout
+  // batch & wait for url to change
+  // url path contains...
+  // expect to have params....
+
+  // try catches and timeout fails
 });

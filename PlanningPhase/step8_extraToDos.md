@@ -115,11 +115,20 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
         - trace stack where assumption was called
         - custom error data
     
-    - wait fors
-        - wait for url to match route
-        - wait for text element to be present
-        - delay
-        - wait until match, w/ timeout
+    ✅ - wait fors
+        ✅ - wait for url to match route
+        ✅ - wait for text element to be present
+        ✅ - delay
+        ✅ - wait until match, w/ timeout
+    
+    - getting element data, like is button disabled
+    - navigating like going back/forward
+    - getting text from elements
+    - hover over settings/element
+
+    - edit profile test outline
+    - edit profile data name labels
+    - edit profile test
     
     - make the assumptions in the SiteEnv functions themselves
 
@@ -130,6 +139,7 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     - logout
     - navigating pages
     - navigating pages logged in
+    - editing one's own profile
     ✅ - pagnating players
     ✅ - viewing user profiles
 
