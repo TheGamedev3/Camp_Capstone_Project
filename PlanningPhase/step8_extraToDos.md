@@ -109,11 +109,6 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - create the pagnation controls test
     ✅ - break down helpers into separate scripts (checks, sets, forum filling, setups)
     ✅ - run only 1 test file w/ a short hand command
-
-    - better errors and checking for elements
-        - wrap in trycatch
-        - trace stack where assumption was called
-        - custom error data
     
     ✅ - wait fors
         ✅ - wait for url to match route
@@ -129,19 +124,22 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - Account logger in function
     ✅ - hover over settings/element
     ✅ - log out function
-    - fix the types not passing over in the custom Test function
+    ✅ - fix the types not passing over in the custom Test function
 
     - edit profile test outline
     - edit profile data name labels
     - edit profile test
     
     - make the assumptions in the SiteEnv functions themselves
-
+    - better errors and checking for elements
+        - wrap in trycatch
+        - trace stack where assumption was called
+        - custom error data
 
 - tests:
     - signup
     ✅ - login
-    - logout
+    ✅ - logout
     - navigating pages
     - navigating pages logged in
     - editing one's own profile
