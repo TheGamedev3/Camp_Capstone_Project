@@ -27,6 +27,7 @@ export default function MySettings() {
                 <div className="flex flex-col items-center gap-2">
                   <CustomProfile url={user.profile} />
                   <EditBtn
+                    name="edit profile url"
                     text="✏️ Edit Profile Image"
                     className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
                   />
@@ -61,6 +62,7 @@ export default function MySettings() {
                     }
                   />
                   <EditBtn
+                    name="cancel editing profile url"
                     text="Cancel"
                     className="bg-red-500 text-white px-4 py-1 rounded"
                   />
@@ -80,6 +82,7 @@ export default function MySettings() {
                       {user.username}
                     </span>
                     <EditBtn
+                      name="edit username"
                       text="✏️"
                       className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
                     />
@@ -94,6 +97,7 @@ export default function MySettings() {
                         if (username === user.username)
                           err("username", "username isn't changed!");
                       }}
+                      forumName="editProfile"
                       request="PATCH /api/editProfile"
                       onSuccess={(newUser) => updateUser(newUser)}
                       fields={[
@@ -112,6 +116,7 @@ export default function MySettings() {
                       }
                     />
                     <EditBtn
+                      name="cancel editing username"
                       text="Cancel"
                       className="bg-red-500 text-white px-4 py-1 rounded"
                     />
@@ -129,6 +134,7 @@ export default function MySettings() {
                       {user.email}
                     </span>
                     <EditBtn
+                      name="edit email"
                       text="✏️"
                       className="bg-gray-200 hover:bg-gray-300 px-3 py-1 rounded"
                     />
@@ -144,6 +150,7 @@ export default function MySettings() {
                         if (email === user.email)
                           err("email", "email isn't changed!");
                       }}
+                      forumName="editProfile"
                       request="PATCH /api/editProfile"
                       onSuccess={(newUser) => updateUser(newUser)}
                       fields={[
@@ -169,6 +176,7 @@ export default function MySettings() {
                       }
                     />
                     <EditBtn
+                      name="cancel editing email"
                       text="Cancel"
                       className="bg-red-500 text-white px-4 py-1 rounded"
                     />
@@ -182,6 +190,7 @@ export default function MySettings() {
               <Editable
                 view={
                   <EditBtn
+                    name="edit password"
                     text="✏️ Change Password"
                     className="bg-gray-500 hover:bg-gray-600 text-white px-3 py-1 rounded"
                   />
@@ -197,6 +206,7 @@ export default function MySettings() {
                         if (password && oldPassword && password === oldPassword)
                           err("password", "this matches your old password!");
                       }}
+                      forumName="editProfile"
                       request="PATCH /api/editProfile"
                       onSuccess={(newUser) => updateUser(newUser)}
                       fields={[
@@ -223,6 +233,7 @@ export default function MySettings() {
                       }
                     />
                     <EditBtn
+                      name="cancel editing password"
                       text="Cancel"
                       className="bg-red-500 text-white px-4 py-1 rounded"
                     />

@@ -3,7 +3,7 @@ import{ DEFAULT_TIMEOUT } from './SiteEnv';
 
 /** Click a button by label, after polling until visible */
 export async function Click(label: string) {
-  const selector = `button:has-text("${label}")`;
+  const selector = `button:has-text("${label}"), button[name="${label}"]`;
 
   await this.waitUntil(async () => {
     return (await this.page.locator(selector).count()) > 0;

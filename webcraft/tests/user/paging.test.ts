@@ -4,7 +4,7 @@ import { expect, TEST } from '@SiteEnv';
 
 // REMOVED briefPause, IsRoute, HasText
 
-TEST('Test pagination', async ({
+TEST('📄 Test Pagination', async ({
   Account,
   Click, ClickNav,
   Forum, Submit,

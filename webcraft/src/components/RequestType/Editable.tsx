@@ -74,12 +74,14 @@ export function useEditArea() {
 /* -------------------- Edit button -------------------- */
 
 type EditBtnProps = {
+  name?: string;
   targetId?: string;
   text?: string;
   className?: string;
 };
 
 export function EditBtn({
+  name,
   targetId,
   text = "Edit",
   className,
@@ -94,7 +96,7 @@ export function EditBtn({
   };
 
   return (
-    <button className={className} onClick={onClick}>
+    <button name={name} className={className} onClick={onClick}>
       {text}
     </button>
   );

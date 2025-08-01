@@ -126,9 +126,9 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - log out function
     ✅ - fix the types not passing over in the custom Test function
 
-    - edit profile test outline
-    - edit profile data name labels
-    - edit profile test
+    ✅ - edit profile test outline
+    ✅ - edit profile data name labels
+    ✅ - edit profile test
     
     - make the assumptions in the SiteEnv functions themselves
     - better errors and checking for elements
@@ -143,7 +143,7 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - logout
     - navigating pages
     - navigating pages logged in
-    - editing one's own profile
+    ✅ - editing one's own profile
     ✅ - pagnating players
     ✅ - viewing user profiles
 

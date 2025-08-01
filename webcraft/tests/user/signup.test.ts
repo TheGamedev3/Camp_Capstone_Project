@@ -2,7 +2,7 @@
 
 import { expect, TEST } from '@SiteEnv';
 
-TEST('Signup page reroute Test', async({
+TEST('📋 Signup Test', async({
   GoTo,
   FillForumWith,
   Account, Logout,

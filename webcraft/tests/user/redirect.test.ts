@@ -1,6 +1,6 @@
 import { expect, TEST } from '@SiteEnv';
 
-TEST('route protection',
+TEST('🛡️ Route Protection Test',
   async ({ GoTo, ExpectUrl, ExpectHeader, ClickNav }) => {
 
     // Go to a protected page
