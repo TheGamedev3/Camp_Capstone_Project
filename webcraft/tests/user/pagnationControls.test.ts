@@ -5,7 +5,7 @@ import { expect, TEST } from '@SiteEnv';
 // REMOVED briefPause, IsRoute, HasText
 
 TEST('Test pagination', async ({
-  GoTo,
+  Account,
   Click, ClickNav,
   Forum, Submit,
   SetOption, SetText, SetCheckbox,
@@ -13,12 +13,8 @@ TEST('Test pagination', async ({
   ExpectElement, ExpectUrl, ExpectHeader, ExpectRouteToChange, ExpectTextIn, ExpectElementTo
 }) => {
 
-  await GoTo('/login');
-  await ExpectUrl(/\/login$/);
-
   // Login
-  await Forum('login', { email: "Aaron@gmail.com", password: "aaron1234" });
-  await Submit('login');
+  await Account('Aaron');
   await ExpectUrl(/\/myProfile$/);
 
   // Navigate to Players
@@ -70,7 +66,7 @@ TEST('Test pagination', async ({
   // Search for Rya (only Ryan)
   await SetText({ 'player search': 'Rya' });
   await ExpectUrl(/\/players(\?.*)?$/,{search:'Rya'});
-  
+
   await ExpectElement('text=Ryan');
   await ExpectElement('text=Gary', false);
 

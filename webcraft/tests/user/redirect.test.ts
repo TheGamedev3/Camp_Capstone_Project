@@ -1,6 +1,6 @@
 import { expect, TEST } from '@SiteEnv';
 
-TEST('unauthenticated user gets redirected to login page',
+TEST('route protection',
   async ({ GoTo, ExpectUrl, ExpectHeader, ClickNav }) => {
 
     // Go to a protected page

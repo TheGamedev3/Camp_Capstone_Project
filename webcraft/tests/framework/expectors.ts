@@ -59,15 +59,26 @@ export async function ExpectElementTo<ElementType extends Element>(
   }, success, timeout);
 }
 
-/** ExpectText("LOGIN") – scans full body text */
+/** ExpectText("LOGIN")  or  ExpectText(["Login","Profile"]) */
 export async function ExpectText(
-  text: string,
+  text: string | (string | RegExp)[],
   success = true,
   timeout = DEFAULT_TIMEOUT
 ) {
+  // Normalise to an array
+  const needles = Array.isArray(text) ? text : [text];
+  if(needles.length === 0)return true;
+
   await this.waitUntil(async () => {
     const body = await this.page.textContent('body');
-    return body?.includes(text) ?? false;
+    if (!body) return false;
+
+    // All needles must satisfy the presence test
+    return needles.every((needle) =>
+      typeof needle === 'string'
+        ? body.includes(needle)
+        : needle.test(body)
+    );
   }, success, timeout);
 }
 

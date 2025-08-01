@@ -2,11 +2,57 @@
 
 import { expect, TEST } from '@SiteEnv';
 
-TEST('Login page reroute Test',
-  async({ Account, ExpectUrl, ExpectHeader, Logout }) => {
+TEST('Login page reroute Test', async({
+  GoTo,
+  FillForumWith, Logout, 
+  ExpectUrl, ExpectHeader
+}) => {
 
-    // use helper shorthand
-    await Account('Ryan');
+    await GoTo('/login');
+
+    await FillForumWith(
+      // forumName
+      "login",
+
+      // client error
+      {
+        label:"Empty",
+        params:{
+          email:"",
+          password:""
+        },
+        expectErrors:[
+          "email can't be blank!",
+          "password can't be blank!"
+        ]
+      },
+
+      // server errors
+      {
+        label:"Invalid Email",
+        params:{
+          email:"Ryen@gmail.com",
+          password:"ryan1234"
+        },
+        expectErrors:["invalid email!"]
+      },
+      {
+        label:"Incorrect Password",
+        params:{
+          email:"Ryan@gmail.com",
+          password:"1234ryan"
+        },
+        expectErrors:["Incorrect password!"]
+      },
+      {
+        label:"Valid Login",
+        params:{
+          email:"Ryan@gmail.com",
+          password:"ryan1234"
+        },
+        expectErrors:[]
+      },
+    ),
 
     // now at Ryan's profile
     await ExpectUrl(/\/myProfile$/);

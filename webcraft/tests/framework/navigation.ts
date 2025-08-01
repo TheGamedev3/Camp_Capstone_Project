@@ -16,6 +16,8 @@ export async function Forward(){
 }
 
 export async function GoTo(route:string){
+    const originalPath = new URL(await this.page.url()).pathname;
+    if(originalPath === route){return}
     await this.FinishLoading(this.page.goto(route));
 }
 

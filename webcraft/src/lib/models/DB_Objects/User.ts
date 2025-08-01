@@ -66,6 +66,7 @@ export const User = (db_object<UserSchema>(
             return await (this as Model<UserSchema>).findOne({ _id:id });
         },
         async signup({ username, profile, email, password }: { profile: string, username: string, email: string, password: string }){
+            if(password.length < 6){throw new Error(mongoErr('password', "Minimum password length is 6 characters").id)}
             return await User.create({
                 username, profile,
                 // ENCRYPT PASSWORD
@@ -103,6 +104,7 @@ export const User = (db_object<UserSchema>(
                 delete edits.oldPassword;
 
                 // REENCRYPT IT
+                if(edits.password.length < 6){throw new Error(mongoErr('password', "Minimum password length is 6 characters").id)}
                 if(edits.password){edits.password = await hashPassword(edits.password)}
             }
             

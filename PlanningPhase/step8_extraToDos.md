@@ -137,8 +137,9 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
         - custom error data
 
 - tests:
-    - signup
+    ✅ - signup
     ✅ - login
+    ✅    -login errs
     ✅ - logout
     - navigating pages
     - navigating pages logged in
