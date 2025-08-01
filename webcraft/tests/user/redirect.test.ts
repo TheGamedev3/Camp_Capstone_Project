@@ -1,23 +1,21 @@
 import { expect, TEST } from '@SiteEnv';
 
 TEST('unauthenticated user gets redirected to login page',
-  async ({ page, HasText, ClickNav, briefPause }) => {
+  async ({ GoTo, ExpectUrl, ExpectHeader, ClickNav }) => {
 
     // Go to a protected page
-    await page.goto('/myProfile');
+    await GoTo('/myProfile');
 
-    // Wait for page to settle (optional safety net)
-    await page.waitForLoadState('networkidle');
+    // Assert URL was redirected to login
+    await ExpectUrl(/\/login$/);
+    await ExpectHeader('LOGIN');
 
-    // Assert URL redirected to login
-    await expect(page).toHaveURL(/\/login$/);
-
-    // Look for the word "LOGIN" (case-sensitive)
-    console.log('login:', await HasText('LOGIN'));
-
+    // go to signup instead
     await ClickNav('Signup');
-    await briefPause();
+    await ExpectUrl(/\/signup$/);
 
-    console.log('signup page:', await HasText('SIGNUP'), await HasText('LOGIN', false))
+    // title says SIGNUP instead of LOGIN
+    await ExpectHeader('SIGNUP');
+    await ExpectHeader('LOGIN', false);
   }
 );

@@ -121,10 +121,13 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
         ✅ - delay
         ✅ - wait until match, w/ timeout
     
-    - getting element data, like is button disabled
-    - navigating like going back/forward
-    - getting text from elements
+    ✅ - getting element data, like is button disabled
+    ✅ - navigating like going back/forward
+    ✅ - getting text from elements
+    ✅ - start at or go to page
+    ✅ - remove the checks script
     - hover over settings/element
+    - Account logger in function
 
     - edit profile test outline
     - edit profile data name labels

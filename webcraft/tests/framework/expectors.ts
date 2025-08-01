@@ -1,5 +1,5 @@
 
-const DEFAULT_TIMEOUT = 3_000;
+const DEFAULT_TIMEOUT = 5_000;
 const INTERVAL        = 100;
 
 /** internal polling helper */
@@ -17,6 +17,24 @@ async function waitUntil(
   throw new Error('Expectation timed-out after ' + timeout + ' ms');
 }
 
+/** ExpectTextIn('[name="pages"]', /Page\s*2\s*of\s*3/) */
+export async function ExpectTextIn(
+  selector: string,
+  textOrRegex: string | RegExp,
+  success = true,
+  timeout = DEFAULT_TIMEOUT
+) {
+  await waitUntil.call(this, async () => {
+    const content = await this.page.locator(selector).textContent();
+    if (!content) return false;
+
+    return typeof textOrRegex === 'string'
+      ? content.includes(textOrRegex)
+      : textOrRegex.test(content);
+  }, success, timeout);
+}
+
+
 /** ExpectElement("text=Ryan") */
 export async function ExpectElement(
   selector: string,
@@ -25,6 +43,21 @@ export async function ExpectElement(
 ) {
   await waitUntil.call(this, async () => {
     return (await this.page.locator(selector).count()) > 0;
+  }, success, timeout);
+}
+
+/** General condition checker on a single element */
+export async function ExpectElementTo<ElementType extends Element>(
+  selector: string,
+  condition: (el: ElementType) => boolean,
+  success = true,
+  timeout = DEFAULT_TIMEOUT
+) {
+  await waitUntil.call(this, async () => {
+    const el = await this.page.locator(selector).elementHandle();
+    return el
+      ? await el.evaluate(condition as (e: Element) => boolean)
+      : false;
   }, success, timeout);
 }
 
@@ -100,4 +133,8 @@ export async function ExpectRouteToChange(
     const currentPath = new URL(await this.page.url()).pathname;
     return currentPath !== originalPath;
   }, success, timeout);
+}
+
+export async function Batch(...promises: Promise<any>[]) {
+  await Promise.all(promises);
 }

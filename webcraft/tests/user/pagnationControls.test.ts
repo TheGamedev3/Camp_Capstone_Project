@@ -2,17 +2,18 @@
 
 import { expect, TEST } from '@SiteEnv';
 
-// REMOVE briefPause
+// REMOVED briefPause, IsRoute, HasText
 
 TEST('Test pagination', async ({
-  page, IsRoute, HasText, Click, ClickNav, Forum,
-  Submit, SetOption, SetText, SetCheckbox,
-  Batch,
-  ExpectElement, ExpectUrl, ExpectHeader, ExpectRouteToChange
+  GoTo,
+  Click, ClickNav,
+  Forum, Submit,
+  SetOption, SetText, SetCheckbox,
+  Back,
+  ExpectElement, ExpectUrl, ExpectHeader, ExpectRouteToChange, ExpectTextIn, ExpectElementTo
 }) => {
 
-  await page.goto('/myProfile');
-  await page.waitForLoadState('networkidle');
+  await GoTo('/login');
   await ExpectUrl(/\/login$/);
 
   // Login
@@ -27,20 +28,28 @@ TEST('Test pagination', async ({
   // Smarter page wait
   const onPage = async (x: string) => {
     const safe = x.trim().replace(/\s+/g, '\\s*');
-    await expect(page.locator('[name="pages"]')).toHaveText(
-      new RegExp(`Page\\s*${safe}`),
-      { timeout: 5000 }
-    );
+    await ExpectTextIn('[name="pages"]', new RegExp(`Page\\s*${safe}`));
   };
 
   // Page nav tests
   await onPage("1 of 3");
-  await expect(page.locator('button[name="back a page"]')).toBeDisabled();
+
+  // back button should be disabled when its at page 1
+  await ExpectElementTo<HTMLButtonElement>(
+    'button[name="back a page"]',
+    (el)=>(el).disabled
+  );
+
   await Click('▶');
   await onPage("2 of 3");
   await Click('▶');
   await onPage("3 of 3");
-  await expect(page.locator('button[name="forward a page"]')).toBeDisabled();
+
+  // forward button should be disabled when its at the last page
+  await ExpectElementTo<HTMLButtonElement>(
+    'button[name="forward a page"]',
+    (el)=>(el).disabled
+  );
 
   // Sort options reset to page 1
   await SetOption('sort style', 'oldest');
@@ -67,10 +76,7 @@ TEST('Test pagination', async ({
   await ExpectHeader('Ryan');
 
   // Back to pagination
-  await Batch(
-    ExpectRouteToChange(),
-    page.goBack(),
-  );
+  await Back();
 
   // Online only toggle + sort
   await SetText({ 'player search': '' });
@@ -79,13 +85,4 @@ TEST('Test pagination', async ({
 
   await ExpectUrl(/\/players(\?.*)?$/,{search:'', onlineOnly:true, sortStyle:'A-Z'});
   await ExpectElement('text=Aaron');
-
-  // element is shown
-  // has text
-  // repeat check until timeout
-  // batch & wait for url to change
-  // url path contains...
-  // expect to have params....
-
-  // try catches and timeout fails
 });

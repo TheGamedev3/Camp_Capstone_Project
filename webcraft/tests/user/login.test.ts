@@ -1,24 +1,23 @@
 import { expect, TEST } from '@SiteEnv';
 
 TEST('Login page reroute Test',
-  async({ page, HasText, ClickNav, Forum, Submit }) => {
+  async({ GoTo, ExpectUrl, Forum, Submit, ExpectHeader }) => {
 
-    // Go to a protected page
-    await page.goto('/myProfile');
+    // Go to /login
+    await GoTo('/login');
+    await ExpectUrl(/\/login$/);
 
-    // Wait for page to settle (optional safety net)
-    await page.waitForLoadState('networkidle');
-
-    // Assert URL redirected to login
-    await expect(page).toHaveURL(/\/login$/);
-
+    // login info
     await Forum('login',{
       email:"Ryan@gmail.com",
       password:"ryan1234"
     });
 
+    // submit info
     await Submit('login');
 
-    await expect(page).toHaveURL(/\/myProfile$/);
+    // now at Ryan's profile
+    await ExpectUrl(/\/myProfile$/);
+    await ExpectHeader('Ryan');
   }
 );
