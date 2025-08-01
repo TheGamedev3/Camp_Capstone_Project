@@ -1,10 +1,8 @@
 
-const DEFAULT_TIMEOUT = 5_000;
-const INTERVAL        = 100;
+import{ DEFAULT_TIMEOUT, INTERVAL } from './SiteEnv';
 
 /** internal polling helper */
-async function waitUntil(
-  this: any,
+export async function waitUntil(
   tester: () => Promise<boolean>,
   expectSuccess = true,
   timeout = DEFAULT_TIMEOUT
@@ -24,7 +22,7 @@ export async function ExpectTextIn(
   success = true,
   timeout = DEFAULT_TIMEOUT
 ) {
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     const content = await this.page.locator(selector).textContent();
     if (!content) return false;
 
@@ -41,7 +39,7 @@ export async function ExpectElement(
   success = true,
   timeout = DEFAULT_TIMEOUT
 ) {
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     return (await this.page.locator(selector).count()) > 0;
   }, success, timeout);
 }
@@ -53,7 +51,7 @@ export async function ExpectElementTo<ElementType extends Element>(
   success = true,
   timeout = DEFAULT_TIMEOUT
 ) {
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     const el = await this.page.locator(selector).elementHandle();
     return el
       ? await el.evaluate(condition as (e: Element) => boolean)
@@ -67,7 +65,7 @@ export async function ExpectText(
   success = true,
   timeout = DEFAULT_TIMEOUT
 ) {
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     const body = await this.page.textContent('body');
     return body?.includes(text) ?? false;
   }, success, timeout);
@@ -79,7 +77,7 @@ export async function ExpectHeader(
   success = true,
   timeout = DEFAULT_TIMEOUT
 ) {
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     const tagMatch = this.page.locator('h1,h2,h3,h4,h5,h6', {
       hasText: heading,
     });
@@ -97,7 +95,7 @@ export async function ExpectUrl(
   success = true,
   timeout = DEFAULT_TIMEOUT
 ) {
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     const url = new URL(await this.page.url());
     const pathOK =
       typeof pathOrRE === 'string'
@@ -118,7 +116,7 @@ export async function ExpectUrlToChange(
   timeout = DEFAULT_TIMEOUT
 ) {
   const original = await this.page.url();
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     return (await this.page.url()) !== original;
   }, success, timeout);
 }
@@ -129,7 +127,7 @@ export async function ExpectRouteToChange(
   timeout = DEFAULT_TIMEOUT
 ) {
   const originalPath = new URL(await this.page.url()).pathname;
-  await waitUntil.call(this, async () => {
+  await this.waitUntil(async () => {
     const currentPath = new URL(await this.page.url()).pathname;
     return currentPath !== originalPath;
   }, success, timeout);

@@ -126,8 +126,10 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - getting text from elements
     ✅ - start at or go to page
     ✅ - remove the checks script
-    - hover over settings/element
-    - Account logger in function
+    ✅ - Account logger in function
+    ✅ - hover over settings/element
+    ✅ - log out function
+    - fix the types not passing over in the custom Test function
 
     - edit profile test outline
     - edit profile data name labels

@@ -1,23 +1,20 @@
+// $env:TEST_PATH="tests/user/login.test.ts"; npm run unitTests
+
 import { expect, TEST } from '@SiteEnv';
 
 TEST('Login page reroute Test',
-  async({ GoTo, ExpectUrl, Forum, Submit, ExpectHeader }) => {
+  async({ Account, ExpectUrl, ExpectHeader, Logout }) => {
 
-    // Go to /login
-    await GoTo('/login');
-    await ExpectUrl(/\/login$/);
-
-    // login info
-    await Forum('login',{
-      email:"Ryan@gmail.com",
-      password:"ryan1234"
-    });
-
-    // submit info
-    await Submit('login');
+    // use helper shorthand
+    await Account('Ryan');
 
     // now at Ryan's profile
     await ExpectUrl(/\/myProfile$/);
     await ExpectHeader('Ryan');
+    await ExpectHeader('LOGIN', false);
+
+    await Logout();
+    await ExpectUrl(/\/login$/);
+    await ExpectHeader('LOGIN');
   }
 );

@@ -20,6 +20,7 @@ export function SettingsTab() {
 
   return(
     <div
+      name="settings tab"
       className="relative"
       onMouseEnter={() => setHovering(true)}
       onMouseLeave={() => setHovering(false)}

@@ -1,4 +1,8 @@
 
+
+export const DEFAULT_TIMEOUT = 6_000;
+export const INTERVAL        = 300;
+
 import { test } from '@playwright/test';
 export { expect } from '@playwright/test';
 

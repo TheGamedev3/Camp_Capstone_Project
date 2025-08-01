@@ -61,12 +61,16 @@ TEST('Test pagination', async ({
 
   // Search for Ry (gary, ryan)
   await SetText({ 'player search': 'Ry' });
+  await ExpectUrl(/\/players(\?.*)?$/,{search:'Ry'});
+
   await ExpectElement('text=Ryan');
   await ExpectElement('text=Gary');
   await onPage("1 of 1");
 
   // Search for Rya (only Ryan)
   await SetText({ 'player search': 'Rya' });
+  await ExpectUrl(/\/players(\?.*)?$/,{search:'Rya'});
+  
   await ExpectElement('text=Ryan');
   await ExpectElement('text=Gary', false);
 
