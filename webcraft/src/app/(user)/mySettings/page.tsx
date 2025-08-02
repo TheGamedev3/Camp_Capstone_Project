@@ -2,6 +2,7 @@
 
 import { useSession } from "@/components/RootType/UserSession";
 import { redirect } from "next/navigation";
+import { PlayerType } from "@types/Player";
 
 import {
   Requester,
@@ -29,13 +30,13 @@ export default function MySettings() {
                   <EditBtn
                     name="edit profile url"
                     text="✏️ Edit Profile Image"
-                    className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded"
+                    className="bg-gray-200 hover:bg-gray-300 px-4 py-1 rounded text-black"
                   />
                 </div>
               }
               edit={
                 <>
-                  <Forum
+                  <Forum<PlayerType>
                     clientValidation={({ profile, err }) => {
                       if (!profile)
                         err("profile", "profile URL can't be blank!");
@@ -90,7 +91,7 @@ export default function MySettings() {
                 }
                 edit={
                   <>
-                    <Forum
+                    <Forum<PlayerType>
                       clientValidation={({ username, err }) => {
                         if (!username)
                           err("username", "username can't be blank!");
@@ -142,7 +143,7 @@ export default function MySettings() {
                 }
                 edit={
                   <>
-                    <Forum
+                    <Forum<PlayerType>
                       clientValidation={({ email, oldPassword, err }) => {
                         if (!email) err("email", "email can't be blank!");
                         if (!oldPassword)
@@ -197,7 +198,7 @@ export default function MySettings() {
                 }
                 edit={
                   <>
-                    <Forum
+                    <Forum<PlayerType>
                       clientValidation={({ password, oldPassword, err }) => {
                         if (!password)
                           err("password", "new password can't be blank!");

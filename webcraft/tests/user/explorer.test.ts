@@ -15,11 +15,13 @@ TEST('🌐 Visit Pages', async ({
     await ExpectUrl(/\/login$/);
     await ExpectHeader('LOGIN');
 
-    async function TestPages(...navLinks) {
-      for(const{navBtn, header, url} of navLinks){
+    type navLinkTestType = { navBtn: string; header?: string; url?: string };
+
+    async function TestPages(...navLinks: navLinkTestType[]) {
+      for (const { navBtn, header, url } of navLinks) {
         await ClickNav(navBtn);
-        if(url)await ExpectUrl(url);
-        if(header)await ExpectHeader(header);
+        if (url) await ExpectUrl(url);
+        if (header) await ExpectHeader(header);
       }
     }
 

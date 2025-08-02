@@ -17,7 +17,7 @@ export async function waitUntil(
   }
 
   const errMsg = onFail ? await onFail() : 'Expectation timed-out after ' + timeout + ' ms';
-  throw new ExpectationFailed(errMsg, 2);
+  throw new ExpectationFailed(errMsg, 3);
 }
 
 

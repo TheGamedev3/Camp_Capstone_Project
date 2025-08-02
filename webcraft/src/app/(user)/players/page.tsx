@@ -6,13 +6,15 @@
 import PageHeader from "@/components/PageHeader";
 import { EntriesLayout } from "./entriesFormat";
 import { useState, createContext, useContext } from "react";
+import { PlayerType } from "@types/Player";
 
 type PageDataType = {
   success?:boolean;
-  err?:any;
-  players?:Record<string,any>;
+  err?:Record<string, unknown>;
+  players?:PlayerType[];
   totalPages?:number;
 }
+
 type PageDataCtxType = {
   PageData: PageDataType;
   givePageData: (data: PageDataType ) => void;

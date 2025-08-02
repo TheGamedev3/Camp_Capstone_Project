@@ -9,7 +9,7 @@ import { ImageField } from './ImageField';
 type RequesterContextType = {
   forumName: string;
   submit: () => Promise<boolean>;
-  setField: (field: string, value: any) => void;
+  setField: (field: string, value: unknown) => void;
   errors: Record<string, string>;
 
   registerSubmitBtn: (ref: HTMLButtonElement | null) => void;
@@ -25,25 +25,25 @@ export function useRequesterContext() {
   return ctx;
 }
 
-export type RequesterType = {
+export type RequesterType<T = unknown> = {
     forumName: string;
     clientValidation?: () => void | Promise<void>;
-    body?: () => any;
+    body?: () => Record<string, string>;
     goTo?: string,
     children: React.ReactNode,
-    onSuccess?: (result:any) => void | Promise<void>;
-    onFinish?: (success:boolean, result:any) => void | Promise<void>;
+    onSuccess?: (result:T) => void | Promise<void>;
+    onFinish?: (success:boolean, result:T) => void | Promise<void>;
     exitEditField: boolean; triggerOnStart: boolean;
 }
 
 import { getRoute } from '@/utils/request';
 import { useEditArea } from './Editable';
 
-export function Requester({
+export function Requester<T = unknown>({
     forumName,
     clientValidation, request, body, fields, goTo, children, onSuccess, onFinish,
     exitEditField=true, triggerOnStart=false
-}: RequesterType
+}: RequesterType<T>
 ){
     const bodyArgs = useRef({});
     const [errors, setErrors] = useState({});

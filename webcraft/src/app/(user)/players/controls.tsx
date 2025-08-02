@@ -6,7 +6,7 @@ import { usePageData } from "./page";
 
 export function SearchControls() {
   const { PageData } = usePageData();
-  const { getParam, setParams, paramSetter } = useQueryParams();
+  const { getParam, setParams } = useQueryParams();
 
   const page = getParam("page") || "1";
   const rawSearch = getParam("search") || "";
@@ -47,7 +47,7 @@ export function SearchControls() {
             name="online only"
             type="checkbox"
             checked={onlineOnly}
-            onChange={paramSetter("onlineOnly", 'checked')}
+            onChange={(e)=>setParams({ page: "1", onlineOnly: e.target.checked })}
           />
           Online Players?
         </label>

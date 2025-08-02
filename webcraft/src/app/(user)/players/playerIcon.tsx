@@ -2,8 +2,9 @@
 
 import Link from "next/link";
 import { CustomProfile } from "@Req";
+import { PlayerType } from "@types/Player";
 
-export function PlayerIcon({ profile, username, _id, created }) {
+export function PlayerIcon({ profile, username, _id, created }: PlayerType) {
   return (
     <Link name={`${username}-icon`} href={`/profile/${_id}`}>
       <div className="cursor-pointer bg-white rounded-2xl shadow p-4 border border-gray-300 hover:shadow-lg hover:bg-gray-50 transition">

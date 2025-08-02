@@ -1,7 +1,9 @@
 
 import { User, Session } from "@Chemicals";
-import { Types } from "mongoose";
+import { FilterQuery, Types } from "mongoose";
 import { attemptRequest } from "@MongooseSys";
+import { FilterQuery } from "mongoose";
+import { UserSchema } from "@Chemicals";
 
 // (set by the server)
 const PerPage = 3;
@@ -17,7 +19,7 @@ export async function GET(req: Request) {
     const onlineOnly = searchParams.get("onlineOnly") === "true";
     const search = searchParams.get("search")?.trim();
 
-    let userFilter: any = {};
+    let userFilter: FilterQuery<UserSchema> = {};
 
     if (onlineOnly) {
       const sessionDocs = await Session.find({}, { userId: 1 });
@@ -53,6 +55,7 @@ export async function GET(req: Request) {
         .sort(sortGroup)
         .skip(skip)
         .limit(PerPage)
+        .select("username profile created") // dont expose email or password to outsiders!
         .lean();
     }
 

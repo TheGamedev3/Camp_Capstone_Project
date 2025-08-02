@@ -2,14 +2,14 @@ type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
 type GetRouteArgs = {
   route: string; // e.g. "POST /login"
-  body?: any;
+  body?: Record<string, unknown>;
 };
 
-type APIResponse<T = any> =
-  | { success: true; result: T }
-  | { success: false; error?: string; errCode?: number };
+type APIResponse<T = unknown> =
+  | { success: true; result: T | undefined | null }
+  | { success: false; result: undefined | null, error?: string; errCode?: number };
 
-export async function getRoute<T = any>({
+export async function getRoute<T = unknown>({
   route,
   body,
 }: GetRouteArgs): Promise<APIResponse<T>> {
@@ -32,7 +32,8 @@ export async function getRoute<T = any>({
     });
     console.log(method)
 
-    const fullResult = await res.json(); // returned as {success:true/false, result, err}
+    const fullResult = await res.json();
+    // expected response is {success:true/false, result, err}, if its working correctly
 
     if (!res.ok) {
       return {
@@ -43,7 +44,7 @@ export async function getRoute<T = any>({
     }
 
     return fullResult;
-  } catch (err: any) {
+  } catch (err: unknown) {
     return {
       success: false,
       err,

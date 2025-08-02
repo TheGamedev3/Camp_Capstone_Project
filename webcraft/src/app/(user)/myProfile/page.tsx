@@ -19,7 +19,6 @@ export default function MyProfile() {
 
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-800">Welcome, {user.username} 👋</h1>
-          <p className="text-sm text-gray-600 mt-2">Email: <span className="font-medium">{user.email}</span></p>
         </div>
 
         <hr className="border-t border-gray-200" />

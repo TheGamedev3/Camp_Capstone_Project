@@ -43,21 +43,10 @@ export function useQueryParams() {
     updateTimer.current = setTimeout(flushParams, 10);
   };
 
-  const paramSetter = (param: string, kind: "value" | "checked" = "value") => {
-    return (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-      if (kind === "value") {
-        setParam(param, e.target.value);
-      } else if (kind === "checked") {
-        setParam(param, (e.target as HTMLInputElement).checked);
-      }
-    };
-  };
-
   return {
     getParam: (key: string) => searchParams.get(key),
     queryString: searchParams.toString(),
     setParam,
     setParams,
-    paramSetter,
   };
 }

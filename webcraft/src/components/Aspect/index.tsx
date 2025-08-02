@@ -28,6 +28,8 @@ export const useSetAspect = (size:boolean) => {
 
   useEffect(()=>{
     ctx.setFullWidth(size);
-    ()=>ctx.setFullWidth(defaultSize); // on exit, restore defaults
+
+    // on exit, restores defaults
+    ()=>ctx.setFullWidth(defaultSize);
   },[size]);
 };

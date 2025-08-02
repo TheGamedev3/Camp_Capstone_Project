@@ -7,7 +7,6 @@ import { CustomProfile } from "./CustomProfile";
 type ImageFieldProps = {
   label?: string;
   bodyField: string;
-  process?: (value: string) => any;
   defaultText?: string;
   placeholderText?: string;
   inputRef?: (el: HTMLInputElement | null) => void; // optional ref function
@@ -17,7 +16,6 @@ type ImageFieldProps = {
 export function ImageField({
   label = "",
   bodyField,
-  process,
   defaultText = "",
   placeholderText = "",
   inputRef, onKeyDown,

@@ -2,8 +2,9 @@
 import { cookies } from "next/headers";
 import { randomUUID } from "crypto";
 import { Session } from "@Chemicals";
+import { ObjectId } from "mongoose";
 
-export async function ValidateSession(userId: Types.ObjectId) {
+export async function ValidateSession(userId: ObjectId) {
     const cookieStore = await cookies();
     let sid = cookieStore.get("sid")?.value;
     let sessionData;

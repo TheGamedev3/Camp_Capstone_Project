@@ -5,7 +5,6 @@ import { useRequesterContext } from "./Requester";
 type TextFieldProps = {
   label?: string;
   bodyField: string;
-  process?: (value: string) => any;
   defaultText?: string;
   placeholderText?: string;
   inputType?: string;
@@ -16,7 +15,6 @@ type TextFieldProps = {
 export function TextField({
   label = "",
   bodyField,
-  process,
   defaultText = "",
   placeholderText = "",
   inputType='text',

@@ -6,6 +6,7 @@ import { CustomProfile } from "@Req";
 import { useSession } from "@/components/RootType/UserSession";
 import { getRoute } from "@/utils/request";
 import { useEffect, useState } from "react";
+import { PlayerType } from "@types/Player";
 
 type ProfileProps = {
   params: Promise<{ id: string }>;
@@ -14,7 +15,7 @@ type ProfileProps = {
 export default function Profile({ params }: ProfileProps) {
 
   const { id } = React.use(params);
-  const[user, setUser]=useState<'loading' | 'notfound' | any>('loading');
+  const[user, setUser]=useState<'loading' | 'notfound' | PlayerType>('loading');
   useEffect(()=>{
     let stillMounted = true;
     (async()=>{
@@ -22,7 +23,7 @@ export default function Profile({ params }: ProfileProps) {
 
         setUser('loading');
         let user = null;
-        const{success, result} = await getRoute({route: `GET /api/profile/${id}`});
+        const{success, result} = await getRoute<PlayerType | null>({route: `GET /api/profile/${id}`});
         if(success && result)user = result;
         if(!stillMounted)return;
 
@@ -58,7 +59,6 @@ export default function Profile({ params }: ProfileProps) {
 
         <div className="text-center">
           <h1 className="text-2xl font-bold text-gray-800">{user.username}</h1>
-          <p className="text-sm text-gray-600 mt-2">Email: <span className="font-medium">{user.email}</span></p>
         </div>
 
       </div>

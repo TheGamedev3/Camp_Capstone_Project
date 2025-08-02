@@ -1,0 +1,4 @@
+- write about the finished Tech Stack
+    - simple easy user entry/exit into a site
+    - MERN 2025 + Typescript
+    - playwright for E2E testing in a readme

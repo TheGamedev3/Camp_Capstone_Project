@@ -1,10 +1,10 @@
 import { db_object, Types, Model } from "@MongooseSys";
 import { User } from "./User";
-import { profile } from "console";
+import { ObjectId } from "mongoose";
 
 export interface SessionSchema {
-  _id: Types.ObjectId;
-  userId: Types.ObjectId;
+  _id: ObjectId;
+  userId: ObjectId;
   sid: string;
   created: Date;
 }
@@ -17,7 +17,7 @@ export const Session = (db_object<SessionSchema>(
   "Session",
   {
     userId: {
-        type: Types.ObjectId,
+        type: ObjectId,
         required: true,
         ref: "User",
     },

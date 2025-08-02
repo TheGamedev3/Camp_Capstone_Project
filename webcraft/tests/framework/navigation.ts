@@ -1,6 +1,6 @@
 
 
-export async function FinishLoading(promise: Promise<any>){
+export async function FinishLoading(promise: Promise<unknown>){
     await Promise.all([
         this.ExpectRouteToChange(),
         promise,

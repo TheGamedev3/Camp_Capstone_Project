@@ -19,12 +19,12 @@ type FormFields = {
 
 type ForumType = RequesterType & FormFields;
 
-export function Forum({
+export function Forum<T = unknown>({
     above, fields, below,
     ...rest
 }:ForumType){
     return(
-        <Requester {...rest}>
+        <Requester<T> {...rest}>
             <InnerForum
                 fields={fields}
                 above={above}

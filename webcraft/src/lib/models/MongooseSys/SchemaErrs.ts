@@ -88,9 +88,15 @@ export async function attemptRequest(
 ) {
   try {
     return await func();
-  } catch (err: any) {
-    const message = err?.message || "";
-    console.log("ERR OCCURED:", message);
+  } catch (err: unknown) {
+    let message = "";
+    if (err instanceof Error) {
+      message = err.message;
+    } else if (typeof err === "string") {
+      message = err;
+    }
+
+    console.log("ERR OCCURRED:", message);
 
     const errObject = getErrs(message);
     if (errObject.matches === 0) {

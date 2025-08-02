@@ -18,16 +18,14 @@ interface SaveAsThis extends Document {
 export function db_object<T extends SaveAsThis>(
   name: string,
   propTypes: SchemaDefinition,
-  methods: Record<string, (...args: any[]) => any>,
+  methods: Record<string, (...args: unknown[]) => unknown>,
   extraSettings: ExtraSettings = {}
 ): Model<T> {
 
-  const extraSchema: Record<string, any> = { strict: 'throw' };
-  if (extraSettings.allowExtraFields) {
-    delete extraSchema.strict;
-  }
+  const schema = new Schema<T>(propTypes, {
+    strict: extraSettings.allowExtraFields ? undefined : 'throw'
+  });
 
-  const schema = new Schema<T>(propTypes, extraSchema);
 
   // Add pre-save hook if defined
   const saveAs = methods.saveAs;

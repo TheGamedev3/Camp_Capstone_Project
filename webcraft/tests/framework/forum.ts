@@ -43,7 +43,7 @@ export async function Submit(forumName){
 
 type FillIn = {
   label: string;
-  params: Record<string, any>;
+  params: Record<string, unknown>;
   expectErrors: string | string[];
 };
 

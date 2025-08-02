@@ -2,9 +2,10 @@
 
 import { db_object, Types, Model, mongoErr } from "@MongooseSys";
 import { isEmail } from "validator";
+import { ObjectId } from "mongoose";
 
 interface UserSchema {
-  _id: Types.ObjectId;
+  _id: ObjectId;
   username: string;
   email: string;
   password: string;

@@ -21,7 +21,13 @@ TEST('✏️ Edit Test', async({
 
     type FillIn = {
       label: string;
-      params: Record<string, any>;
+      params:{
+        profile?: string;
+        username?: string;
+        email?: string;
+        password?: string;
+        oldPassword?: string;
+      };
       expectErrors: string | string[];
     };
 
@@ -192,7 +198,6 @@ TEST('✏️ Edit Test', async({
 
         // verify the new user profile changes have updated in
         await ExpectHeader("Saren");
-        await ExpectText(("Saren@gmail.com").toLowerCase());
         await ExpectElement("[src='https://tse2.mm.bing.net/th/id/OIP._FxktD4oZ3vqGSFVAgD6GwHaUP?r=0&rs=1&pid=ImgDetMain&o=7&rm=3']");
       
         await Logout();
