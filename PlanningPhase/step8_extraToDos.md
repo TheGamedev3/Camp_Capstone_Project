@@ -167,10 +167,10 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - remove most instances of any
     ✅ - pass the expected forum response type down to its requester 
 
-- write about the finished Tech Stack
-    - simple easy user entry/exit into a site
-    - MERN 2025 + Typescript
-    - playwright for E2E testing in a readme
+✅ - write about the finished Tech Stack
+    ✅ - simple easy user entry/exit into a site
+    ✅ - MERN 2025 + Typescript
+    ✅ - playwright for E2E testing in a readme
 
 🥳 THE FINAL COMMIT FOR PHASE 1:
 - save this as a separate branch, so it can be used as a template for later
