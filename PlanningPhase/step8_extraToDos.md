@@ -172,8 +172,8 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - MERN 2025 + Typescript
     ✅ - playwright for E2E testing in a readme
 
-🥳 THE FINAL COMMIT FOR PHASE 1:
-- save this as a separate branch, so it can be used as a template for later
+✅ 🥳 THE FINAL COMMIT FOR PHASE 1:
+✅ - save this as a separate branch, so it can be used as a template for later
 
 NEXT UP PHASE 2:
 🔮 - trade db schema object & item logic eventually

@@ -1,8 +1,8 @@
 "use client";
 
 import { useSession } from "@/components/RootType/UserSession";
-import { EntryLinks } from "../entry/index.tsx"
-import { SessionLinks } from "../session/index.tsx"
+import { EntryLinks } from "../entry/index.jsx"
+import { SessionLinks } from "../session/index.jsx"
 
 export function NavBar() {
   const{user} = useSession();
