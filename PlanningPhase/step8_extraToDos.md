@@ -146,20 +146,20 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
         ✅ - the polling and expectors require expectationFailure errors the most
         ✅ - possibly putting all this error logic in a new script would be a good move...
 
-- tests:
+✅ - tests:
     ✅ - signup
     ✅ - login
     ✅    -login errs
     ✅ - logout
-    - navigating all the pages when signed out
-    - navigating pages logged in
+    ✅ - navigating all the pages when signed out
+    ✅ - navigating pages logged in
     ✅ - editing one's own profile
     ✅ - pagnating players
     ✅ - viewing user profiles
 
 - refine the typescript of everything
 
-- trade db schema object & item logic eventually
+🔮 - trade db schema object & item logic eventually
 
 */
 

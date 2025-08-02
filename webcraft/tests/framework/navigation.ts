@@ -21,6 +21,10 @@ export async function GoTo(route:string){
     await this.FinishLoading(this.page.goto(route));
 }
 
+export async function AttemptGoTo(route:string){
+    await this.page.goto(route);
+}
+
 export async function ClickNav(label: string){
     const selector = [
         `a[name="${label}"]`,                   // PlayerIcon links, they also end with -icon
