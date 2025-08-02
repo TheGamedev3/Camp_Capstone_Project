@@ -5,9 +5,12 @@ import{ DEFAULT_TIMEOUT } from './SiteEnv';
 export async function Click(label: string) {
   const selector = `button:has-text("${label}"), button[name="${label}"]`;
 
-  await this.waitUntil(async () => {
-    return (await this.page.locator(selector).count()) > 0;
-  });
+  await this.waitUntil(
+    async () => {
+      return (await this.page.locator(selector).count()) > 0;
+    },
+    ()=>`no buttons of label '${label}' were found`
+  );
 
   await this.page.click(selector);
   await this.page.waitForLoadState('networkidle');
@@ -20,9 +23,12 @@ export async function Hover(
 ) {
   const selector = `[name="${targetName}"]`;
 
-  await this.waitUntil(async () => {
+  await this.waitUntil(
+    async () => {
     return (await this.page.locator(selector).count()) > 0;
-  });
+    },
+    ()=>`no hover elements with a name of '${targetName}' were found`
+  );
 
   await this.page.hover(selector);
 }

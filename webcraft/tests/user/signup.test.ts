@@ -109,5 +109,7 @@ TEST('📋 Signup Test', async({
     await Account('Goofy');
     await ExpectUrl(/\/myProfile$/);
     await ExpectHeader('Goofy');
+
+    await Logout();
   }
 );

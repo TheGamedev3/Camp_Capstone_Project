@@ -5,7 +5,7 @@ import { expect, TEST } from '@SiteEnv';
 // REMOVED briefPause, IsRoute, HasText
 
 TEST('📄 Test Pagination', async ({
-  Account,
+  Account, Logout,
   Click, ClickNav,
   Forum, Submit,
   SetOption, SetText, SetCheckbox,
@@ -85,4 +85,6 @@ TEST('📄 Test Pagination', async ({
 
   await ExpectUrl(/\/players(\?.*)?$/,{search:'', onlineOnly:true, sortStyle:'A-Z'});
   await ExpectElement('text=Aaron');
+
+  await Logout();
 });

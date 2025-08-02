@@ -1,3 +1,4 @@
+
 // helpers.ts -----------------------------------------------------------
 import { test, Page } from '@playwright/test';
 export { expect } from '@playwright/test';
@@ -66,6 +67,7 @@ function Helpers({ page }: { page: Page }): BoundHelpers {
 /* -------------------------------------------------------------------- */
 /* 4️⃣  Typed TEST wrapper                                               */
 /* -------------------------------------------------------------------- */
+import { expectationCatcher } from './Errs';
 export function TEST<
   Fn extends (...args: BoundHelpers[]) => Promise<unknown> | void,
 >(
@@ -83,6 +85,6 @@ export function TEST<
     );
 
     // Fully-typed call ✔️
-    await func(...helpers);
+    await expectationCatcher(async()=>await func(...helpers));
   });
 }

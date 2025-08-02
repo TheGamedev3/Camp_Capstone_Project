@@ -1,10 +1,10 @@
 
 
 export async function FinishLoading(promise: Promise<any>){
-    await this.Batch(
+    await Promise.all([
         this.ExpectRouteToChange(),
         promise,
-    );
+    ]);
 }
 
 export async function Back(){
@@ -28,9 +28,12 @@ export async function ClickNav(label: string){
         `a:has-text("${label}")`                // for the dropdown links with just the text
     ].join(', ');
 
-    await this.waitUntil(async () => {
-        return (await this.page.locator(selector).count()) > 0;
-    });
+    await this.waitUntil(
+        async () => {
+            return (await this.page.locator(selector).count()) > 0;
+        },
+        ()=>`no navlink elements with '${label}' were found\n(perhaps you're on the wrong page?)`
+    );
 
     const link = this.page.locator(selector).first();      // de-dupe if >1 match
     await link.waitFor({ state: 'visible' });

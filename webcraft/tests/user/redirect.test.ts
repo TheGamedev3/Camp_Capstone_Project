@@ -1,3 +1,5 @@
+// $env:TEST_PATH="tests/user/redirect.test.ts"; npm run unitTests
+
 import { expect, TEST } from '@SiteEnv';
 
 TEST('🛡️ Route Protection Test',

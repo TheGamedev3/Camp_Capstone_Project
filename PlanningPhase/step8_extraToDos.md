@@ -130,18 +130,28 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
     ✅ - edit profile data name labels
     ✅ - edit profile test
     
-    - make the assumptions in the SiteEnv functions themselves
-    - better errors and checking for elements
-        - wrap in trycatch
-        - trace stack where assumption was called
-        - custom error data
+    ✅ - make the assumptions in the SiteEnv functions themselves
+    ✅ - better errors and checking for elements
+        ✅ - wrap in trycatch
+        ✅ - trace stack where assumption was called
+        ✅ - custom error data
+    ✅ - outline the new error system
+        ✅ - expectationFailed
+            ✅ - trace level (1 up? 2 up?)
+            ✅ - message
+        ✅ - the expectation catcher
+            ✅ - find if its an expectation failure
+            ✅ - console.error it with the correct format
+                ✅ - 🛑reason\n error line \n erroring code
+        ✅ - the polling and expectors require expectationFailure errors the most
+        ✅ - possibly putting all this error logic in a new script would be a good move...
 
 - tests:
     ✅ - signup
     ✅ - login
     ✅    -login errs
     ✅ - logout
-    - navigating pages
+    - navigating all the pages when signed out
     - navigating pages logged in
     ✅ - editing one's own profile
     ✅ - pagnating players
