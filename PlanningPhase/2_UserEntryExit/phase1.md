@@ -1,3 +1,6 @@
+
+Phase1: User Entry/Exit
+
 /*
 ✅ - make the signup page
 ✅ - learn tailwind and css better
@@ -94,6 +97,9 @@ I needed an End 2 End tester to test everything as if a user would be using the 
 Both were free and E2E, but unlike Cypress, Playwright had more features, and even allowed for multiple sessions at once.
 "
 
+✅ - Forum Refactor into Request
+✅ - RootType Components
+
 - create test helpers:
     ✅ - like logging into accounts/creating sessions
     ✅ - filling in forum fields
@@ -177,50 +183,3 @@ Both were free and E2E, but unlike Cypress, Playwright had more features, and ev
 */
 
 
-/*
-
-
-
-NEXT UP PHASE 2:
-🔮 - trade db schema object & item logic eventually
- - in the other branch include:
-    - preview screenshots of all the pages
-    - list all the steps to set up env and the mongodb
-    - remind README to npm install at first
-
- - find a nice JS framework to embed for all the trading stuff
-
-*/
-
-
-
-
-
-
-
-
-
-
-
-/*
-
-✅ Questions or weak points:
-- in a server, how to get the current route
-- upon getting the current route, how to see if a route matches a route string, like /user/1234 === /user, true? so i can know to redirect it or not
-
-Answer:
-- its impossible to dynamically protect routes on the server side
-- even manually listing all the routes, because the top server components like layout, have no access to what the current route is
-- rerouting is done in middleware
-- when middleware can't fully verify things (because the middleware can't access the database),
-- then check the data in the route element, and manually redirect
-*/
-
-
-✅ - Forum Refactor into Request
-✅ - RootType Components
-
-// leetcode easy problems, exercism.io, or codewars
-// codewars is my mentor's personal pick
-// whiteboard solving
-// interviewers provide their own interviews

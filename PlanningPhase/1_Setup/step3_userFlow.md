@@ -27,7 +27,7 @@
 *See the charts!* 📈
 
 <p align="center">
-  <img src="./resources/Step3UserFlow.excalidraw.svg" alt="UserFlowCharts" width="400"/>
+  <img src="../resources/Step3UserFlow.excalidraw.svg" alt="UserFlowCharts" width="400"/>
 </p>
 
 ## 🌍 legend:
