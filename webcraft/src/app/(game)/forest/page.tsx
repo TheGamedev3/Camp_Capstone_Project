@@ -1,5 +1,5 @@
 
-import TileGrid from "@/components/Gameplay";
+import Gameplay from "@Gameplay/Looks/Gameplay";
 import PageHeader from "@/components/PageHeader";
 
 export default function PlayersPage() {
@@ -9,7 +9,7 @@ export default function PlayersPage() {
         title="🌲 FOREST"
         subtitle="Gather wood! 🪵"
       />
-      <TileGrid/>
+      <Gameplay/>
     </div>
   );
 }

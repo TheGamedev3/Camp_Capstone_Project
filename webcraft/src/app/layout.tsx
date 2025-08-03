@@ -18,6 +18,7 @@ export const metadata: Metadata = {
 };
 
 import { Root } from "@/components/RootType";
+import { GameDataSession } from "@Gameplay/Looks/UpdateHook"
 
 export default async function RootLayout({
   children,
@@ -30,7 +31,9 @@ export default async function RootLayout({
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <Root>
-          {children}
+          <GameDataSession>
+            {children}
+          </GameDataSession>
         </Root>
       </body>
     </html>

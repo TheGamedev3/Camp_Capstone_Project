@@ -14,7 +14,7 @@ export function UserSession({ children, session }){
       async updateUser(newInfo: object | null = null){
         let newUserInfo = newInfo;
         if(newInfo === null){
-          const{success, result} = await getRoute("GET /api/myInfo");
+          const{success, result} = await getRoute({route: "GET /api/myInfo"});
           if(success)newUserInfo = result;
         }
         if(newInfo !== null)updateUserState(newInfo);

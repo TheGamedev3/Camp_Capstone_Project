@@ -25,7 +25,8 @@
       "@Chemicals": ["./src/lib/models/DB_Objects/Collection.ts"],
       "@Req": ["./src/components/RequestType/index.tsx"],
       "@SiteEnv": ["./tests/framework/SiteEnv.ts"],
-      "@types/*": ["types/*"]
+      "@types/*": ["types/*"],
+      "@Gameplay/*": ["./src/Gameplay/*"],
     }
   },
   "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", ".next/types/**/*.ts"],
