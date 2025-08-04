@@ -99,16 +99,46 @@ export const Tile = React.memo(function Tile({ id }: TileProps) {
 
   /* --------  Render  --------------------------------------------------- */
 
-  return (
-    <div className="aspect-square rounded-sm" style={baseStyle}>
-      {structures.map((s, idx) => (
-        <img
-          key={idx}
-          src={s.texture}
-          alt=""
-          style={overlayStyle}
+    return (
+    <div className="aspect-square rounded-sm relative overflow-hidden">
+        {/* Base color */}
+        <div
+        style={{
+            backgroundColor: bgColor,
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            inset: 0,
+        }}
         />
-      ))}
+        {/* Texture overlay */}
+        {bgTexture && (
+        <div
+            style={{
+            backgroundImage: `url(${bgTexture})`,
+            backgroundSize: "cover",
+            backgroundPosition: "center",
+            opacity: 0.9, // Adjust as needed to let bgColor show through
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            inset: 0,
+            }}
+        />
+        )}
+        {/* Structure overlays */}
+        {structures.map((s, idx) => (
+        <img
+            key={idx}
+            src={s.texture}
+            alt=""
+            style={{
+            ...overlayStyle,
+            zIndex: 2,
+            }}
+        />
+        ))}
     </div>
-  );
+    );
+
 });

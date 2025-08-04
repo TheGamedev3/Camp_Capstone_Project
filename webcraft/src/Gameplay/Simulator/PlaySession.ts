@@ -29,6 +29,7 @@ export class PlaySession{
         this.tileBucket = props.tileBucket;
     }
 
+    pingListeners: (()=>{})[] = [];
     ping(){
         if(this.inactivity){
             clearTimeout(this.inactivity);
@@ -47,6 +48,7 @@ export class PlaySession{
         },10000);
 
         // run process ticks here
+        this.pingListeners.forEach(func=>func());
 
         // occasionally auto save
     }
@@ -66,23 +68,31 @@ export class PlaySession{
 
         // else create default:
         const islandPreset = { gridXSize: 6, gridYSize: 6, defaultTile: "Grass" };
-        const tileBucket = {};
-
-        for (let y = 0; y < islandPreset.gridYSize; y++) {
-            for (let x = 0; x < islandPreset.gridXSize; x++) {
-                (tileBucket[`${x}-${y}`]??=[]).push(createTile({tilename: islandPreset.defaultTile, x, y}));
-            }
-        }
-
-        (tileBucket[`3-4`]??=[]).push(createTile({tilename: "RedStructure", x:3, y:4}));
 
         const newCache = new PlaySession({
             userId,
             gridXSize: islandPreset.gridXSize,
             gridYSize: islandPreset.gridYSize,
-            tileBucket
+            tileBucket:{}
         });
+
+        // place down spaces
+        for (let y = 0; y < islandPreset.gridYSize; y++) {
+            for (let x = 0; x < islandPreset.gridXSize; x++) {
+                newCache.placeAt({what: islandPreset.defaultTile, x, y});
+            }
+        }
+        // place down prebuilt structures
+        newCache.placeAt({what: "BrickHouse", x:3, y:4});
+
         playSessionCache[userId] = newCache;
         return newCache;
+    }
+
+    placeAt({ who, what, x, y}){
+        // who depends on the player or some auto placing thing
+        (this.tileBucket[`${x}-${y}`]??=[]).push(
+            createTile({tilename: what, x, y, session: this}) // give the reference to these session function
+        );
     }
 }

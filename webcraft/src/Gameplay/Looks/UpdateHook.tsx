@@ -66,7 +66,6 @@ export function useTile(id: string) {
         const tileData = JSON.stringify(GameData?.tileBucket?.[id]);
         if (tileData !== myTileData) {
             setTileData(tileData);
-            console.log("CHANGE",tileData, GameData)
         }
     }, [GameData, id]);
 

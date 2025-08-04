@@ -1,3 +1,4 @@
+import { PlaySession } from "../Simulator/PlaySession";
 
 export class TileBase {
     x: number; y: number;
@@ -7,8 +8,67 @@ export class TileBase {
     texture?: string;
     tileColor?: string;
 
-    constructor({ x, y }: { x: number; y: number }) {
+    private myListeners: (() => void)[] = [];
+    private session: PlaySession;
+
+    constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
         this.x = x; this.y = y;
         this.key = `${x}-${y}`;
+        
+        Object.defineProperty(this, "session", {
+            value: session,
+            enumerable: false,
+            writable: true,
+        });
     }
+
+    onTick(range: number, func: () => void) {
+        this.myListeners.push(func);
+        let count = 0;
+
+        const onEvery = () => {
+            count++;
+            if (count >= range) {
+                count = 0;
+                func();
+            }
+        };
+
+        this.session.pingListeners.push(onEvery);
+        
+        // (track the wrapped version for removal)
+        this.myListeners.push(onEvery);
+    }
+
+    deleteSelf() {
+        if(!this.removeSelf())return;
+        this.myListeners.forEach(listener => {
+            const index = this.session.pingListeners.indexOf(listener);
+            if (index !== -1) {
+                this.session.pingListeners.splice(index, 1);
+            }
+        });
+        this.myListeners = [];
+    }
+
+    moveTo(newX: number, newY: number){
+        if(!this.session){return}
+        if(!this.removeSelf())return;
+
+        this.x = newX; this.y = newY;
+        this.key = `${newX}-${newY}`;
+        (this.session.tileBucket[this.key]??=[]).push(this);
+    }
+
+    removeSelf(){
+        const arr = this.session.tileBucket[this.key];
+        if (!arr) return false;
+        const index = arr.indexOf(this);
+        if (index !== -1) {
+            arr.splice(index, 1);
+            return true;
+        }
+        return false
+    }
+
 }

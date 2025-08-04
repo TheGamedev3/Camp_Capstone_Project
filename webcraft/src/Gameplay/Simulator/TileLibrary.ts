@@ -1,9 +1,9 @@
 import Grass from "../Tiles/Grass";
-import RedStructure from "../Tiles/RedStructure";
+import BrickHouse from "../Tiles/BrickHouse";
 
 const tileLibrary = {
     Grass,
-    RedStructure,
+    BrickHouse,
 };
 
 type TileLibrary = typeof tileLibrary;
@@ -15,5 +15,6 @@ export function createTile<T extends TileName>(
 ): TileConstructor<T> {
     const { tilename, ...rest } = params;
     const TileClass = tileLibrary[tilename];
+    if(!TileClass)console.error(`❌⏹️ TILE "${tilename}" NOT FOUND!`);
     return new TileClass(rest) as TileConstructor<T>;
 }
