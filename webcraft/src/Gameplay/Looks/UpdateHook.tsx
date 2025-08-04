@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { getRoute } from "@/utils/request";
 import { useSession } from "@/components/RootType/UserSession";
+import { json } from "stream/consumers";
 
 type GameData = unknown;
 
@@ -56,3 +57,21 @@ export function GameDataSession({ children }){
         </GameDataContext.Provider>
     );
 }
+
+export function useTile(id: string) {
+    const { GameData } = useGameData();
+    const [myTileData, setTileData] = useState<string>('');
+
+    useEffect(() => {
+        const tileData = JSON.stringify(GameData?.tileBucket?.[id]);
+        if (tileData !== myTileData) {
+            setTileData(tileData);
+            console.log("CHANGE",tileData, GameData)
+        }
+    }, [GameData, id]);
+
+    const myTileStack = myTileData ? JSON.parse(myTileData) : [];
+    if(myTileStack.length === 0){return[]}
+    return myTileStack;
+}
+

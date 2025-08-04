@@ -16,10 +16,7 @@ export function TileGrid() {
 
   for (let y = 0; y < GameData.gridYSize; y++) {
     for (let x = 0; x < GameData.gridXSize; x++) {
-      tiles.push({
-        id: `${x}-${y}`,
-        color: "#eee", // default tile color
-      });
+      tiles.push({ id: `${x}-${y}` });
     }
   }
 
@@ -31,8 +28,8 @@ export function TileGrid() {
           gridTemplateColumns: `repeat(${GameData.gridXSize}, 1fr)`,
         }}
       >
-        {tiles.map(({ id, color }) => (
-          <Tile key={id} color={color} />
+        {tiles.map(({ id }) => (
+          <Tile key={id} id={id} />
         ))}
       </div>
     </div>

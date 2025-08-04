@@ -1,10 +1,13 @@
 
 
+import { createTile } from "./TileLibrary";
+
 const playSessionCache: Record<string, PlaySession> = {};
 
 const exposedProperties = [
     'userId',
-    'gridXSize', 'gridYSize'
+    'gridXSize', 'gridYSize',
+    'tileBucket'
 ] as const;
 
 // inferred: "userId" | "gridXSize" | "gridYSize" ....
@@ -15,13 +18,15 @@ export class PlaySession{
 
     userId: string;
     gridXSize: number; gridYSize: number;
+    tileBucket: Record<string, any[]>;
 
     inactivity: NodeJS.Timeout | null = null;
 
-    constructor(props: { userId: string; gridXSize: number; gridYSize: number }) {
+    constructor(props: { userId: string; gridXSize: number; gridYSize: number, tileBucket: Record<string, any[]> }) {
         this.userId = props.userId;
         this.gridXSize = props.gridXSize;
         this.gridYSize = props.gridYSize;
+        this.tileBucket = props.tileBucket;
     }
 
     ping(){
@@ -59,8 +64,23 @@ export class PlaySession{
 
         // fetch user mongoose data to get the tile data here later...
 
+        // else create default:
+        const islandPreset = { gridXSize: 6, gridYSize: 6, defaultTile: "Grass" };
+        const tileBucket = {};
+
+        for (let y = 0; y < islandPreset.gridYSize; y++) {
+            for (let x = 0; x < islandPreset.gridXSize; x++) {
+                (tileBucket[`${x}-${y}`]??=[]).push(createTile({tilename: islandPreset.defaultTile, x, y}));
+            }
+        }
+
+        (tileBucket[`3-4`]??=[]).push(createTile({tilename: "RedStructure", x:3, y:4}));
+
         const newCache = new PlaySession({
-            userId, gridXSize: 6, gridYSize: 6
+            userId,
+            gridXSize: islandPreset.gridXSize,
+            gridYSize: islandPreset.gridYSize,
+            tileBucket
         });
         playSessionCache[userId] = newCache;
         return newCache;
