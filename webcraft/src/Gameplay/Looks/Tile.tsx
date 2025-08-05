@@ -1,5 +1,6 @@
 import React, { CSSProperties, useMemo } from "react";
 import { useTile } from "./UpdateHook";
+import { useTools } from "../Tools/ToolHook";
 
 /* ----------  Types ----------------------------------------------------- */
 
@@ -55,6 +56,7 @@ function blendColors(colors: string[]): string {
 
 export const Tile = React.memo(function Tile({ id }: TileProps) {
   const myTileStack = useTile(id) as TileDatum[] | null;
+  const { selectedTile, selectedTool, setHover, fireActivate } = useTools();
 
   /* --------  Derived display data  ------------------------------------ */
 
@@ -97,48 +99,92 @@ export const Tile = React.memo(function Tile({ id }: TileProps) {
     pointerEvents: "none",
   };
 
+  const highlightOverlay: CSSProperties = {
+    backgroundColor: selectedTile === id && selectedTool.highlight
+      ? selectedTool.highlight
+      : "transparent",
+    opacity: 0.3,
+    position: "absolute",
+    inset: 0,
+    zIndex: 5,
+    pointerEvents: "none",
+  };
+
+  /* --------  Handlers  --------------------------------------------------- */
+
+  const handleMouseEnter = () => setHover(id);
+
+  const handleMouseLeave = () => {
+    if (selectedTile === id) setHover(null);
+  };
+
+  const handleClick = () => {
+    if (selectedTile === id) fireActivate(id);
+  };
+
   /* --------  Render  --------------------------------------------------- */
 
-    return (
-    <div className="aspect-square rounded-sm relative overflow-hidden">
-        {/* Base color */}
-        <div
+return (
+  <div className="aspect-square relative"> {/* outer — square, no border radius */}
+    <div className="w-full h-full rounded-sm overflow-hidden relative z-0">
+      {/* Visual content */}
+      <div
         style={{
-            backgroundColor: bgColor,
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            inset: 0,
+          backgroundColor: bgColor,
+          width: "100%",
+          height: "100%",
+          position: "absolute",
+          inset: 0,
         }}
-        />
-        {/* Texture overlay */}
-        {bgTexture && (
+      />
+
+      {bgTexture && (
         <div
-            style={{
+          style={{
             backgroundImage: `url(${bgTexture})`,
             backgroundSize: "cover",
             backgroundPosition: "center",
-            opacity: 0.9, // Adjust as needed to let bgColor show through
+            opacity: 0.9,
             width: "100%",
             height: "100%",
             position: "absolute",
             inset: 0,
-            }}
+          }}
         />
-        )}
-        {/* Structure overlays */}
-        {structures.map((s, idx) => (
+      )}
+
+      <div style={highlightOverlay} />
+
+      {structures.map((s, idx) => (
         <img
-            key={idx}
-            src={s.texture}
-            alt=""
-            style={{
+          key={idx}
+          src={s.texture}
+          alt=""
+          style={{
             ...overlayStyle,
             zIndex: 2,
-            }}
+          }}
         />
-        ))}
+      ))}
     </div>
-    );
+
+    {/* Hitbox layer (outside rounded child) */}
+    <div
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+      onClick={handleClick}
+      style={{
+        position: "absolute",
+        inset: "-2px",
+        zIndex: 10,
+        backgroundColor: "transparent",
+        pointerEvents: "auto",
+        borderRadius: "inherit", // not needed here anymore, but harmless
+      }}
+    />
+  </div>
+);
+
 
 });
+

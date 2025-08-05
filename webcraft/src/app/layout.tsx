@@ -19,6 +19,7 @@ export const metadata: Metadata = {
 
 import { Root } from "@/components/RootType";
 import { GameDataSession } from "@Gameplay/Looks/UpdateHook"
+import { ToolInfoWrapper } from "@Gameplay/Tools/ToolHook";
 
 export default async function RootLayout({
   children,
@@ -32,7 +33,9 @@ export default async function RootLayout({
       >
         <Root>
           <GameDataSession>
-            {children}
+            <ToolInfoWrapper>
+              {children}
+            </ToolInfoWrapper>
           </GameDataSession>
         </Root>
       </body>

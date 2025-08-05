@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useRef, useState } from "react";
 import { getRoute } from "@/utils/request";
 import { useSession } from "@/components/RootType/UserSession";
-import { json } from "stream/consumers";
 
 type GameData = unknown;
 

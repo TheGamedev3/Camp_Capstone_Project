@@ -1,18 +1,19 @@
 
+"use client";
 
-// have an inventory thingy nearby also
+import { useGameData } from "./UpdateHook";
+import { TileGrid } from "./TileGrid";
+import { ToolBar } from "../Tools/Tool";
 
-"use client"
+export default function Gameplay() {
+  const { GameData } = useGameData();
 
-import { useGameData } from "./UpdateHook"
-import { TileGrid } from "./TileGrid"
+  if (GameData === null) return <div>Loading</div>;
 
-export default function Gameplay(){
-    const{ GameData } = useGameData();
-
-    return(
-        GameData === null
-            ? <div>Loading</div>
-            : <TileGrid/>
-    );
+  return (
+    <>
+      <TileGrid />
+      <ToolBar />
+    </>
+  );
 }
