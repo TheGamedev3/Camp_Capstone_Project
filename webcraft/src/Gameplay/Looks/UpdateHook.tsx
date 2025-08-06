@@ -1,6 +1,6 @@
 
 "use client";
-import { createContext, useContext, useEffect, useRef, useState } from "react";
+import { createContext, useContext, useEffect, useRef, useState, useMemo } from "react";
 import { getRoute } from "@/utils/request";
 import { useSession } from "@/components/RootType/UserSession";
 
@@ -8,6 +8,7 @@ type GameData = unknown;
 
 type GameDataContextType = {
   GameData: GameData | null;
+  updateTile: (tileId: string, tileStack: any[]) => void;
 };
 
 const GameDataContext = createContext<GameDataContextType | null>(null);
@@ -15,6 +16,23 @@ export const useGameData = () => useContext(GameDataContext)!;
 
 export function GameDataSession({ children }){
     const[GameData, updateGameData] = useState<GameData | null>(null);
+    const contextValue = useMemo(() => ({
+        GameData,
+        updateTile(tileId: string, tileStack: any[]){
+            updateGameData(gamedata => {
+            if (!gamedata) return null;
+
+            return {
+                ...gamedata,
+                tileBucket: {
+                ...gamedata.tileBucket,
+                [tileId]: tileStack
+                }
+            };
+            });
+        }
+    }), [GameData]);
+
     const { user } = useSession();
 
     type Fetcher = {
@@ -49,9 +67,7 @@ export function GameDataSession({ children }){
     }, [user]);
         
     return (
-        <GameDataContext.Provider value={{
-            GameData
-        }}>
+        <GameDataContext.Provider value={contextValue}>
             {children}
         </GameDataContext.Provider>
     );

@@ -34,3 +34,5 @@ npm i -D concurrently wait-on cross-env # for a special playwright command to st
 
 # to run all tests
 npx playwright test
+
+

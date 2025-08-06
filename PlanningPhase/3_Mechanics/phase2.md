@@ -110,7 +110,67 @@ Now that tools are a thing,
     
     the onAction will also have that, putting in a temporary client side build in, until recieving an update from the server (a "temporary-client-overridable-by-server-tile-datum")
 
+    structure tile layers are the ones that contain durability
+        a server side cache will point to all the references of the durability going down, and durability wont be saved on different sessions
 
+
+
+/*
+
+Break Tool:
+onHover(tileId:string){
+
+    const tileId = session.tileBucket[tileId];
+    const breakTarget = tileId.find(tileDatum=>tileDatum.layer === "structure");
+
+    return{
+        actionable: breakTarget,
+        highlight: breakTarget ? "red" : null
+    }
+}
+
+async onAction(tileId: string){
+    const tileId = session.tileBucket[tileId];
+    const breakTarget = tileId.find(tileDatum=>tileDatum.layer === "structure");
+    if(!breakTarget){return}
+
+    const {success, result: changedTile} = await getRoute({route: "/api/break", body: {target: breakTarget.Id, tool: "wooden_axe", tile: tileId}});
+    // UPDATE MY TILE DATA WITH "changedTile"
+}
+
+CREATE THE ONHOVER RETURN THINGIES
+CREATE THE API BREAK ROUTE
+SOMEHOW DISPLAY A HEALTH BAR?
+FIGURE OUT HOW TO LOCAL UPDATE CERTAIN TILES ON THE CLIENT SIDE DIRECTLY
+
+Build Tool:
+onHover(tileId:string){
+
+    const tileId = session.tileBucket[tileId];
+    const collision = tileId.find(tileDatum=>tileDatum.layer === "structure");
+
+    return{
+        actionable: !collision,
+        highlight: !collision ? "green" : "red",
+        hoverTile: {structure: "BrickHouse"} (w/ a default transparency of 40)
+    }
+}
+
+async onAction(tileId: string){
+    const tileId = session.tileBucket[tileId];
+    const collision = tileId.find(tileDatum=>tileDatum.layer === "structure");
+    if(!collision){return}
+
+    const {success, result: changedTile} = await getRoute({route: "/api/build", body: {what: "BrickHouse", tile: tileId}});
+    // UPDATE MY TILE DATA WITH "changedTile"
+}
+
+CREATE THE ONHOVER RETURN THINGIES
+ADD HOVER TILES
+CREATE THE API BUILD ROUTE
+FIGURE OUT HOW TO LOCAL UPDATE CERTAIN TILES ON THE CLIENT SIDE DIRECTLY
+
+*/
 */
 
 

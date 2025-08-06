@@ -1,21 +1,6 @@
 
-
-// x dimensions, y dimensions,
-// get tile at(x, y)
-// action("place", x, y)
-// ping()
-// render()
-// fetch user schema world from mongoose
-
-// Entire World/Player
-// durabilityStorage[]
-// autoDurability
-// Equipped Tools
-// Inventory
-// Inventory Size
-
 import { getSession } from "@/lib/Validator";
-import { PlaySession } from "./PlaySession";
+import { PlaySession } from "../Simulator/PlaySession";
 
 export async function ping(){
     const userId = (await getSession())?._id;

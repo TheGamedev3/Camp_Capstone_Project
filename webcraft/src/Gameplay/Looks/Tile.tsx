@@ -56,7 +56,7 @@ function blendColors(colors: string[]): string {
 
 export const Tile = React.memo(function Tile({ id }: TileProps) {
   const myTileStack = useTile(id) as TileDatum[] | null;
-  const { selectedTile, selectedTool, setHover, fireActivate } = useTools();
+  const { selectedTile, selectedTool, setHover, selectedHighlight, fireActivate } = useTools();
 
   /* --------  Derived display data  ------------------------------------ */
 
@@ -100,16 +100,13 @@ export const Tile = React.memo(function Tile({ id }: TileProps) {
   };
 
   const highlightOverlay: CSSProperties = {
-    backgroundColor: selectedTile === id && selectedTool.highlight
-      ? selectedTool.highlight
-      : "transparent",
-    opacity: 0.3,
+    backgroundColor: selectedTile === id && selectedHighlight ? selectedHighlight : "transparent",
     position: "absolute",
     inset: 0,
     zIndex: 5,
     pointerEvents: "none",
   };
-
+  
   /* --------  Handlers  --------------------------------------------------- */
 
   const handleMouseEnter = () => setHover(id);
