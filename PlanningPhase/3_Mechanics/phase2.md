@@ -174,7 +174,11 @@ FIGURE OUT HOW TO LOCAL UPDATE CERTAIN TILES ON THE CLIENT SIDE DIRECTLY
 */
 
 
+    // drop command for structures, ex "x3 string" (make sure its invisible to clients)
+    // gets corresponding item in the command, under an Items folder
+    // under GameData, there'd be a .Inventory, and .Placeables
 
+    ✅ // separate ToolBase, from Tools, and from ToolBar
 
 
 

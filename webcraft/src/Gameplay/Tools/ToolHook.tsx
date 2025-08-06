@@ -3,7 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import { getRoute } from "@/utils/request";
 import { useSession } from "@/components/RootType/UserSession";
-import { Tool } from "./Tool";
+import { defaultTool, Tool } from "./Tools";
 import { useGameData } from "../Looks/UpdateHook";
 
 type ToolContextType = {
@@ -17,8 +17,6 @@ type ToolContextType = {
 
 const ToolContext = createContext<ToolContextType | null>(null);
 export const useTools = () => useContext(ToolContext)!;
-
-import { defaultTool } from "./Tool";
 
 export function ToolInfoWrapper({ children }){
     const[selectedHighlight, setHighlight] = useState<string | null>(null);
