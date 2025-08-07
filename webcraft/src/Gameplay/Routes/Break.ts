@@ -1,12 +1,28 @@
 
-import { getSession } from "@/lib/Validator";
-import { PlaySession } from "../Simulator/PlaySession";
+import { UnderSession } from "./UponSession";
 
-export async function breakAt({tileId, tool}){
-    const userId = (await getSession())?._id;
-    if(!userId)return{ success:false, err:{server:"no session found!"}}
-    
-    const session = await PlaySession.getPlaySession(userId);
-    const{success, tileData} = session.breakAt({tileId, tool});
-    return{success, result: tileData};
+interface BreakAtParams {
+  tool?: string; // can narrow this if needed
+  tileId?: string;
+  x?: number;
+  y?: number;
 }
+
+export const breakAt = UnderSession((session, { tool, tileId, x, y }: BreakAtParams)=>{
+    let tx: number, ty: number;
+    if (tileId) {
+        [tx, ty] = tileId.split('-').map(Number);
+    } else if (x != null && y != null) {
+        tx = x;
+        ty = y;
+        tileId = `${tx}-${ty}`;
+    } else {
+        throw new Error("Must provide either tileId or x/y coordinates.");
+    }
+
+    const tileStack = session.tileBucket[tileId] || [];
+    const breakTarget = tileStack.find(stackLayer=>stackLayer.layer === 'structure');
+    const success = Boolean(breakTarget);
+    breakTarget.deleteSelf();
+    return{success, tileData: session.tileBucket[tileId]}
+});

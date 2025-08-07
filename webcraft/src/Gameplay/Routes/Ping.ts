@@ -1,15 +1,10 @@
 
-import { getSession } from "@/lib/Validator";
-import { PlaySession } from "../Simulator/PlaySession";
+import { UnderSession } from "./UponSession";
 
-export async function ping(){
-    const userId = (await getSession())?._id;
-    if(!userId)return{ success:false, err:{server:"no session found!"}}
-    
-    const session = await PlaySession.getPlaySession(userId);
+export const ping = UnderSession((session)=>{
     session.ping();
     return{
         success: true,
         result: session.getData()
     }
-}
+});

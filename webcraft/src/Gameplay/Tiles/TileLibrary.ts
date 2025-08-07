@@ -2,12 +2,17 @@ import Grass from "../Tiles/Grass";
 import BrickHouse from "../Tiles/BrickHouse";
 
 const tileLibrary = {
-    Grass,
-    BrickHouse,
-};
+  Grass,
+  BrickHouse,
+} as const;
 
 type TileLibrary = typeof tileLibrary;
 type TileName = keyof TileLibrary;
+
+export function isTileName(name: string): name is TileName {
+  return name in tileLibrary;
+}
+
 type TileConstructor<T extends TileName> = InstanceType<TileLibrary[T]>;
 
 export function createTile<T extends TileName>(
@@ -15,6 +20,5 @@ export function createTile<T extends TileName>(
 ): TileConstructor<T> {
     const { tilename, ...rest } = params;
     const TileClass = tileLibrary[tilename];
-    if(!TileClass)console.error(`❌⏹️ TILE "${tilename}" NOT FOUND!`);
     return new TileClass(rest) as TileConstructor<T>;
 }
