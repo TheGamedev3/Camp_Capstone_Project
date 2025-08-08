@@ -31,11 +31,13 @@ export function interpretQuantities(itemList: string): [Item, number][] {
 
 import { UnderSession } from "../Routes/UponSession";
 import { PlaySession } from "../Simulator/PlaySession";
+import { randomBytes } from 'crypto';
+
 function supposeItem(session: PlaySession, itemBase: Item, create: boolean=true): Item{
-    let item: Item | undefined = session.items.find(i=>i.name === itemBase.name);
+    let item: Item | undefined = session.inventory.find(i=>i.name === itemBase.name);
     if(item === undefined && create){
-        item = {...itemBase}; // PICK WHAT DATA SPECIFICALLY TO CONSTRUCT IT! MAYBE AN ITEM CONSTRUCTOR????
-        session.items.push(item);
+        item = {...itemBase, slotId: randomBytes(16).toString('hex') }; // PICK WHAT DATA SPECIFICALLY TO CONSTRUCT IT! MAYBE AN ITEM CONSTRUCTOR????
+        session.inventory.push(item);
     }
     // possibly give a unique id?
     // depends on if stackable or not
@@ -46,9 +48,14 @@ function supposeItem(session: PlaySession, itemBase: Item, create: boolean=true)
 
 export const giveCommand = UnderSession((session, itemList: string)=>{
     
-    interpretQuantities(itemList).forEach(([item, quantity])=>supposeItem(session, item, true).quantity+=quantity)
+    interpretQuantities(itemList).forEach(([item, quantity])=>{
+      const targetItem = supposeItem(session, item, true);
+      targetItem.quantity??=0;
+      targetItem.quantity+=quantity;
+    })
     // return{success, tileData: session.tileBucket[tileId]}
     // which means, potentially flag in other events into the server like inventory changed?
+    // REMEMBER TO TURN ON ESLINT OR WHATEVER
     /*
     [
     

@@ -37,6 +37,7 @@ export const Tools: Tool[] = [
     },
 
     async onAction(tileId: string, tileStack: any[]){
+        if(!tileStack)return;
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(collision){return}
 
@@ -60,6 +61,7 @@ export const Tools: Tool[] = [
     },
 
     async onAction(tileId: string, tileStack: any[]){
+        if(!tileStack)return;
         const breakTarget = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(!breakTarget){return}
 

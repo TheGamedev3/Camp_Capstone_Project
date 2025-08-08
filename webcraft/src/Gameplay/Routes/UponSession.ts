@@ -18,7 +18,12 @@ export function UnderSession(func: FuncType): RequestHandler & DirectHandler {
       if (!userId) return { success: false, err: { server: 'no session found!' } };
 
       const session = await PlaySession.getPlaySession(userId);
-      const args = await req.json();
+      let args: unknown;
+      try {
+        args = await req.json();
+      } catch {
+        args = undefined; // no valid JSON
+      }
       return NextResponse.json(await func(session, args));
     });
   };
@@ -33,7 +38,8 @@ export function UnderSession(func: FuncType): RequestHandler & DirectHandler {
     if (args.length === 1 && args[0] instanceof Request) {
       return handleRequest(args[0]);
     } else if (args.length === 2) {
-      return handleDirect(args[0] as SessionType, ...args);
+      const [session, ...rest] = args as [SessionType, ...any[]];
+      return handleDirect(session, ...rest);
     } else {
       throw new Error('Invalid arguments passed to UnderSession');
     }

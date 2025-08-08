@@ -4,6 +4,7 @@
 import { useGameData } from "./UpdateHook";
 import { TileGrid } from "./TileGrid";
 import { Toolbar } from "../Tools/Toolbar";
+import { ItemList } from "../Items/ItemList";
 
 export default function Gameplay() {
   const { GameData } = useGameData();
@@ -12,6 +13,7 @@ export default function Gameplay() {
 
   return (
     <>
+      <ItemList />
       <TileGrid />
       <Toolbar />
     </>

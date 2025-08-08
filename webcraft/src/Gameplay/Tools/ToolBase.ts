@@ -54,7 +54,7 @@ export class Tool {
             return hoverResult;
         }
     }
-    this.action = async(tileId: string, tileStack: any[])=>{if(this._actionable)return await onAction?.(tileId, tileStack)} ?? ((tileId: string) => {});
+    this.action = async(tileId: string, tileStack: any[])=>{if(this._actionable)return await onAction?.(tileId, tileStack)};
     this.equip = onEquip ?? (() => {});
     this.unequip = onUnequip ?? (() => {});
   }

@@ -3,7 +3,9 @@
 export type Item = {
     name: string;
     icon: string;
+    quantity?: number;
     itemType?: string;
+    slotId?: string;
 };
 
 

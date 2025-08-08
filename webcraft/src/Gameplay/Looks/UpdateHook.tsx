@@ -73,19 +73,8 @@ export function GameDataSession({ children }){
     );
 }
 
+
 export function useTile(id: string) {
-    const { GameData } = useGameData();
-    const [myTileData, setTileData] = useState<string>('');
-
-    useEffect(() => {
-        const tileData = JSON.stringify(GameData?.tileBucket?.[id]);
-        if (tileData !== myTileData) {
-            setTileData(tileData);
-        }
-    }, [GameData, id]);
-
-    const myTileStack = myTileData ? JSON.parse(myTileData) : [];
-    if(myTileStack.length === 0){return[]}
-    return myTileStack;
+  const { GameData } = useGameData();
+  return GameData?.tileBucket?.[id];
 }
-

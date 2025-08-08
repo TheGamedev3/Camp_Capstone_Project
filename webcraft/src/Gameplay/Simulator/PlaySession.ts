@@ -5,8 +5,11 @@ const playSessionCache: Record<string, PlaySession> = {};
 const exposedProperties = [
     'userId',
     'gridXSize', 'gridYSize',
-    'tileBucket'
+    'tileBucket', 'inventory'
 ] as const;
+
+import { Item } from "../Items/Items";
+import { build } from "../Routes/Build";
 
 // inferred: "userId" | "gridXSize" | "gridYSize" ....
 type ExposedKeys = typeof exposedProperties[number];
@@ -16,14 +19,16 @@ export class PlaySession{
     userId: string;
     gridXSize: number; gridYSize: number;
     tileBucket: Record<string, any[]>;
+    inventory: Item[];
 
     inactivity: NodeJS.Timeout | null = null;
 
-    constructor(props: { userId: string; gridXSize: number; gridYSize: number, tileBucket: Record<string, any[]> }) {
+    constructor(props: { userId: string; gridXSize: number; gridYSize: number, tileBucket: Record<string, any[]>, inventory: Item[] }) {
         this.userId = props.userId;
         this.gridXSize = props.gridXSize;
         this.gridYSize = props.gridYSize;
         this.tileBucket = props.tileBucket;
+        this.inventory = props.inventory;
     }
 
     pingListeners: (()=>{})[] = [];
@@ -70,17 +75,18 @@ export class PlaySession{
             userId,
             gridXSize: islandPreset.gridXSize,
             gridYSize: islandPreset.gridYSize,
-            tileBucket:{}
+            tileBucket:{},
+            inventory:[]
         });
 
         // place down spaces
         for (let y = 0; y < islandPreset.gridYSize; y++) {
             for (let x = 0; x < islandPreset.gridXSize; x++) {
-                newCache.placeAt({what: islandPreset.defaultTile, x, y});
+                await build(newCache, {what: islandPreset.defaultTile, x, y});
             }
         }
         // place down prebuilt structures
-        newCache.placeAt({what: "BrickHouse", x:3, y:4});
+        await build(newCache, {what: "BrickHouse", x:3, y:4});
 
         playSessionCache[userId] = newCache;
         return newCache;

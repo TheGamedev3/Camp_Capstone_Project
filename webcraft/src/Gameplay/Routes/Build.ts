@@ -41,7 +41,7 @@ export const build = UnderSession((session, { who, what, tileId, x, y }:PlaceAtP
         }
 
         if(success){(session.tileBucket[tileId] ??= []).push(newTile)}
-        return{success, tileData: session.tileBucket[tileId]}
+        return{success, result: session.tileBucket[tileId]}
     }else{
         console.error(`❌⏹️ TILE "${what}" NOT FOUND!`);
     }

@@ -8,6 +8,7 @@ interface BreakAtParams {
   y?: number;
 }
 
+import { giveCommand } from "../Items/ItemGive";
 export const breakAt = UnderSession((session, { tool, tileId, x, y }: BreakAtParams)=>{
     let tx: number, ty: number;
     if (tileId) {
@@ -24,5 +25,8 @@ export const breakAt = UnderSession((session, { tool, tileId, x, y }: BreakAtPar
     const breakTarget = tileStack.find(stackLayer=>stackLayer.layer === 'structure');
     const success = Boolean(breakTarget);
     breakTarget.deleteSelf();
-    return{success, tileData: session.tileBucket[tileId]}
+
+    giveCommand(session, "wood (3)");
+
+    return{success, result: session.tileBucket[tileId]}
 });
