@@ -1,6 +1,7 @@
 
 import { UnderSession } from "./UponSession";
 import { isTileName, createTile } from "../Tiles/TileLibrary";
+import { giveCommand } from "../Items/ItemGive";
 
 interface PlaceAtParams {
   who?: string; // can narrow this if needed
@@ -40,8 +41,15 @@ export const build = UnderSession((session, { who, what, tileId, x, y }:PlaceAtP
             success = Boolean(tileStack.find(stackLayer=>stackLayer.layer === 'floor')) && !Boolean(tileStack.find(stackLayer=>stackLayer.layer === 'structure'));
         }
 
-        if(success){(session.tileBucket[tileId] ??= []).push(newTile)}
-        return{success, result: session.tileBucket[tileId]}
+        if(success){
+            (session.tileBucket[tileId] ??= []).push(newTile);
+            session.tileChange(tileId);
+            giveCommand(session, "wood (-1)");
+            // tile change
+            // make sure to subtract a brick house here
+            // make sure can only build if contains at least 1 brick house
+        }
+        return{success, result: session.ejectChanges()}
     }else{
         console.error(`❌⏹️ TILE "${what}" NOT FOUND!`);
     }

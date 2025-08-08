@@ -41,8 +41,8 @@ export const Tools: Tool[] = [
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(collision){return}
 
-        const tileUpdate = await getRoute({route: "POST /api/build", body: {what: "BrickHouse", tileId}});
-        return{tileUpdate};
+        const eventData = await getRoute({route: "POST /api/build", body: {what: "BrickHouse", tileId}});
+        return eventData;
     }
   }),
   new Tool({
@@ -65,8 +65,8 @@ export const Tools: Tool[] = [
         const breakTarget = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(!breakTarget){return}
 
-        const tileUpdate = await getRoute({route: "DELETE /api/break", body: {tileId, tool: "wooden_axe"}});
-        return{tileUpdate};
+        const eventData = await getRoute({route: "DELETE /api/break", body: {tileId, tool: "wooden_axe"}});
+        return eventData;
     }
   }),
 ];

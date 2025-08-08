@@ -22,16 +22,25 @@ export function ToolInfoWrapper({ children }){
     const[selectedHighlight, setHighlight] = useState<string | null>(null);
     const[selectedTool, setTool] = useState<Tool>(defaultTool);
     const[selectedTile, setHover] = useState<string | null>(null);
-    const{ updateTile, GameData }=useGameData();
+    const{ updateGameData, GameData }=useGameData();
 
-    const updater = useRef(updateTile);
-    useEffect(()=>{updater.current = updateTile}, [updateTile]);
+    const updater = useRef(updateGameData);
+    useEffect(()=>{updater.current = updateGameData}, [updateGameData]);
 
     const fireActivate = useCallback(async (tileId: string) => {
         const tileStack = GameData?.tileBucket[tileId];
-        const actionResult = await selectedTool.action(tileId, tileStack);
-        if (actionResult?.tileUpdate?.success === true) {
-            updater.current(tileId, actionResult.tileUpdate.result);
+        const eventData = await selectedTool.action(tileId, tileStack);
+        if (eventData?.success === true && (eventData.result.timestamp > GameData.timestamp)) {
+            GameData.tileBucket = {...GameData.tileBucket, ...eventData.result.newTiles};
+
+            const newItems = eventData.result.newItems; // [Item, number][]
+            const overwriteItem = newItems.map(([item])=>item.slotId);
+            GameData.inventory = GameData.inventory.filter(item=>!overwriteItem.includes(item.slotId));
+            GameData.inventory.push(...(newItems.map(([item])=>item)));
+
+            GameData.timestamp = eventData.result.timestamp;
+            
+            updater.current({...GameData});
         }
     }, [GameData, selectedTool]);
 

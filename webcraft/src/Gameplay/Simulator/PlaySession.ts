@@ -13,13 +13,38 @@ import { build } from "../Routes/Build";
 
 // inferred: "userId" | "gridXSize" | "gridYSize" ....
 type ExposedKeys = typeof exposedProperties[number];
+type TileStack = any[];
 
 export class PlaySession{
 
     userId: string;
     gridXSize: number; gridYSize: number;
-    tileBucket: Record<string, any[]>;
+    tileBucket: Record<string, TileStack>;
     inventory: Item[];
+
+    private eventChanges: {
+        newTiles: string[];
+        newItems: [Item, number][];
+    }
+    tileChange(tileId: string){
+        if(!this.eventChanges.newTiles.find(id=>id===tileId))this.eventChanges.newTiles.push(tileId);
+    }
+    itemChange(newItem: Item, quantity: number){
+        // remove the older updates
+        this.eventChanges.newItems = this.eventChanges.newItems.filter(([item])=>item.slotId !== newItem.slotId);
+        this.eventChanges.newItems.push([newItem, quantity]); // if quantity 0, client will handle deleting it on its end
+    }
+    ejectChanges(){
+        const eventChanges = this.eventChanges;
+        this.eventChanges = {newTiles:[], newItems:[]};
+        const{newTiles, newItems} = eventChanges;
+
+        return{
+            timestamp: Date.now(),
+            newTiles:Object.fromEntries(newTiles.map(tileId=>[tileId, this.tileBucket[tileId]])),
+            newItems
+        };
+    }
 
     inactivity: NodeJS.Timeout | null = null;
 
@@ -29,6 +54,7 @@ export class PlaySession{
         this.gridYSize = props.gridYSize;
         this.tileBucket = props.tileBucket;
         this.inventory = props.inventory;
+        this.eventChanges = {newTiles:[], newItems:[]};
     }
 
     pingListeners: (()=>{})[] = [];
@@ -55,11 +81,16 @@ export class PlaySession{
         // occasionally auto save
     }
 
-    // expose only certain properties
-    getData(): Pick<PlaySession, ExposedKeys> {
-        return Object.fromEntries(
+    // ExposedKeys should be a union of keys of PlaySession
+    // type ExposedKeys = keyof PlaySession | ... (your union)
+
+    getData(): Pick<PlaySession, ExposedKeys> & { timestamp: number } {
+
+        const data = Object.fromEntries(
             exposedProperties.map((key) => [key, this[key]])
         ) as Pick<PlaySession, ExposedKeys>;
+
+        return { ...data, timestamp: Date.now() };
     }
 
     static async getPlaySession(userId: string){

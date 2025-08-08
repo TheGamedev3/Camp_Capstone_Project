@@ -25,8 +25,9 @@ export const breakAt = UnderSession((session, { tool, tileId, x, y }: BreakAtPar
     const breakTarget = tileStack.find(stackLayer=>stackLayer.layer === 'structure');
     const success = Boolean(breakTarget);
     breakTarget.deleteSelf();
+    session.tileChange(tileId);
 
     giveCommand(session, "wood (3)");
 
-    return{success, result: session.tileBucket[tileId]}
+    return{success, result: session.ejectChanges()}
 });

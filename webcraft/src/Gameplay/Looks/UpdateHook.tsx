@@ -8,7 +8,7 @@ type GameData = unknown;
 
 type GameDataContextType = {
   GameData: GameData | null;
-  updateTile: (tileId: string, tileStack: any[]) => void;
+  updateGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
 };
 
 const GameDataContext = createContext<GameDataContextType | null>(null);
@@ -16,22 +16,7 @@ export const useGameData = () => useContext(GameDataContext)!;
 
 export function GameDataSession({ children }){
     const[GameData, updateGameData] = useState<GameData | null>(null);
-    const contextValue = useMemo(() => ({
-        GameData,
-        updateTile(tileId: string, tileStack: any[]){
-            updateGameData(gamedata => {
-            if (!gamedata) return null;
-
-            return {
-                ...gamedata,
-                tileBucket: {
-                ...gamedata.tileBucket,
-                [tileId]: tileStack
-                }
-            };
-            });
-        }
-    }), [GameData]);
+    const contextValue = useMemo(() => ({GameData, updateGameData}), [GameData, updateGameData]);
 
     const { user } = useSession();
 

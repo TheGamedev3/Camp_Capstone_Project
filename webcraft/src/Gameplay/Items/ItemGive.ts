@@ -2,31 +2,30 @@
 import { Item, allItems } from "./Items";
 
 
+// name = anything not parentheses; quantity = optional (+/-)int inside ()
+const rx = /^\s*([^()]+?)\s*(?:\(\s*([+-]?\d+)\s*\))?\s*$/;
+
 export function interpretQuantities(itemList: string): [Item, number][] {
-  const entries = itemList.split(',').map(entry => entry.trim());
+  return itemList
+    .split(',')
+    .map(s => s.trim())
+    .filter(s => s.length)
+    .flatMap(entry => {
+      const m = entry.match(rx);
+      if (!m) {
+        console.error(`Could not parse entry: "${entry}"`);
+        return [];
+      }
+      const itemName = m[1].trim();
+      const qty = m[2] !== undefined ? parseInt(m[2], 10) : 1;
 
-  const result: [Item, number][] = [];
-
-  for (const entry of entries) {
-    const match = entry.match(/^([a-zA-Z0-9\s]+?)(?:\s*\((\d+)\))?$/);
-
-    if (match) {
-      const itemName = match[1].trim();
-      const quantity = match[2] ? parseInt(match[2]) : 1;
-
-      const item = allItems.find(i=>i.name === itemName);
+      const item = allItems.find(i => i.name === itemName);
       if (!item) {
         console.error(`Item "${itemName}" not found in allItems.`);
-        continue;
+        return [];
       }
-
-      result.push([item, quantity]);
-    } else {
-      console.error(`Could not parse entry: "${entry}"`);
-    }
-  }
-
-  return result;
+      return [[item, qty] as [Item, number]];
+    });
 }
 
 import { UnderSession } from "../Routes/UponSession";
@@ -52,7 +51,8 @@ export const giveCommand = UnderSession((session, itemList: string)=>{
       const targetItem = supposeItem(session, item, true);
       targetItem.quantity??=0;
       targetItem.quantity+=quantity;
-    })
+      session.itemChange(targetItem, quantity);
+    });
     // return{success, tileData: session.tileBucket[tileId]}
     // which means, potentially flag in other events into the server like inventory changed?
     // REMEMBER TO TURN ON ESLINT OR WHATEVER
