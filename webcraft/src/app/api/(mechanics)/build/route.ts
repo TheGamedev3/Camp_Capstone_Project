@@ -1,4 +1,4 @@
 
-import { build } from '@/Gameplay/Routes/Build';
+import { placeItem } from '@/Gameplay/Routes/Build';
 
-export async function POST(req: Request) {return await build(req)}
+export async function POST(req: Request) {return await placeItem(req)}

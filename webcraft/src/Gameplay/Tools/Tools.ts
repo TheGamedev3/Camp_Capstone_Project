@@ -10,7 +10,8 @@ export const Tools: Tool[] = [
     keybind: 'e',
     icon: Info,
     defaultTool: true,
-    onHover(tileId: string | null, tileStack: any[]){
+    // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
+    onHover({tileId, tileStack}){
         if(tileId === null)return{actionable: false}
         const interactable = tileStack.find(tileDatum=>tileDatum.layer === "structure");
 
@@ -25,9 +26,15 @@ export const Tools: Tool[] = [
     keybind: 't',
     icon: Hammer,
     borderColor: 'border-blue-500',
-    onHover(tileId: string, tileStack: any[]){
+    // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
+    onHover({slotId, tileId, tileStack}){
         if(tileId === null)return{actionable: false}
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
+        // %! BPS(199) GHOST TILE PREVIEW OF ITEM
+        // REQUIRES:
+        // GETTING INVENTORY
+        // GETTING STRUCTURE HOVER TILE DATA IN ADVANCED
+        // JOINING IT WITH THE REST OF THE TILE
 
         return{
             actionable: !collision,
@@ -36,12 +43,15 @@ export const Tools: Tool[] = [
         }
     },
 
-    async onAction(tileId: string, tileStack: any[]){
+    // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
+    async onAction({slotId, tileId, tileStack}){
         if(!tileStack)return;
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(collision){return}
 
-        const eventData = await getRoute({route: "POST /api/build", body: {what: "BrickHouse", tileId}});
+        // %! BPS(200) CLIENT SIDE QUICK PLACE (AND QUICK SUBTRACT MAYBE?)
+
+        const eventData = await getRoute({route: "POST /api/build", body: {slotId, tileId}});
         return eventData;
     }
   }),
@@ -50,7 +60,8 @@ export const Tools: Tool[] = [
     keybind: 'b',
     icon: X,
     borderColor: 'border-red-500',
-    onHover(tileId: string, tileStack: any[]){
+    // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
+    onHover({tileId, tileStack}){
         if(tileId === null)return{actionable: false}
         const breakTarget = tileStack.find(tileDatum=>tileDatum.layer === "structure");
 
@@ -60,7 +71,8 @@ export const Tools: Tool[] = [
         }
     },
 
-    async onAction(tileId: string, tileStack: any[]){
+    // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
+    async onAction({tileId, tileStack}){
         if(!tileStack)return;
         const breakTarget = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(!breakTarget){return}

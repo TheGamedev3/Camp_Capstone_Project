@@ -182,3 +182,30 @@ FIGURE OUT HOW TO LOCAL UPDATE CERTAIN TILES ON THE CLIENT SIDE DIRECTLY
 
 
 
+Task list.......
+
+
+BUILD PLACE STRUCTURES
+// %! BPS(189)
+
+    IN INVENTORY ITEMLIST.TSX
+⏩ - selecting an item from the inventory for tools to select (item slotId maybe?)
+    ✅ - start off with just selecting the first structure item by default
+
+    IN ITEMS.tsx' DATA
+✅ - finding what structure that item places, and sending it over to the client
+
+    ⏩IN THE ONHOVER OF THE BUILD TOOL IN TOOLS
+ - ghost hover tile of that item being placed
+ - on Action, if valid, assume it will get placed
+
+    ON THE BUILD ROUTE SERVER SIDE
+    A BIT OF REORGANIZING ON THE BUILD ROUTE SERVER SIDE
+✅ - (Place Item Vrs Spawn Structure) place structure, and place item, which uses place structure will then be different (distinguish the building on start, when generating structures, have it NOT subtract away things)
+✅ - on the server place that item's structure down, and -1 of that item
+✅ - only place item if you have one selected and more than 0
+
+
+ ✅ - LABEL ALL SECTIONS
+
+

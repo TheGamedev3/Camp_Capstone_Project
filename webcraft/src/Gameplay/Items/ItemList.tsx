@@ -14,11 +14,14 @@
   // use GameData.itemChanges to use on ItemNotif!
 
 import { useGameData } from "../Looks/UpdateHook"
+import { useTools } from "../Tools/ToolHook";
 import { Item } from "./Items";
 import { useCallback, useMemo } from "react";
 
 export function ItemList() {
   const { GameData, updateGameData } = useGameData();
+  // %! BPS(193) USE TOOL HOOK?
+  const{ selectedSlot } = useTools();
 
   const updateSlot = useCallback((...items: Item[]) => {
     if (items.length === 0) return;
@@ -41,10 +44,18 @@ export function ItemList() {
     updateSlot,
   }), [GameData.inventory, updateSlot]);
 
+  // %! BPS(192) SELECT UI
   return (
     <div>
       {backpack.inventory.map(({ slotId, name, quantity }) => (
-        <div key={slotId}>{name} ({quantity})</div>
+        <div
+          key={slotId}
+          className={`px-2 py-1 ${
+            slotId === selectedSlot ? 'bg-blue-300' : ''
+          }`}
+        >
+          {name} ({quantity})
+        </div>
       ))}
     </div>
   );

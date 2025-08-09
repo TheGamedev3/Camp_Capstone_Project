@@ -1,6 +1,6 @@
 
 
-const playSessionCache: Record<string, PlaySession> = {};
+export const playSessionCache: Record<string, PlaySession> = {};
 
 const exposedProperties = [
     'userId',
@@ -9,7 +9,7 @@ const exposedProperties = [
 ] as const;
 
 import { Item } from "../Items/Items";
-import { build } from "../Routes/Build";
+import { createWorld } from "./CreateWorld";
 
 // inferred: "userId" | "gridXSize" | "gridYSize" ....
 type ExposedKeys = typeof exposedProperties[number];
@@ -44,6 +44,11 @@ export class PlaySession{
             newTiles:Object.fromEntries(newTiles.map(tileId=>[tileId, this.tileBucket[tileId]])),
             newItems
         };
+    }
+
+    getItem(slotId: string){
+        if(!slotId)return null;
+        return this.inventory.find(item=>item.slotId === slotId) || null;
     }
 
     inactivity: NodeJS.Timeout | null = null;
@@ -99,27 +104,7 @@ export class PlaySession{
 
         // fetch user mongoose data to get the tile data here later...
 
-        // else create default:
-        const islandPreset = { gridXSize: 6, gridYSize: 6, defaultTile: "Grass" };
-
-        const newCache = new PlaySession({
-            userId,
-            gridXSize: islandPreset.gridXSize,
-            gridYSize: islandPreset.gridYSize,
-            tileBucket:{},
-            inventory:[]
-        });
-
-        // place down spaces
-        for (let y = 0; y < islandPreset.gridYSize; y++) {
-            for (let x = 0; x < islandPreset.gridXSize; x++) {
-                await build(newCache, {what: islandPreset.defaultTile, x, y});
-            }
-        }
-        // place down prebuilt structures
-        await build(newCache, {what: "BrickHouse", x:3, y:4});
-
-        playSessionCache[userId] = newCache;
-        return newCache;
+        // else create default
+        return await createWorld(userId);
     }
 }

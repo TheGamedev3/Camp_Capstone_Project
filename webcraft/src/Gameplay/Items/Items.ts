@@ -6,6 +6,8 @@ export type Item = {
     quantity?: number;
     itemType?: string;
     slotId?: string;
+    structure?: string;
+    // %! BPS(196) GIVE DATA ON WHAT STRUCTURE IT PLACES
 };
 
 
@@ -33,6 +35,7 @@ export const MaterialTable: Item[] = [
 ].map(item=>{(item as Item).itemType = 'material'; return item});
 
 
+// %! BPS(196) GIVE DATA ON WHAT STRUCTURE IT PLACES
 export const StructureTable: Item[] = [
     {
         name: "pine cone",
@@ -57,11 +60,11 @@ export const StructureTable: Item[] = [
     {
         name: "metal ore rock",
         icon:""
-    }
-    ,
+    },
     {
         name: "brick house",
-        icon:""
+        icon: "",
+        structure: "BrickHouse"
     }
 ].map(item=>{(item as Item).itemType = 'structure'; return item});
 

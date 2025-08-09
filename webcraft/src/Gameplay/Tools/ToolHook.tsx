@@ -1,10 +1,9 @@
 
 "use client";
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
-import { getRoute } from "@/utils/request";
-import { useSession } from "@/components/RootType/UserSession";
 import { defaultTool, Tool } from "./Tools";
 import { useGameData } from "../Looks/UpdateHook";
+import { Item } from "../Items/Items";
 
 type ToolContextType = {
   selectedHighlight: string | null;
@@ -19,17 +18,29 @@ const ToolContext = createContext<ToolContextType | null>(null);
 export const useTools = () => useContext(ToolContext)!;
 
 export function ToolInfoWrapper({ children }){
+    const{ updateGameData, GameData }=useGameData();
+
     const[selectedHighlight, setHighlight] = useState<string | null>(null);
     const[selectedTool, setTool] = useState<Tool>(defaultTool);
     const[selectedTile, setHover] = useState<string | null>(null);
-    const{ updateGameData, GameData }=useGameData();
+    const[selectedSlot, setSlot] = useState<string>('');
+    // %! BPS(193) USE TOOL HOOK FOR AN OPTIONAL SELECTED ITEM, SEND IT INTO THE ACTION HOVER STUFF
+    
+    // %! BPS(193) TEMPORARY USE EFFECT SELECT FIRST STRUCTURE ON DEFAULT
+    useEffect(()=>{
+        if(selectedSlot !== '' || !GameData)return;
+        const firstStructure = GameData?.inventory.find(item=>item.itemType === 'structure');
+        setSlot(firstStructure.slotId);
+    },[GameData, selectedSlot]);
 
     const updater = useRef(updateGameData);
     useEffect(()=>{updater.current = updateGameData}, [updateGameData]);
 
     const fireActivate = useCallback(async (tileId: string) => {
         const tileStack = GameData?.tileBucket[tileId];
-        const eventData = await selectedTool.action(tileId, tileStack);
+
+        // %! BPS(193) PASS SELECTED ITEM TO ACTION
+        const eventData = await selectedTool.action({slotId: selectedSlot, tileId, tileStack});
         if (eventData?.success === true && (eventData.result.timestamp > GameData.timestamp)) {
             GameData.tileBucket = {...GameData.tileBucket, ...eventData.result.newTiles};
 
@@ -42,19 +53,21 @@ export function ToolInfoWrapper({ children }){
             
             updater.current({...GameData});
         }
-    }, [GameData, selectedTool]);
+    }, [GameData, selectedTool, selectedSlot]);
 
     useEffect(()=>selectedTool.equip(),[selectedTool]);
 
     // only update initially on a new tool being selected, or on gamedata updating!!!!
     useEffect(()=>{
+        // %! BPS(193) PASS SELECTED ITEM TO HIGHLIGHT
         const tileStack = GameData?.tileBucket[selectedTile];
-        const hoverResult = selectedTool.hover(selectedTile, tileStack);
+        const hoverResult = selectedTool.hover({slotId: selectedSlot, tileId: selectedTile, tileStack});
         setHighlight(hoverResult?.highlight || null);
-    },[selectedTool, selectedTile, GameData]);
+    },[selectedTool, selectedTile, GameData, selectedSlot]);
 
     return (
         <ToolContext.Provider value={{
+            selectedSlot,
             selectedTool,
             equipTool(tool){
                 if(selectedTool === tool && tool !== defaultTool){
