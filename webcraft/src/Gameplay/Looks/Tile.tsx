@@ -1,6 +1,7 @@
 import React, { CSSProperties, useMemo } from "react";
 import { useTile } from "./UpdateHook";
 import { useTools } from "../Tools/ToolHook";
+import Image from "next/image";
 
 /* ----------  Types ----------------------------------------------------- */
 

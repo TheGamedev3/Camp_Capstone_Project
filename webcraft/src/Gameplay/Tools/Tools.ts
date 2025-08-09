@@ -10,6 +10,8 @@ export const Tools: Tool[] = [
     keybind: 'e',
     icon: Info,
     defaultTool: true,
+    selectsItems: false,
+    // %! PII(255) CREATE FILTER HERE
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
     onHover({tileId, tileStack}){
         if(tileId === null)return{actionable: false}
@@ -26,9 +28,11 @@ export const Tools: Tool[] = [
     keybind: 't',
     icon: Hammer,
     borderColor: 'border-blue-500',
+    usesItemTypeOf:(item)=>(item.itemType === "structure" && item.structure),
+    // %! PII(255) CREATE FILTER HERE
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
     onHover({selectedItem, tileId, tileStack}){
-        if(tileId === null)return{actionable: false}
+        if(tileId === null || !selectedItem)return{actionable: false}
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         
         
@@ -54,7 +58,10 @@ export const Tools: Tool[] = [
 
         // %! BPS(200) CLIENT SIDE QUICK PLACE (AND QUICK SUBTRACT MAYBE?)
         // instantly temporarily place the preview down while waiting for the server response
-        if(selectedItem.tilePreview){
+        if(selectedItem?.tilePreview){
+          // %! PII(252/253)
+          selectedItem.quantity -= 1;
+          GameData.inventory = GameData.inventory.filter(item=>item.quantity !== 0);
           GameData.tileBucket[tileId].push(selectedItem.tilePreview);
           refresh({...GameData});
         }
@@ -68,6 +75,8 @@ export const Tools: Tool[] = [
     keybind: 'b',
     icon: X,
     borderColor: 'border-red-500',
+    usesItemTypeOf:(item)=>(item.itemType === "tool"),
+    // %! PII(255) CREATE FILTER HERE
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
     onHover({tileId, tileStack}){
         if(tileId === null)return{actionable: false}

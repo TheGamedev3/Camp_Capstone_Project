@@ -185,7 +185,7 @@ FIGURE OUT HOW TO LOCAL UPDATE CERTAIN TILES ON THE CLIENT SIDE DIRECTLY
 Task list.......
 
 
-BUILD PLACE STRUCTURES
+🏠⬇️🌲 BUILD PLACE STRUCTURES
 // %! BPS(189)
 
     IN INVENTORY ITEMLIST.TSX
@@ -207,5 +207,73 @@ BUILD PLACE STRUCTURES
 
 
  ✅ - LABEL ALL SECTIONS
+
+
+
+Next Possible Tasks?
+
+➕🌃🏭 Industrial Revolution
+ - selecting a placeable item from the inventory
+ - mainly making new placeable items
+
+    SPAWNERS (consider how tiles interact with their neighbors):
+    - Mountain (spawns rocks cardinally to itself)
+    - Mineshaft (has a higher chance of spawning ores cardinally to itself)
+    - forest (spawns trees cardinally to itself over time)
+
+    STRUCTURES (give them drops):
+    - tree (drops wood)
+    - Rock
+    - Coal Ore
+    - Metal Ore
+
+    AUTOMATERS (consider how tiles interact with their neighbors):
+    - saw (chops nearby rocks and ores if close to a power source)
+    - lumbermill (chops nearby trees if close to a power source)
+    - solar panel (provides steady power)
+
+    ITEMS (drops):
+    - coal
+    - metal ore
+    - stone
+    - wood
+    - pine cone
+
+ - Initially start off with materials since there's no crafting
+ - test the drops and everything working together!
+
+
+
+🎒✨ Polished Improved Inventory
+// %! PII(248)
+
+✅ - deleting quantity 0 items from inventory
+    ✅ - on server side
+    ✅ - and on client side
+    ✅ 🪳 - fix it so the number update immediately, as does the tiles do on placing in build-Action
+✅ - filtering the inventory based on the tool to whats relevant, like a tool filter thing (is it a structure? or all? or a material? or a break tool?)
+    ✅ - actual filters for each tool
+    ✅ - whenever a new filter is set, select the first item that appears by default
+    ✅ - relevant-inventory hook
+✅ - item profile pictures and polished ui
+    ✅ - a new item slot component
+       ✅ - shrink item profile to a specific aspect
+    ✅ - scrollbar and handle overflow
+✅ - consider crafting in the future?
+✅ 🪳 - items dont have be selected for certain tools!
+
+✅ - scout out where each task is located in each file
+
+
+🖥️ Interactable UI
+ - click certain structures to pull up UI (add it in properties, and make custom ui for them, they'll mostly consist of +/- buttons of items, and an output you can click to claim)
+ - coal generator (eats coal? dunno how.... we'll need a ui for it later)
+ - furnace (also requires a ui)
+ - IRON THIS OUT MORE!
+
+new sections in the far future:
+⛏️ Upgradable tools, durability, and structure health
+🛠️ Crafting
+💱 Trading with Players
 
 

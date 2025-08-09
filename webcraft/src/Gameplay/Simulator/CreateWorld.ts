@@ -24,7 +24,7 @@ export async function createWorld(userId: string){
     // place down prebuilt structures
     await spawnStructure(newCache, {what: "BrickHouse", x:3, y:4});
 
-    await giveCommand(newCache, "brick house (10)");
+    await giveCommand(newCache, "brick house (10), metal (2), stone (6), wood (3), metal ore (7)");
     newCache.ejectChanges();
 
     playSessionCache[userId] = newCache;

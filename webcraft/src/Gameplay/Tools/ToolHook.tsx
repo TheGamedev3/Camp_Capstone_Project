@@ -3,7 +3,6 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import { defaultTool, Tool } from "./Tools";
 import { useGameData } from "../Looks/UpdateHook";
-import { Item } from "../Items/Items";
 
 type ToolContextType = {
   selectedHighlight: string | null;
@@ -11,6 +10,7 @@ type ToolContextType = {
   equipTool: React.Dispatch<React.SetStateAction<Tool>>;
   selectedTile: string | null;
   setHover: React.Dispatch<React.SetStateAction<string | null>>;
+  setSlot: React.Dispatch<React.SetStateAction<string>>;
   fireActivate: (x: number, y: number)=>void;
 };
 
@@ -25,40 +25,40 @@ export function ToolInfoWrapper({ children }){
     const[selectedTile, setHover] = useState<string | null>(null);
     const[selectedSlot, setSlot] = useState<string>('');
     // %! BPS(193) USE TOOL HOOK FOR AN OPTIONAL SELECTED ITEM, SEND IT INTO THE ACTION HOVER STUFF
-    
-    // %! BPS(193) TEMPORARY USE EFFECT SELECT FIRST STRUCTURE ON DEFAULT
-    useEffect(()=>{
-        if(selectedSlot !== '' || !GameData)return;
-        const firstStructure = GameData?.inventory.find(item=>item.itemType === 'structure');
-        setSlot(firstStructure.slotId);
-    },[GameData, selectedSlot]);
 
     const updater = useRef(updateGameData);
     useEffect(()=>{updater.current = updateGameData}, [updateGameData]);
+    
+    const liveData = useRef(GameData);
+    useEffect(()=>{liveData.current = GameData}, [GameData]);
 
     const fireActivate = useCallback(async (tileId: string) => {
-        const tileStack = GameData?.tileBucket[tileId];
+        const gamedata=()=>liveData.current;
+        const tileStack = gamedata()?.tileBucket[tileId];
 
         // %! BPS(193) PASS SELECTED ITEM TO ACTION
         const eventData = await selectedTool.action({
             refresh: updater.current,
-            GameData,
+            GameData: gamedata(),
             slotId: selectedSlot,
             tileId, tileStack
         });
-        if (eventData?.success === true && (eventData.result.timestamp > GameData.timestamp)) {
-            GameData.tileBucket = {...GameData.tileBucket, ...eventData.result.newTiles};
+        const gameDataNow = gamedata();
+        if (eventData?.success === true && (eventData.result.timestamp > gameDataNow.timestamp)) {
+            gameDataNow.tileBucket = {...gameDataNow.tileBucket, ...eventData.result.newTiles};
 
             const newItems = eventData.result.newItems; // [Item, number][]
             const overwriteItem = newItems.map(([item])=>item.slotId);
-            GameData.inventory = GameData.inventory.filter(item=>!overwriteItem.includes(item.slotId));
-            GameData.inventory.push(...(newItems.map(([item])=>item)));
+            gameDataNow.inventory = gameDataNow.inventory.filter(item=>!overwriteItem.includes(item.slotId));
+           
+            // %! PII\(252/253) UPDATE NUMBERS ON THE CLIENT SIDE
+            gameDataNow.inventory.push(...(newItems.map(([item])=>item).filter(item=>item.quantity !== 0)));
 
-            GameData.timestamp = eventData.result.timestamp;
+            gameDataNow.timestamp = eventData.result.timestamp;
             
-            updater.current({...GameData});
+            updater.current({...gameDataNow});
         }
-    }, [GameData, selectedTool, selectedSlot]);
+    }, [selectedTool, selectedSlot]);
 
     useEffect(()=>selectedTool.equip(),[selectedTool]);
 
@@ -76,6 +76,7 @@ export function ToolInfoWrapper({ children }){
         );
     },[selectedTool, selectedTile, GameData, selectedSlot]);
 
+    // %! PII(257) PROVIDE THE RELEVANT INVENTORY ASKED FROM THE TOOLS
     return (
         <ToolContext.Provider value={{
             selectedSlot,
@@ -89,7 +90,7 @@ export function ToolInfoWrapper({ children }){
                     setTool(tool);
                 }
             },
-            selectedTile, setHover, selectedHighlight,
+            selectedTile, setHover, selectedHighlight, setSlot,
             fireActivate
         }}>
             {children}

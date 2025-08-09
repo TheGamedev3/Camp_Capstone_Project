@@ -27,7 +27,7 @@ export const breakAt = UnderSession((session, { tool, tileId, x, y }: BreakAtPar
     breakTarget.deleteSelf();
     session.tileChange(tileId);
 
-    giveCommand(session, "wood (3)");
+    giveCommand(session, "brick house (1)");
 
     return{success, result: session.ejectChanges()}
 });

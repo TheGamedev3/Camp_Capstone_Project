@@ -1,63 +1,86 @@
 
-
-
-
-// alphabetical
-// or by quantity
-// by type (placeables or materials)
-// select if nessecary
-
-// consider crafting and max storage later
-
-
-  // use GameData.items memoized!
-  // use GameData.itemChanges to use on ItemNotif!
-
-import { useGameData } from "../Looks/UpdateHook"
-import { useTools } from "../Tools/ToolHook";
-import { Item } from "./Items";
-import { useCallback, useMemo } from "react";
+import { useEffect, useLayoutEffect, useRef } from "react";
+import Slot from "./Slot";
+import { useInventory } from "./InventoryHook";
 
 export function ItemList() {
-  const { GameData, updateGameData } = useGameData();
-  // %! BPS(193) USE TOOL HOOK?
-  const{ selectedSlot } = useTools();
+  const{relevantItems, selectedSlot} = useInventory();
 
-  const updateSlot = useCallback((...items: Item[]) => {
-    if (items.length === 0) return;
+  // preserve scroll position across re-renders
+  const scrollRef = useRef<HTMLDivElement>(null);
+  const savedScrollTop = useRef(0);
+  const prevScrollHeight = useRef(0);
 
-    updateGameData(prev => {
-      if (!prev) return prev;
+  // Track scrollTop continuously (so we always have the latest)
+  useEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
+    const onScroll = () => { savedScrollTop.current = el.scrollTop; };
+    el.addEventListener("scroll", onScroll);
+    return () => el.removeEventListener("scroll", onScroll);
+  }, []);
 
-      const overwrite = new Set(items.map(i => i.slotId));
-      const nextInv = [
-        ...prev.inventory.filter(i => !overwrite.has(i.slotId)),
-        ...items,
-      ];
+  // Restore scrollTop after content changes.
+  // If height changed a lot, restore by ratio so the viewport feels consistent.
+  useLayoutEffect(() => {
+    const el = scrollRef.current;
+    if (!el) return;
 
-      return { ...prev, inventory: nextInv };
+    const oldHeight = prevScrollHeight.current || el.scrollHeight;
+    const ratio = oldHeight ? savedScrollTop.current / oldHeight : 0;
+
+    // Next frame after DOM paints
+    requestAnimationFrame(() => {
+      if (!scrollRef.current) return;
+      const newHeight = scrollRef.current.scrollHeight;
+      const byRatio = Math.round(ratio * newHeight);
+
+      // Prefer ratio when list height changed; fall back to absolute if similar
+      const heightChangedALot = Math.abs(newHeight - oldHeight) > 8;
+      scrollRef.current.scrollTop = heightChangedALot ? byRatio : savedScrollTop.current;
+
+      prevScrollHeight.current = newHeight;
     });
-  }, [updateGameData]);
-
-  const backpack = useMemo(() => ({
-    inventory: GameData.inventory,
-    updateSlot,
-  }), [GameData.inventory, updateSlot]);
+  }, [relevantItems]); // re-run when list content order/size changes
 
   // %! BPS(192) SELECT UI
+  // %! PII(261) SCROLLBAR AND HANDLE OVERFLOW
+  // %! PII(259) NEW SLOT COMPONENT
+// Grid (centered, fixed-height, N columns always square)
+  const rowLength = 8;        // number of squares per row
+  const slotPx    = 80;       // matches w-20 (80px)
+  const gapPx     = 8;        // Tailwind gap-2 = 0.5rem ≈ 8px
+  const heightPx  = 200;
+
   return (
-    <div>
-      {backpack.inventory.map(({ slotId, name, quantity }) => (
+    <aside className="fixed left-0 bottom-0 w-full flex justify-center pb-2">
+      <div className="w-full flex justify-center">
         <div
-          key={slotId}
-          className={`px-2 py-1 ${
-            slotId === selectedSlot ? 'bg-blue-300' : ''
-          }`}
+          ref={scrollRef}
+          style={{
+            // fixed bar geometry
+            maxHeight: `${heightPx}px`,
+            width: `${rowLength * slotPx + (rowLength - 1) * gapPx}px`,
+            minHeight: `${slotPx+gapPx*2}px`,                 // ← keep height as if one square exists
+            // layout math handled by flex
+            display: "flex",
+            flexWrap: "wrap",
+            gap: `${gapPx}px`,
+            justifyContent: "center",                 // ← center items per row
+            alignContent: "flex-start",
+          }}
+          className="overflow-auto rounded bg-neutral-800 p-2"
         >
-          {name} ({quantity})
+          {relevantItems.map((item) => (
+            <Slot
+              key={item.slotId}
+              selected={item.slotId === selectedSlot}
+              {...item}
+            />
+          ))}
         </div>
-      ))}
-    </div>
+      </div>
+    </aside>
   );
 }
 

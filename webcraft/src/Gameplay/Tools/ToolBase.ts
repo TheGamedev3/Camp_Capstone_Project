@@ -8,6 +8,7 @@ export type MouseEvent={
   selectedItem?: unknown;
   refresh?: RefObject<Dispatch<unknown>>
 }
+type Item = unknown;
 
 export class Tool {
   name: string;
@@ -17,6 +18,9 @@ export class Tool {
   keybind?: string;
   icon: React.ComponentType<any>;
   defaultTool: boolean;
+  usesItemTypeOf?: (item: Item)=>boolean;
+  selectsItems: boolean = true;
+  // %! PII(255) CREATE FILTER PROP HERE
 
   private _unhover: (tileId: string | null) => void;
   private _hoveringTile: string | null = null;
@@ -29,10 +33,12 @@ export class Tool {
     keybind,
     icon = () => null,     /* fallback empty icon */
     defaultTool = false,
+    selectsItems = true,
     onHover,
     onAction,
     onEquip,
     onUnequip,
+    usesItemTypeOf,
   }: {
     name: string;
     hoverName?: string;
@@ -40,11 +46,14 @@ export class Tool {
     keybind?: string;
     icon?: React.ComponentType<any>;
     defaultTool?: boolean;
+    selectsItems?: boolean;
 
     onHover?: (args: MouseEvent) => any;
     onAction?: (args: MouseEvent) => Promise<any> | any;
     onEquip?: () => void;
     onUnequip?: () => void;
+
+    usesItemTypeOf?: (item: Item)=>boolean;
   }) {
     this.name = name;
     this.hoverName = hoverName ?? name;
@@ -52,6 +61,10 @@ export class Tool {
     this.keybind = keybind;
     this.icon = icon;
     this.defaultTool = defaultTool;
+    this.selectsItems = selectsItems;
+
+    // %! PII(255) PASS FILTER PROP HERE
+    this.usesItemTypeOf = usesItemTypeOf;
 
     function fitMouseEvent(mouseEvent: MouseEvent){
       const {slotId, GameData} = mouseEvent;

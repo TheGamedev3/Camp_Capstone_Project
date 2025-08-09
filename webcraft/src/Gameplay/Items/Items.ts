@@ -17,23 +17,23 @@ export type Item = {
 export const MaterialTable: Item[] = [
     {
         name: "wood",
-        icon:"",
+        icon:"https://tse2.mm.bing.net/th/id/OIP.SHwxfTNu52nxwioUggM9JwHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
     },
     {
         name: "stone",
-        icon:""
+        icon:"https://cdn.shopify.com/s/files/1/1027/4949/products/fz7v40r0zyobl19vsat3_3315x3000.jpg?v=1578504079"
     },
     {
         name: "coal",
-        icon:""
+        icon:"https://tse4.mm.bing.net/th/id/OIP.mAx4f1uTISRl_XHHyweWZQHaGM?r=0&rs=1&pid=ImgDetMain&o=7&rm=3"
     },
     {
         name: "metal",
-        icon:""
+        icon:"https://www.smetals.co.uk/wp-content/uploads/2023/04/3mm-mild-steel-sheet-metal-image.jpg"
     },
     {
         name: "metal ore",
-        icon:""
+        icon:"https://i.pinimg.com/originals/3f/6e/d0/3f6ed0a78397d54054b8d3f04ccf1ae1.jpg"
     }
 ].map(item=>{(item as Item).itemType = 'material'; return item});
 
@@ -42,7 +42,7 @@ export const MaterialTable: Item[] = [
 export const StructureTable: Item[] = [
     {
         name: "pine cone",
-        icon:"",
+        icon:"https://tse3.mm.bing.net/th/id/OIP.gm5pLYXg2eMR6gCZGntHWAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
     },
     {
         name: "tree",
@@ -66,7 +66,7 @@ export const StructureTable: Item[] = [
     },
     {
         name: "brick house",
-        icon: "",
+        icon: "https://www.homestratosphere.com/wp-content/uploads/2018/07/red-brick-exterior-home2018-07-06-at-1.44.50-PM-12.jpg",
         structure: "BrickHouse"
     }
 ].map(item=>{

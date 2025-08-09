@@ -91,6 +91,9 @@ export class PlaySession{
 
     getData(): Pick<PlaySession, ExposedKeys> & { timestamp: number } {
 
+        // %! PII(251) CLEAR ANY QUANTITY 0 OR DURABILITY 0% ITEMS
+        this.inventory = this.inventory.filter(item=>item.quantity !== 0);
+
         const data = Object.fromEntries(
             exposedProperties.map((key) => [key, this[key]])
         ) as Pick<PlaySession, ExposedKeys>;
