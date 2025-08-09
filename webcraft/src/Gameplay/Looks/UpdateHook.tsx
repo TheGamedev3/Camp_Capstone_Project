@@ -8,7 +8,9 @@ type GameData = unknown;
 
 type GameDataContextType = {
   GameData: GameData | null;
+  hoverBucket: Record<string, any>;
   updateGameData: React.Dispatch<React.SetStateAction<GameData | null>>;
+  updateHoverBucket: React.Dispatch<React.SetStateAction<Record<string, any>>>;
 };
 
 const GameDataContext = createContext<GameDataContextType | null>(null);
@@ -16,7 +18,11 @@ export const useGameData = () => useContext(GameDataContext)!;
 
 export function GameDataSession({ children }){
     const[GameData, updateGameData] = useState<GameData | null>(null);
-    const contextValue = useMemo(() => ({GameData, updateGameData}), [GameData, updateGameData]);
+    const[hoverBucket, updateHoverBucket] = useState<Record<string, any>>({});
+    const contextValue = useMemo(() => ({
+        GameData, hoverBucket,
+        updateGameData, updateHoverBucket
+    }), [GameData, updateGameData, hoverBucket, updateHoverBucket]);
 
     const { user } = useSession();
 
@@ -60,6 +66,8 @@ export function GameDataSession({ children }){
 
 
 export function useTile(id: string) {
-  const { GameData } = useGameData();
-  return GameData?.tileBucket?.[id];
+  const { GameData, hoverBucket } = useGameData();
+  const myStack = GameData?.tileBucket?.[id];
+  const myHover = hoverBucket[id]||[];
+  return myStack ? [...myStack, ...myHover] : null;
 }

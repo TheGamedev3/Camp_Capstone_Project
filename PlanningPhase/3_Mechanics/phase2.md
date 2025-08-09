@@ -189,15 +189,15 @@ BUILD PLACE STRUCTURES
 // %! BPS(189)
 
     IN INVENTORY ITEMLIST.TSX
-⏩ - selecting an item from the inventory for tools to select (item slotId maybe?)
+⏩ (SKIP FOR NOW) - selecting an item from the inventory for tools to select (item slotId maybe?)
     ✅ - start off with just selecting the first structure item by default
 
     IN ITEMS.tsx' DATA
 ✅ - finding what structure that item places, and sending it over to the client
 
-    ⏩IN THE ONHOVER OF THE BUILD TOOL IN TOOLS
- - ghost hover tile of that item being placed
- - on Action, if valid, assume it will get placed
+    IN THE ONHOVER OF THE BUILD TOOL IN TOOLS
+✅ - ghost hover tile of that item being placed, TILE PREVIEWING
+✅ - on Action, if valid, assume it will get placed
 
     ON THE BUILD ROUTE SERVER SIDE
     A BIT OF REORGANIZING ON THE BUILD ROUTE SERVER SIDE

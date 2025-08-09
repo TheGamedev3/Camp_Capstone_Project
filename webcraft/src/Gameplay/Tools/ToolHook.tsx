@@ -18,7 +18,7 @@ const ToolContext = createContext<ToolContextType | null>(null);
 export const useTools = () => useContext(ToolContext)!;
 
 export function ToolInfoWrapper({ children }){
-    const{ updateGameData, GameData }=useGameData();
+    const{ updateGameData, updateHoverBucket, GameData }=useGameData();
 
     const[selectedHighlight, setHighlight] = useState<string | null>(null);
     const[selectedTool, setTool] = useState<Tool>(defaultTool);
@@ -40,7 +40,12 @@ export function ToolInfoWrapper({ children }){
         const tileStack = GameData?.tileBucket[tileId];
 
         // %! BPS(193) PASS SELECTED ITEM TO ACTION
-        const eventData = await selectedTool.action({slotId: selectedSlot, tileId, tileStack});
+        const eventData = await selectedTool.action({
+            refresh: updater.current,
+            GameData,
+            slotId: selectedSlot,
+            tileId, tileStack
+        });
         if (eventData?.success === true && (eventData.result.timestamp > GameData.timestamp)) {
             GameData.tileBucket = {...GameData.tileBucket, ...eventData.result.newTiles};
 
@@ -61,8 +66,14 @@ export function ToolInfoWrapper({ children }){
     useEffect(()=>{
         // %! BPS(193) PASS SELECTED ITEM TO HIGHLIGHT
         const tileStack = GameData?.tileBucket[selectedTile];
-        const hoverResult = selectedTool.hover({slotId: selectedSlot, tileId: selectedTile, tileStack});
+        const hoverResult = selectedTool.hover({GameData, slotId: selectedSlot, tileId: selectedTile, tileStack});
+        
         setHighlight(hoverResult?.highlight || null);
+
+        const hoverTile = hoverResult?.hoverTile;
+        updateHoverBucket(
+            (hoverTile && selectedTile) ? {[selectedTile]:[hoverTile]} : {}
+        );
     },[selectedTool, selectedTile, GameData, selectedSlot]);
 
     return (

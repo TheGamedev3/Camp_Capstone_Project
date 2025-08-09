@@ -77,7 +77,6 @@ export const placeItem = UnderSession(async(session, { slotId, tileId, x, y }:Pl
         }
     }
     console.error(`COULDNT PLACE ITEM ${slotId}! \n`, item, `\n result:\n`, result);
-    console.log(session.inventory)
     return{success: false}
 });
 // %! BPS(206) VERIFY U HAVE ENOUGH OF THAT ITEM

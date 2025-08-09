@@ -159,7 +159,7 @@ return (
           alt=""
           style={{
             ...overlayStyle,
-            zIndex: 2,
+            zIndex: 6,
           }}
         />
       ))}

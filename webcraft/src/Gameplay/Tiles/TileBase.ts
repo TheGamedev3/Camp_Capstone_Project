@@ -23,6 +23,8 @@ export class TileBase {
     }
 
     onTick(range: number, func: () => void) {
+        if(!this.session)return;
+
         this.myListeners.push(func);
         let count = 0;
 
@@ -41,6 +43,7 @@ export class TileBase {
     }
 
     deleteSelf() {
+        if(!this.session)return;
         if(!this.removeSelf())return;
         this.myListeners.forEach(listener => {
             const index = this.session.pingListeners.indexOf(listener);
@@ -61,6 +64,7 @@ export class TileBase {
     }
 
     removeSelf(){
+        if(!this.session)return false;
         const arr = this.session.tileBucket[this.key];
         if (!arr) return false;
         const index = arr.indexOf(this);

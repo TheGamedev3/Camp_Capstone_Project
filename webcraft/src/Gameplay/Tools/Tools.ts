@@ -27,29 +27,37 @@ export const Tools: Tool[] = [
     icon: Hammer,
     borderColor: 'border-blue-500',
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
-    onHover({slotId, tileId, tileStack}){
+    onHover({selectedItem, tileId, tileStack}){
         if(tileId === null)return{actionable: false}
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
+        
+        
         // %! BPS(199) GHOST TILE PREVIEW OF ITEM
         // REQUIRES:
         // GETTING INVENTORY
         // GETTING STRUCTURE HOVER TILE DATA IN ADVANCED
         // JOINING IT WITH THE REST OF THE TILE
 
+        const actionable = selectedItem && !collision;
         return{
-            actionable: !collision,
-            highlight: !collision ? 'rgba(0, 255, 34, 0.7)' : 'rgba(136, 0, 0, 0.7)',
-            hoverTile: {structure: "BrickHouse"} // (w/ a default transparency of 40)
+            actionable,
+            highlight: actionable ? 'rgba(0, 255, 34, 0.7)' : 'rgba(136, 0, 0, 0.7)',
+            hoverTile: {...selectedItem.tilePreview, key:tileId} // (w/ a default transparency of 40)
         }
     },
 
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
-    async onAction({slotId, tileId, tileStack}){
-        if(!tileStack)return;
+    async onAction({GameData, refresh, selectedItem, slotId, tileId, tileStack}){
+        if(!tileStack || !selectedItem || !GameData)return;
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(collision){return}
 
         // %! BPS(200) CLIENT SIDE QUICK PLACE (AND QUICK SUBTRACT MAYBE?)
+        // instantly temporarily place the preview down while waiting for the server response
+        if(selectedItem.tilePreview){
+          GameData.tileBucket[tileId].push(selectedItem.tilePreview);
+          refresh({...GameData});
+        }
 
         const eventData = await getRoute({route: "POST /api/build", body: {slotId, tileId}});
         return eventData;

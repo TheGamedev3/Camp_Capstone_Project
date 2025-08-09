@@ -1,4 +1,5 @@
 
+import { tilePreview } from "../Tiles/TileLibrary";
 
 export type Item = {
     name: string;
@@ -6,7 +7,9 @@ export type Item = {
     quantity?: number;
     itemType?: string;
     slotId?: string;
+
     structure?: string;
+    tilePreview?: string;
     // %! BPS(196) GIVE DATA ON WHAT STRUCTURE IT PLACES
 };
 
@@ -66,7 +69,14 @@ export const StructureTable: Item[] = [
         icon: "",
         structure: "BrickHouse"
     }
-].map(item=>{(item as Item).itemType = 'structure'; return item});
+].map(item=>{
+    (item as Item).itemType = 'structure';
+    const tilename = item.structure;
+    if(tilename){
+        item.tilePreview = tilePreview({tilename});
+    }
+    return item;
+});
 
 
 export const allItems: Item[] = [...MaterialTable, ...StructureTable];

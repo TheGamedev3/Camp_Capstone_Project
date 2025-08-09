@@ -15,6 +15,14 @@ export function isTileName(name: string): name is TileName {
 
 type TileConstructor<T extends TileName> = InstanceType<TileLibrary[T]>;
 
+export function tilePreview<T extends TileName>(
+    params: { tilename: T } & ConstructorParameters<TileLibrary[T]>[0]
+): Record<string, any> {
+    const { tilename, ...rest } = params;
+    const TileClass = tileLibrary[tilename];
+    return JSON.parse(JSON.stringify((new TileClass(rest) as TileConstructor<T>)));
+}
+
 export function createTile<T extends TileName>(
     params: { tilename: T } & ConstructorParameters<TileLibrary[T]>[0]
 ): TileConstructor<T> {
