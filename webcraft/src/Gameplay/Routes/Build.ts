@@ -45,9 +45,10 @@ export const spawnStructure = UnderSession(async(session, { who, what, tileId, x
             (session.tileBucket[tileId] ??= []).push(newTile);
             session.tileChange(tileId);
         }
-        return{success, result: session.ejectChanges()}
+        return{success}
     }else{
         console.error(`❌⏹️ TILE "${what}" NOT FOUND!`);
+        return{success: false}
     }
 });
 
@@ -73,7 +74,7 @@ export const placeItem = UnderSession(async(session, { slotId, tileId, x, y }:Pl
             // instead of using the give command, subtract it out manually, as to use the correct slotId reference
             item.quantity -= 1;
             session.itemChange(item, -1);
-            return(result as ReturnType<spawnStructure>);
+            return{success: result.success, result: session.ejectChanges()}
         }
     }
     console.error(`COULDNT PLACE ITEM ${slotId}! \n`, item, `\n result:\n`, result);

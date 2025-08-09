@@ -1,9 +1,19 @@
 import Grass from "../Tiles/Grass";
 import BrickHouse from "../Tiles/BrickHouse";
+import CoalOre from "../Tiles/CoalOre";
+import Forest from "../Tiles/Forest";
+import MetalOre from "../Tiles/MetalOre";
+import PineTree from "../Tiles/PineTree";
+import Rock from "../Tiles/Rock";
 
 const tileLibrary = {
   Grass,
   BrickHouse,
+  CoalOre,
+  Forest,
+  MetalOre,
+  PineTree,
+  Rock,
 } as const;
 
 type TileLibrary = typeof tileLibrary;

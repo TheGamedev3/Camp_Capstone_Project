@@ -35,32 +35,21 @@ import { randomBytes } from 'crypto';
 function supposeItem(session: PlaySession, itemBase: Item, create: boolean=true): Item{
     let item: Item | undefined = session.inventory.find(i=>i.name === itemBase.name);
     if(item === undefined && create){
+        // create an item w/ an unique id
         item = {...itemBase, slotId: randomBytes(16).toString('hex') }; // PICK WHAT DATA SPECIFICALLY TO CONSTRUCT IT! MAYBE AN ITEM CONSTRUCTOR????
         session.inventory.push(item);
     }
-    // possibly give a unique id?
-    // depends on if stackable or not
-    // ADD ITEM TO THINGY
-    // think of making a separate obtainedItem class for Item instances in the inventory?
+    // depends on if stackable/ is a tool or not
     return (item as Item);
 }
 
 export const giveCommand = UnderSession((session, itemList: string)=>{
-    
     interpretQuantities(itemList).forEach(([item, quantity])=>{
       const targetItem = supposeItem(session, item, true);
       targetItem.quantity??=0;
       targetItem.quantity+=quantity;
       session.itemChange(targetItem, quantity);
     });
-    // return{success, tileData: session.tileBucket[tileId]}
-    // which means, potentially flag in other events into the server like inventory changed?
-    // REMEMBER TO TURN ON ESLINT OR WHATEVER
-    /*
-    [
-    
-    ]
-    */
 });
 export const exchange = UnderSession((session, costList: string, outputList: string, conditions: ()=>boolean)=>{
     

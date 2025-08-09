@@ -7,6 +7,7 @@ export default class BrickHouse extends TileBase {
     texture: string = "https://www.homestratosphere.com/wp-content/uploads/2018/07/red-brick-exterior-home2018-07-06-at-1.44.50-PM-12.jpg";
 
     swap: boolean = false;
+    drops(){return`brick house (1)`}
     constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
         super({ x, y, session });
 

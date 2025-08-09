@@ -43,6 +43,7 @@ export const StructureTable: Item[] = [
     {
         name: "pine cone",
         icon:"https://tse3.mm.bing.net/th/id/OIP.gm5pLYXg2eMR6gCZGntHWAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        structure: "PineTree"
     },
     {
         name: "tree",

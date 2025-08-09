@@ -9,7 +9,7 @@ interface BreakAtParams {
 }
 
 import { giveCommand } from "../Items/ItemGive";
-export const breakAt = UnderSession((session, { tool, tileId, x, y }: BreakAtParams)=>{
+export const breakAt = UnderSession(async(session, { tool, tileId, x, y }: BreakAtParams)=>{
     let tx: number, ty: number;
     if (tileId) {
         [tx, ty] = tileId.split('-').map(Number);
@@ -24,10 +24,10 @@ export const breakAt = UnderSession((session, { tool, tileId, x, y }: BreakAtPar
     const tileStack = session.tileBucket[tileId] || [];
     const breakTarget = tileStack.find(stackLayer=>stackLayer.layer === 'structure');
     const success = Boolean(breakTarget);
-    breakTarget.deleteSelf();
+    // %! IRR(242) GET DROP DATA FROM FUNCTION HERE
+    const drops = breakTarget?.dropSelf();
+    if(drops){await giveCommand(session, drops)}
     session.tileChange(tileId);
-
-    giveCommand(session, "brick house (1)");
 
     return{success, result: session.ejectChanges()}
 });

@@ -209,41 +209,6 @@ Task list.......
  ✅ - LABEL ALL SECTIONS
 
 
-
-Next Possible Tasks?
-
-➕🌃🏭 Industrial Revolution
- - selecting a placeable item from the inventory
- - mainly making new placeable items
-
-    SPAWNERS (consider how tiles interact with their neighbors):
-    - Mountain (spawns rocks cardinally to itself)
-    - Mineshaft (has a higher chance of spawning ores cardinally to itself)
-    - forest (spawns trees cardinally to itself over time)
-
-    STRUCTURES (give them drops):
-    - tree (drops wood)
-    - Rock
-    - Coal Ore
-    - Metal Ore
-
-    AUTOMATERS (consider how tiles interact with their neighbors):
-    - saw (chops nearby rocks and ores if close to a power source)
-    - lumbermill (chops nearby trees if close to a power source)
-    - solar panel (provides steady power)
-
-    ITEMS (drops):
-    - coal
-    - metal ore
-    - stone
-    - wood
-    - pine cone
-
- - Initially start off with materials since there's no crafting
- - test the drops and everything working together!
-
-
-
 🎒✨ Polished Improved Inventory
 // %! PII(248)
 
@@ -264,6 +229,56 @@ Next Possible Tasks?
 
 ✅ - scout out where each task is located in each file
 
+Next Possible Tasks?
+
+
+➕🌃🏭 Industrial-Revolution & Resources
+// %! IRR(236)
+
+ - selecting a placeable item from the inventory
+ - mainly making new placeable items
+
+    Dropping:
+    ✅ - tile.drop() on server side
+
+    STRUCTURES (give them drops):
+    ✅ - tree (drops wood and a pine cone)
+    ✅ - Rock (drops stone)
+    ✅ - Coal Ore (drops coal)
+    ✅ - Metal Ore (drops metal ore)
+
+    Neighbors:
+    ✅ - get cardinal neighbors and tile info
+    ✅ - is valid space?
+    ✅ - pick random space every tick to generate new
+
+    SPAWNERS (consider how tiles interact with their neighbors):
+    ✅ - forest (spawns trees cardinally to itself over time)
+    - Mountain (spawns rocks cardinally to itself)
+    - Mineshaft (has a higher chance of spawning ores cardinally to itself)
+
+    Gather:
+    - auto collects upon breaking nearby structures
+
+    AUTOMATERS (consider how tiles interact with their neighbors):
+    - drill (chops nearby rocks and ores if close to a power source)
+    - lumbermill (chops nearby trees if close to a power source)
+    - solar panel (provides steady power)
+
+
+    ITEMS (drops):
+    ✅ - coal
+    ✅ - metal ore
+    ✅ - stone
+    ✅ - wood
+    ✅ - pine cone
+
+ - Initially start off with materials since there's no crafting
+ - test the drops and everything working together!
+
+
+
+
 
 🖥️ Interactable UI
  - click certain structures to pull up UI (add it in properties, and make custom ui for them, they'll mostly consist of +/- buttons of items, and an output you can click to claim)
@@ -277,3 +292,5 @@ new sections in the far future:
 💱 Trading with Players
 
 
+Brief “+1” / “−1” micro-animations on the slot quantity (150–200ms).
+have it brodcast its changes to the itemnotification!
