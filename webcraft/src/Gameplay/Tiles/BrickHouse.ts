@@ -1,5 +1,4 @@
 
-import { PlaySession } from "../Simulator/PlaySession";
 import { TileBase } from "./TileBase";
 
 export default class BrickHouse extends TileBase {
@@ -8,8 +7,9 @@ export default class BrickHouse extends TileBase {
 
     swap: boolean = false;
     drops(){return`brick house (1)`}
-    constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
-        super({ x, y, session });
+    constructor(coords) {
+        super(coords);
+        const{ x, y }: { x: number; y: number } = coords;
 
         const cord1 = [x, y];
         const cord2 = [x+1, y+1];

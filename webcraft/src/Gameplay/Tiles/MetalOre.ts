@@ -1,5 +1,4 @@
 
-import { PlaySession } from "../Simulator/PlaySession";
 import { TileBase } from "./TileBase";
 
 export default class MetalOre extends TileBase {
@@ -10,7 +9,5 @@ export default class MetalOre extends TileBase {
         const ore = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
         return`metal ore (${ore})`;
     }
-    constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
-        super({ x, y, session });
-    }
+    constructor(coords){super(coords)}
 }

@@ -1,5 +1,4 @@
 
-import { PlaySession } from "../Simulator/PlaySession";
 import { TileBase } from "./TileBase";
 
 export default class Rock extends TileBase {
@@ -10,7 +9,5 @@ export default class Rock extends TileBase {
         const stone = Math.floor(Math.random() * (4 - 2 + 1)) + 2;
         return`stone (${stone})`;
     }
-    constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
-        super({ x, y, session });
-    }
+    constructor(coords){super(coords)}
 }

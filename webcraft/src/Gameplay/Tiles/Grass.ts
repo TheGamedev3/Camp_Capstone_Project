@@ -1,4 +1,3 @@
-import { PlaySession } from "../Simulator/PlaySession";
 import { TileBase } from "./TileBase";
 
 export default class Grass extends TileBase {
@@ -6,8 +5,9 @@ export default class Grass extends TileBase {
     texture: string = "https://tse4.mm.bing.net/th/id/OIP.FbqH0HgUQPEISriPPbjhVgHaE8?r=0&rs=1&pid=ImgDetMain&o=7&rm=3";
     tileColor: string;
 
-    constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
-        super({ x, y, session });
+    constructor(coords) {
+        super(coords);
+        const{ x, y }: { x: number; y: number } = coords;
 
         // Checkerboard logic: alternate tint based on x + y
         const isEven = (x + y) % 2 === 0;

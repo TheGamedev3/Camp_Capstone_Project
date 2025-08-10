@@ -51,7 +51,8 @@ export const StructureTable: Item[] = [
     },
     {
         name: "forest",
-        icon:""
+        icon:"https://tse2.mm.bing.net/th/id/OIP.Gs0tJU3w2iFeE-zC63gh2gHaE6?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        structure: "Forest"
     },
     {
         name: "rock",
@@ -69,12 +70,32 @@ export const StructureTable: Item[] = [
         name: "brick house",
         icon: "https://www.homestratosphere.com/wp-content/uploads/2018/07/red-brick-exterior-home2018-07-06-at-1.44.50-PM-12.jpg",
         structure: "BrickHouse"
+    },
+    {
+        name: "lumber mill",
+        icon: "https://tse2.mm.bing.net/th/id/OIP.rXHMZ6ZqHWNqSnfXQwhcywHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        structure: "Lumbermill"
+    },
+    {
+        name: "drill",
+        icon: "https://th.bing.com/th/id/R.2d733f8a457e3863529293f0503bd5e9?rik=AFEdiOlIJHzFRw&pid=ImgRaw&r=0",
+        structure: "Drill"
+    },
+    {
+        name: "mountain",
+        icon: "https://th.bing.com/th/id/R.a4135f38639d7f8c71d08731c6225ec2?rik=wGokmSuSKxk%2fOQ&pid=ImgRaw&r=0",
+        structure: "Mountain"
+    },
+    {
+        name: "mineshaft",
+        icon: "https://th.bing.com/th/id/R.02b16a23b74028b45938e1faa377bbc9?rik=PzRRvkfu%2bBODQw&riu=http%3a%2f%2fi.imgur.com%2fzPvdz.jpg&ehk=rEQ4U7SDvBUCwcBJSVJyCH6b3JH75DtSNJYqFrmOoKw%3d&risl=&pid=ImgRaw&r=0",
+        structure: "Mineshaft"
     }
 ].map(item=>{
     (item as Item).itemType = 'structure';
-    const tilename = item.structure;
-    if(tilename){
-        item.tilePreview = tilePreview({tilename});
+    const name = item.structure;
+    if(name){
+        item.tilePreview = tilePreview({name});
     }
     return item;
 });

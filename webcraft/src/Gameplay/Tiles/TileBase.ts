@@ -4,6 +4,7 @@ export class TileBase {
     x: number; y: number;
     key: string;
 
+    name: string;
     layer?: string = 'structure';
     texture?: string;
     tileColor?: string;
@@ -12,9 +13,10 @@ export class TileBase {
     private myListeners: (() => void)[] = [];
     private session: PlaySession;
 
-    constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
+    constructor({ x, y, session, name }: { x: number; y: number, session: PlaySession, name: string }) {
         this.x = x; this.y = y;
         this.key = `${x}-${y}`;
+        this.name = name;
         
         Object.defineProperty(this, "session", {
             value: session,

@@ -25,7 +25,7 @@ export const spawnStructure = UnderSession(async(session, { who, what, tileId, x
 
     if(isTileName(what)){
         const newTile = createTile({
-            tilename: what,
+            name: what,
             x: tx, y: ty,
             session
         });

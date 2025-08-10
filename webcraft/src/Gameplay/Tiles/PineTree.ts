@@ -1,5 +1,4 @@
 
-import { PlaySession } from "../Simulator/PlaySession";
 import { TileBase } from "./TileBase";
 
 export default class PineTree extends TileBase {
@@ -12,10 +11,8 @@ export default class PineTree extends TileBase {
 
         // small chance to get a second cone
         if(Math.random() > 0.8){cones = 2}
-        
+
         return`wood (${wood}), pine cone (${cones})`;
     }
-    constructor({ x, y, session }: { x: number; y: number, session: PlaySession }) {
-        super({ x, y, session });
-    }
+    constructor(coords){super(coords)}
 }

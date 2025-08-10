@@ -235,8 +235,8 @@ Next Possible Tasks?
 ➕🌃🏭 Industrial-Revolution & Resources
 // %! IRR(236)
 
- - selecting a placeable item from the inventory
- - mainly making new placeable items
+⏩ - selecting a placeable item from the inventory
+✅ - mainly making new placeable items
 
     Dropping:
     ✅ - tile.drop() on server side
@@ -254,17 +254,18 @@ Next Possible Tasks?
 
     SPAWNERS (consider how tiles interact with their neighbors):
     ✅ - forest (spawns trees cardinally to itself over time)
-    - Mountain (spawns rocks cardinally to itself)
-    - Mineshaft (has a higher chance of spawning ores cardinally to itself)
+    ✅ - Mountain (spawns rocks cardinally to itself)
+    ✅ - Mineshaft (has a higher chance of spawning ores cardinally to itself)
 
     Gather:
-    - auto collects upon breaking nearby structures
+    ✅ - get all cardinal neighbors
+    ✅ - every tick send a break command to them (tool: drill or lumbermill)
+    ✅ - auto collects upon breaking nearby structures
 
     AUTOMATERS (consider how tiles interact with their neighbors):
-    - drill (chops nearby rocks and ores if close to a power source)
-    - lumbermill (chops nearby trees if close to a power source)
-    - solar panel (provides steady power)
-
+    ✅ - drill (chops nearby rocks and ores if close to a power source)
+    ✅ - lumbermill (chops nearby trees if close to a power source)
+    ✅ - solar panel (provides steady power)
 
     ITEMS (drops):
     ✅ - coal
@@ -273,8 +274,8 @@ Next Possible Tasks?
     ✅ - wood
     ✅ - pine cone
 
- - Initially start off with materials since there's no crafting
- - test the drops and everything working together!
+✅ - Initially start off with materials since there's no crafting
+✅ - test the drops and everything working together!
 
 
 
