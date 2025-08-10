@@ -1,7 +1,15 @@
 
 import { useEffect, useLayoutEffect, useRef } from "react";
 import Slot from "./Slot";
+
 import { useInventory } from "./InventoryHook";
+import { useTools } from "../Tools/ToolHook";
+import { Tools } from "../Tools/Tools";
+
+const[interact, builder, breaker] = Tools;
+const properTools = {
+  'material': undefined, 'structure': builder, 'breakTool': breaker
+}
 
 export function ItemList() {
   const{relevantItems, selectedSlot} = useInventory();
@@ -52,6 +60,7 @@ export function ItemList() {
   const gapPx     = 8;        // Tailwind gap-2 = 0.5rem ≈ 8px
   const heightPx  = 200;
 
+  const { selectedTool, equipTool, setSlot } = useTools();
   return (
     <aside className="fixed left-0 bottom-0 w-full flex justify-center pb-2">
       <div className="w-full flex justify-center">
@@ -71,13 +80,33 @@ export function ItemList() {
           }}
           className="overflow-auto rounded bg-neutral-800 p-2"
         >
-          {relevantItems.map((item) => (
-            <Slot
-              key={item.slotId}
-              selected={item.slotId === selectedSlot}
-              {...item}
-            />
-          ))}
+          {relevantItems.map((item) => {
+            const isSelected = item.slotId === selectedSlot;
+            return(
+              <Slot
+                key={item.slotId}
+                selected={isSelected}
+                onClick={()=>{
+                  
+                  // unselect
+                  if(isSelected && selectedTool !== interact){
+                    equipTool(interact);
+                    setSlot('');
+                    return;
+                  }
+
+                  // select slot & tool
+                  const toolOfChoice = properTools[item.itemType];
+                  if(!toolOfChoice)return;
+                  if(selectedTool !== toolOfChoice){
+                    equipTool(toolOfChoice);
+                  }
+                  setSlot(item.slotId);
+                }}
+                {...item}
+              />
+            );
+          })}
         </div>
       </div>
     </aside>

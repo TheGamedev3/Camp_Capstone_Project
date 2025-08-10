@@ -1,6 +1,6 @@
 
 import { PlaySession } from "../Simulator/PlaySession";
-import { TileBase } from "./TileBase";
+import { Structure } from "./Structure";
 import { spawnStructure } from "../Routes/Build";
 
 function shuffle<T>(arr: T[]): T[] {
@@ -12,7 +12,7 @@ function shuffle<T>(arr: T[]): T[] {
   return a;
 }
 
-export default class Spawner extends TileBase {
+export default class Spawner extends Structure {
     layer: string = "structure";
 
     spawnChance: number = 0.25;

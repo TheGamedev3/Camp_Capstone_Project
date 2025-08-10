@@ -5,13 +5,28 @@ export type Item = {
     name: string;
     icon: string;
     quantity?: number;
-    itemType?: string;
+    itemType?: 'material' | 'structure' | 'breakTool';
     slotId?: string;
 
+    // %! BPS(196) GIVE DATA ON WHAT STRUCTURE IT PLACES
     structure?: string;
     tilePreview?: string;
-    // %! BPS(196) GIVE DATA ON WHAT STRUCTURE IT PLACES
+
+    tool?: ToolStats;
 };
+
+export type ToolStats={
+    durability?: number | 'infinite';
+    currentDurability?: number;
+
+    woodDmg?: number,
+    stoneDmg?: number,
+    metalDmg?: number,
+
+    upgradeToItem?: string;
+    upgradeCost?: string;
+    downgradeToItem?: string;
+}
 
 
 export const MaterialTable: Item[] = [
@@ -101,11 +116,104 @@ export const StructureTable: Item[] = [
 });
 
 
-export const allItems: Item[] = [...MaterialTable, ...StructureTable];
+export const ToolTable: Item[] = [
+    {
+        name: "wood axe",
+        icon:"https://i.etsystatic.com/12915054/r/il/34a0dd/1462561723/il_794xN.1462561723_5h64.jpg",
+        tool:{
+            durability: 'infinite',
 
-// maybe add a ToolTable?
+            woodDmg: 1,
+
+            upgradeToItem: "stone axe",
+            upgradeCost: "5 wood, 10 stone",
+        }
+    },
+    {
+        name: "wood pickaxe",
+        icon:"https://www.renderhub.com/dereza/wooden-pickaxe/wooden-pickaxe-02.jpg",
+        tool:{
+            durability: 'infinite',
+
+            stoneDmg: 1,
+            metalDmg: 1,
+
+            upgradeToItem: "stone axe",
+            upgradeCost: "5 wood, 10 stone",
+        }
+    },
+    {
+        name: "stone axe",
+        icon:"https://th.bing.com/th/id/R.acb501c861e3ba8fe4a199a134353a10?rik=f58TE6u6ftDBmQ&pid=ImgRaw&r=0",
+        tool:{
+            durability: 20,
+
+            woodDmg: 2,
+
+            upgradeToItem: "metal axe",
+            upgradeCost: "5 wood, 10 metal",
+            downgradeToItem: "wood axe",
+        }
+    },
+    {
+        name: "stone pickaxe",
+        icon:"https://tse1.explicit.bing.net/th/id/OIP.i1xamhuhoDLr3LkML9bJjwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        tool:{
+            durability: 20,
+
+            stoneDmg: 2,
+            metalDmg: 1,
+
+            upgradeToItem: "metal axe",
+            upgradeCost: "5 wood, 10 metal",
+            downgradeToItem: "wood pickaxe",
+        }
+    },
+    {
+        name: "metal axe",
+        icon:"https://cdn.britannica.com/93/125393-050-BA7F4807/Ax.jpg",
+        tool:{
+            durability: 30,
+
+            woodDmg: 4,
+
+            downgradeToItem: "stone pickaxe",
+        }
+    },
+    {
+        name: "metal pickaxe",
+        icon:"https://th.bing.com/th/id/R.74b1d6c43a6caf37aa5ca90807f2af28?rik=9sDso8oHsShCPg&riu=http%3a%2f%2fpreview.turbosquid.com%2fPreview%2f2015%2f04%2f10__15_07_53%2f10000.jpg9e42941e-ff0e-4a80-974b-c0b8e0b542b6Original.jpg&ehk=r481%2bqlCh4WUFNH6IqAxTP0r%2fXmW0AwSrzkVF1lMSZ4%3d&risl=&pid=ImgRaw&r=0",
+        tool:{
+            durability: 30,
+
+            stoneDmg: 4,
+            metalDmg: 2,
+
+            downgradeToItem: "stone pickaxe",
+        }
+    },
+    {
+        name: "wrench",
+        icon:"https://m.media-amazon.com/images/I/71UQTCpwndL.jpg",
+        tool:{
+            durability: 30,
+
+            metalDmg: 5,
+        }
+    }
+].map(item=>{
+    const i = (item as Item);
+    i.itemType = 'breakTool';
+    if(i.tool?.durability !== 'infinite'){
+        i.tool.currentDurability = i.tool.durability;
+    }
+    return i;
+});
+
+
+export const allItems: Item[] = [...MaterialTable, ...StructureTable, ...ToolTable];
 
 export const itemAbout = {
-    MaterialTable, StructureTable, allItems
+    MaterialTable, StructureTable, ToolTable, allItems
 };
 

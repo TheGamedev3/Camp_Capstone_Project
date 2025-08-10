@@ -24,15 +24,15 @@ export class PlaySession{
 
     private eventChanges: {
         newTiles: string[];
-        newItems: [Item, number][];
+        newItems: Item[];
     }
     tileChange(tileId: string){
         if(!this.eventChanges.newTiles.find(id=>id===tileId))this.eventChanges.newTiles.push(tileId);
     }
-    itemChange(newItem: Item, quantity: number){
+    itemChange(newItem: Item){
         // remove the older updates
-        this.eventChanges.newItems = this.eventChanges.newItems.filter(([item])=>item.slotId !== newItem.slotId);
-        this.eventChanges.newItems.push([newItem, quantity]); // if quantity 0, client will handle deleting it on its end
+        this.eventChanges.newItems = this.eventChanges.newItems.filter(item=>item.slotId !== newItem.slotId);
+        this.eventChanges.newItems.push(newItem); // if quantity 0, client will handle deleting it on its end
     }
     ejectChanges(){
         const eventChanges = this.eventChanges;
@@ -92,7 +92,12 @@ export class PlaySession{
     getData(): Pick<PlaySession, ExposedKeys> & { timestamp: number } {
 
         // %! PII(251) CLEAR ANY QUANTITY 0 OR DURABILITY 0% ITEMS
-        this.inventory = this.inventory.filter(item=>item.quantity !== 0);
+        // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
+        this.inventory = this.inventory.filter(item=>{
+            if(item.quantity === 0)return false;
+            if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0)return false;
+            return true;
+        });
 
         const data = Object.fromEntries(
             exposedProperties.map((key) => [key, this[key]])

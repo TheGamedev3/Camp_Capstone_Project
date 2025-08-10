@@ -34,7 +34,7 @@ import { randomBytes } from 'crypto';
 
 function supposeItem(session: PlaySession, itemBase: Item, create: boolean=true): Item{
     let item: Item | undefined = session.inventory.find(i=>i.name === itemBase.name);
-    if(item === undefined && create){
+    if((item === undefined || itemBase.itemType === 'breakTool') && create){
         // create an item w/ an unique id
         item = {...itemBase, slotId: randomBytes(16).toString('hex') }; // PICK WHAT DATA SPECIFICALLY TO CONSTRUCT IT! MAYBE AN ITEM CONSTRUCTOR????
         session.inventory.push(item);
@@ -43,15 +43,26 @@ function supposeItem(session: PlaySession, itemBase: Item, create: boolean=true)
     return (item as Item);
 }
 
-export const giveCommand = UnderSession((session, itemList: string)=>{
+export const giveCommand = UnderSession((session, clientSide, itemList: string)=>{
     interpretQuantities(itemList).forEach(([item, quantity])=>{
-      const targetItem = supposeItem(session, item, true);
-      targetItem.quantity??=0;
-      targetItem.quantity+=quantity;
-      session.itemChange(targetItem, quantity);
+      if(item.itemType === 'breakTool'){
+        if(quantity < 0)throw new Error(`ATTEMPTED TO SUBTRACT A NONSTACKABLE TOOL! ${item} (${quantity})`);
+        // non stackable
+        for (let i = 0; i < quantity; i++) {
+          const targetItem = supposeItem(session, item, true);
+          targetItem.quantity=1;
+          session.itemChange(targetItem);
+        }
+      }else{
+        const targetItem = supposeItem(session, item, true);
+        targetItem.quantity??=0;
+        targetItem.quantity+=quantity;
+        session.itemChange(targetItem);
+      }
     });
 });
-export const exchange = UnderSession((session, costList: string, outputList: string, conditions: ()=>boolean)=>{
+
+export const exchange = UnderSession((session, clientSide, costList: string, outputList: string, conditions: ()=>boolean)=>{
     
     // return{success, tileData: session.tileBucket[tileId]}
 });

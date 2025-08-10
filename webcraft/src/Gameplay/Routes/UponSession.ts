@@ -1,49 +1,66 @@
-import { NextResponse } from 'next/server';
-import { attemptRequest } from '@MongooseSys';
-import { getSession } from '@/lib/Validator';
-import { PlaySession } from '../Simulator/PlaySession';
+import { NextResponse } from "next/server";
+import { attemptRequest } from "@MongooseSys";
+import { getSession } from "@/lib/Validator";
+import { PlaySession } from "../Simulator/PlaySession";
 
 type SessionType = Awaited<ReturnType<typeof PlaySession.getPlaySession>>;
 
-type FuncType = (session: SessionType, ...args: any) => Promise<any> | any;
+// Func can be used from API (clientSide=true) or direct (clientSide=false)
+type FuncType<R = unknown> = (
+  session: SessionType,
+  clientSide: boolean,
+  ...args: any[]
+) => Promise<R> | R;
 
-type RequestHandler = (req: Request) => Promise<ReturnType<typeof attemptRequest>>;
-type DirectHandler = (session: SessionType, ...args: any[]) => Promise<any>;
+type RequestHandler<R> = (req: Request) => Promise<ReturnType<typeof attemptRequest>>;
+type DirectHandler<R> = (session: SessionType, ...args: any[]) => Promise<R> | R;
 
-export function UnderSession(func: FuncType): RequestHandler & DirectHandler {
-  // Case 1: Accept a full Request
-  const handleRequest = async (req: Request) => {
-    return await attemptRequest(async () => {
+export function UnderSession<R = unknown>(
+  func: FuncType<R>
+): RequestHandler<R> & DirectHandler<R> {
+  // --- Case 1: Accept a full Request (API route) -----------------------
+  async function handleRequest(req: Request) {
+    return attemptRequest(async () => {
       const userId = (await getSession())?._id;
-      if (!userId) return { success: false, err: { server: 'no session found!' } };
+      if (!userId) return { success: false, err: { server: "no session found!" } };
 
       const session = await PlaySession.getPlaySession(userId);
-      let args: unknown;
+
+      // Parse JSON body; spread arrays, single-arg for non-arrays
+      let body: unknown;
       try {
-        args = await req.json();
+        body = await req.json();
       } catch {
-        args = undefined; // no valid JSON
+        body = undefined; // no/invalid JSON
       }
-      return NextResponse.json(await func(session, args));
+
+      const callArgs = Array.isArray(body)
+        ? (body as any[])
+        : body !== undefined
+        ? [body]
+        : [];
+
+      const result = await func(session, true, ...callArgs);
+      return NextResponse.json(result);
     });
-  };
+  }
 
-  // Case 2: Accept a preloaded session directly
-  const handleDirect = async (session: SessionType, ...args: any[]) => {
-    return await func(session, ...args);
-  };
+  // --- Case 2: Accept a preloaded session directly ---------------------
+  async function handleDirect(session: SessionType, ...args: any[]) {
+    return func(session, false, ...args);
+  }
 
-  // Combined function that smartly dispatches
-  const hybridHandler = ((...args: [Request] | [SessionType, any[]]) => {
+  // --- Overloaded hybrid dispatcher (nice typing) ----------------------
+  function hybrid(req: Request): Promise<ReturnType<typeof attemptRequest>>;
+  function hybrid(session: SessionType, ...args: any[]): Promise<R> | R;
+  function hybrid(...args: any[]) {
+    // NOTE: `instanceof Request` is safe in Next.js runtime for API routes.
     if (args.length === 1 && args[0] instanceof Request) {
       return handleRequest(args[0]);
-    } else if (args.length === 2) {
-      const [session, ...rest] = args as [SessionType, ...any[]];
-      return handleDirect(session, ...rest);
-    } else {
-      throw new Error('Invalid arguments passed to UnderSession');
     }
-  }) as RequestHandler & DirectHandler;
+    const [session, ...rest] = args as [SessionType, ...any[]];
+    return handleDirect(session, ...rest);
+  }
 
-  return hybridHandler;
+  return hybrid as RequestHandler<R> & DirectHandler<R>;
 }

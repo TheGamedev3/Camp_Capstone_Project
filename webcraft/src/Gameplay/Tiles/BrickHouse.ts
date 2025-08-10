@@ -1,7 +1,7 @@
 
-import { TileBase } from "./TileBase";
+import { Structure } from "./Structure";
 
-export default class BrickHouse extends TileBase {
+export default class BrickHouse extends Structure {
     layer: string = "structure";
     texture: string = "https://www.homestratosphere.com/wp-content/uploads/2018/07/red-brick-exterior-home2018-07-06-at-1.44.50-PM-12.jpg";
 

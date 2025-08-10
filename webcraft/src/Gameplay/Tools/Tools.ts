@@ -61,7 +61,12 @@ export const Tools: Tool[] = [
         if(selectedItem?.tilePreview){
           // %! PII(252/253)
           selectedItem.quantity -= 1;
-          GameData.inventory = GameData.inventory.filter(item=>item.quantity !== 0);
+          // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
+          GameData.inventory = GameData.inventory.filter(item=>{
+            if(item.quantity === 0)return false;
+            if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0)return false;
+            return true;
+          });
           GameData.tileBucket[tileId].push(selectedItem.tilePreview);
           refresh({...GameData});
         }
@@ -75,7 +80,7 @@ export const Tools: Tool[] = [
     keybind: 'b',
     icon: X,
     borderColor: 'border-red-500',
-    usesItemTypeOf:(item)=>(item.itemType === "tool"),
+    usesItemTypeOf:(item)=>(item.itemType === "breakTool"),
     // %! PII(255) CREATE FILTER HERE
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
     onHover({tileId, tileStack}){
@@ -89,16 +94,15 @@ export const Tools: Tool[] = [
     },
 
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
-    async onAction({tileId, tileStack}){
+    async onAction({tileId, tileStack, slotId}){
         if(!tileStack)return;
         const breakTarget = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(!breakTarget){return}
 
-        const eventData = await getRoute({route: "DELETE /api/break", body: {tileId, tool: "wooden_axe"}});
+        const eventData = await getRoute({route: "DELETE /api/break", body: {slotId, tileId}});
         return eventData;
     }
   }),
 ];
-
 
 export const defaultTool = Tools.find(t => t.defaultTool) ?? Tools[0];

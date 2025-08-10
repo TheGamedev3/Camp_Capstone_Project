@@ -47,12 +47,17 @@ export function ToolInfoWrapper({ children }){
         if (eventData?.success === true && (eventData.result.timestamp > gameDataNow.timestamp)) {
             gameDataNow.tileBucket = {...gameDataNow.tileBucket, ...eventData.result.newTiles};
 
-            const newItems = eventData.result.newItems; // [Item, number][]
-            const overwriteItem = newItems.map(([item])=>item.slotId);
+            const newItems = eventData.result.newItems; // Item[]
+            const overwriteItem = newItems.map(item=>item.slotId);
             gameDataNow.inventory = gameDataNow.inventory.filter(item=>!overwriteItem.includes(item.slotId));
            
             // %! PII\(252/253) UPDATE NUMBERS ON THE CLIENT SIDE
-            gameDataNow.inventory.push(...(newItems.map(([item])=>item).filter(item=>item.quantity !== 0)));
+            // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
+            gameDataNow.inventory.push(...(newItems.filter(item=>{
+                if(item.quantity === 0)return false;
+                if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0)return false;
+                return true;
+            })));
 
             gameDataNow.timestamp = eventData.result.timestamp;
             

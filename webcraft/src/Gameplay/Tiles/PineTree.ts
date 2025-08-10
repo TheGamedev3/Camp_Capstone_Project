@@ -1,7 +1,7 @@
 
-import { TileBase } from "./TileBase";
+import { Structure } from "./Structure";
 
-export default class PineTree extends TileBase {
+export default class PineTree extends Structure {
     layer: string = "structure";
     texture: string = "https://m.media-amazon.com/images/I/61J5Ja5WQhL._AC_.jpg";
     drops(){

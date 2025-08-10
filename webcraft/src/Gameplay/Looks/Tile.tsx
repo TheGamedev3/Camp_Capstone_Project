@@ -60,40 +60,38 @@ export const Tile = React.memo(function Tile({ id }: TileProps) {
   const { selectedTile, selectedTool, setHover, selectedHighlight, fireActivate } = useTools();
 
   /* --------  Derived display data  ------------------------------------ */
-
   const { bgColor, bgTexture, structures } = useMemo(() => {
-    const floorData = (myTileStack ?? []).filter((d) => d.layer === "floor");
+    const floorData = (myTileStack ?? []).filter(d => d.layer === "floor");
     const structureData = (myTileStack ?? []).filter(
-      (d) => d.layer === "structure" && d.texture
+      d => d.layer === "structure" && d.texture
     );
 
-    const bgColor = blendColors(
-      floorData.map((d) => d.tileColor ?? "#FFFFFF")
-    );
-
-    const bgTexture =
-      floorData.find((d) => d.texture)?.texture ?? undefined;
+    const bgColor = blendColors(floorData.map(d => d.tileColor ?? "#FFFFFF"));
+    const bgTexture = floorData.find(d => d.texture)?.texture ?? undefined;
 
     return {
       bgColor,
       bgTexture,
-      structures: structureData as Required<Pick<TileDatum, "texture">>[],
+      structures: structureData as Array<
+        Required<Pick<TileDatum, "texture">> &
+        Partial<Pick<TileDatum, "name" | "currentHealth" | "health">>
+      >,
     };
   }, [myTileStack]);
 
+  /* pick the top-most structure (if multiple stacked) */
+  const topStruct = structures.at(-1);
+  const sName = topStruct?.name ?? "";
+  const hp     = (topStruct?.currentHealth) as number | undefined;
+  const hpMax  = (topStruct?.health) as number | undefined;
+
+  const showHover = selectedTile === id && !!selectedHighlight;
+  const showHpBar = showHover && hpMax !== undefined && hp !== undefined && hp !== hpMax;
+
   /* --------  Styles  --------------------------------------------------- */
-
-  const baseStyle: CSSProperties = {
-    backgroundColor: bgColor,
-    backgroundImage: bgTexture ? `url(${bgTexture})` : undefined,
-    backgroundSize: "cover",
-    backgroundPosition: "center",
-    position: "relative",
-  };
-
   const overlayStyle: CSSProperties = {
     position: "absolute",
-    inset: "10%", // 10% padding on all sides
+    inset: "10%",
     objectFit: "contain",
     width: "80%",
     height: "80%",
@@ -107,82 +105,85 @@ export const Tile = React.memo(function Tile({ id }: TileProps) {
     zIndex: 5,
     pointerEvents: "none",
   };
-  
-  /* --------  Handlers  --------------------------------------------------- */
 
+  /* --------  Handlers  ------------------------------------------------- */
   const handleMouseEnter = () => setHover(id);
-
-  const handleMouseLeave = () => {
-    if (selectedTile === id) setHover(null);
-  };
-
-  const handleClick = () => {
-    if (selectedTile === id) fireActivate(id);
-  };
+  const handleMouseLeave = () => { if (selectedTile === id) setHover(null); };
+  const handleClick = () => { if (selectedTile === id) fireActivate(id); };
 
   /* --------  Render  --------------------------------------------------- */
+  return (
+    <div className="aspect-square relative">
+      <div className="w-full h-full rounded-sm overflow-hidden relative z-0">
+        {/* base color */}
+        <div style={{ backgroundColor: bgColor, position: "absolute", inset: 0, width: "100%", height: "100%" }} />
+        {/* floor texture */}
+        {bgTexture && (
+          <div
+            style={{
+              backgroundImage: `url(${bgTexture})`,
+              backgroundSize: "cover",
+              backgroundPosition: "center",
+              opacity: 0.9,
+              position: "absolute",
+              inset: 0,
+              width: "100%",
+              height: "100%",
+            }}
+          />
+        )}
 
-return (
-  <div className="aspect-square relative"> {/* outer — square, no border radius */}
-    <div className="w-full h-full rounded-sm overflow-hidden relative z-0">
-      {/* Visual content */}
+        <div style={highlightOverlay} />
+
+        {/* structures */}
+        {structures.map((s, idx) => (
+          <img
+            key={idx}
+            src={s.texture}
+            alt=""
+            style={{ ...overlayStyle, zIndex: 6 }}
+          />
+        ))}
+
+        {/* Hover UI: name + (if damaged) HP bar */}
+        {showHover && topStruct && (
+          <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-1 z-8 flex flex-col items-center gap-1">
+            {/* name tag */}
+            {sName && (
+              <div className="rounded px-1.5 py-0.5 text-[10px] font-semibold bg-black/70 text-white">
+                {sName}
+              </div>
+            )}
+            {/* hp bar only if not at max */}
+            {showHpBar && (
+              <div className="flex flex-col items-center gap-0.5">
+                {/* bar */}
+                <div className="h-1 w-16 rounded bg-black/50 overflow-hidden">
+                  <div
+                    className="h-full bg-emerald-400"
+                    style={{
+                      width: `${Math.max(0, Math.min(100, (hp! / hpMax!) * 100))}%`,
+                    }}
+                  />
+                </div>
+                {/* hp numbers */}
+                <span className="text-[10px] font-semibold text-white drop-shadow">
+                  {hp} / {hpMax}
+                </span>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      {/* Hitbox layer */}
       <div
-        style={{
-          backgroundColor: bgColor,
-          width: "100%",
-          height: "100%",
-          position: "absolute",
-          inset: 0,
-        }}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        onClick={handleClick}
+        style={{ position: "absolute", inset: "-2px", zIndex: 10, backgroundColor: "transparent", pointerEvents: "auto" }}
       />
-
-      {bgTexture && (
-        <div
-          style={{
-            backgroundImage: `url(${bgTexture})`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            opacity: 0.9,
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            inset: 0,
-          }}
-        />
-      )}
-
-      <div style={highlightOverlay} />
-
-      {structures.map((s, idx) => (
-        <img
-          key={idx}
-          src={s.texture}
-          alt=""
-          style={{
-            ...overlayStyle,
-            zIndex: 6,
-          }}
-        />
-      ))}
     </div>
-
-    {/* Hitbox layer (outside rounded child) */}
-    <div
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      onClick={handleClick}
-      style={{
-        position: "absolute",
-        inset: "-2px",
-        zIndex: 10,
-        backgroundColor: "transparent",
-        pointerEvents: "auto",
-        borderRadius: "inherit", // not needed here anymore, but harmless
-      }}
-    />
-  </div>
-);
-
-
+  );
 });
 

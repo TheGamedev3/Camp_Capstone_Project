@@ -11,7 +11,7 @@ interface PlaceAtParams {
 }
 
 // %! BPS(204) spawn structure
-export const spawnStructure = UnderSession(async(session, { who, what, tileId, x, y }:PlaceAtParams)=>{
+export const spawnStructure = UnderSession(async(session, clientSide, { who, what, tileId, x, y }:PlaceAtParams)=>{
     let tx: number, ty: number;
     if (tileId) {
         [tx, ty] = tileId.split('-').map(Number);
@@ -54,7 +54,7 @@ export const spawnStructure = UnderSession(async(session, { who, what, tileId, x
 
 
 // %! BPS(204) PLACE ITEM FUNCTION AND SESSION
-export const placeItem = UnderSession(async(session, { slotId, tileId, x, y }:PlaceAtParams)=>{
+export const placeItem = UnderSession(async(session, clientSide, { slotId, tileId, x, y }:PlaceAtParams)=>{
     // %! BPS(205) SUBTRACT AWAY WHAT WAS NESSECARY
     // GET THE ITEM
     // PLUG IT INTO SPAWN STRUCTURE
@@ -73,7 +73,7 @@ export const placeItem = UnderSession(async(session, { slotId, tileId, x, y }:Pl
         if(result && result.success){
             // instead of using the give command, subtract it out manually, as to use the correct slotId reference
             item.quantity -= 1;
-            session.itemChange(item, -1);
+            session.itemChange(item);
             return{success: result.success, result: session.ejectChanges()}
         }
     }

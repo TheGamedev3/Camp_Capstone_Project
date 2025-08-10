@@ -1,11 +1,12 @@
 
-import { TileBase } from "./TileBase";
+import { Structure } from "./Structure";
 import { breakAt } from "../Routes/Break";
 
-export default class Automaton extends TileBase {
+export default class Automaton extends Structure {
     layer: string = "structure";
 
     breakStructures: string | string[] = '';
+    customDamage: number = 5;
 
     constructor(coords) {
         super(coords);
@@ -28,7 +29,7 @@ export default class Automaton extends TileBase {
                 const y2 = y + dy;
                 const tileId = `${x2}-${y2}`;
                 if (isSpaceValid(tileId)) {
-                    breakAt(session, { tool: name, tileId });
+                    breakAt(session, { customDamage: this.customDamage, tileId });
                     return; // done for this tick
                 }
             }

@@ -12,24 +12,45 @@ type SlotProps = {
   name: string;
   icon: string;       // image url
   quantity?: number;
+  onClick?: MouseEventHandler<HTMLButtonElement>;
+  tool?:{
+    durability: number | 'infinite';
+    currentDurability: number;
+  }
 };
 
 // Slot.tsx
-export default function Slot({ selected, name, icon, quantity }: SlotProps) {
+export default function Slot({
+  selected,
+  name,
+  icon,
+  quantity,
+  tool,
+  onClick,
+}: SlotProps) {
+  // %! STT(131) durability health bar show in the slot if it has both durability & current durability!!!
+  
+  const hasDurability = tool && tool.durability !== 'infinite' && tool.currentDurability > 0;
+  console.log(hasDurability, tool)
+
+  const pct =
+    hasDurability ? Math.max(0, Math.min(1, tool.currentDurability! / tool.durability!)) : 0;
+
   return (
-    <div
+    <button
+      type="button"
+      onClick={onClick}
+      title={name}
       className={[
         "group relative rounded-md border",
         "bg-neutral-900/40 border-neutral-700",
         "hover:border-neutral-500 transition-colors",
-        "w-20 h-20",                 // fixed square; remove w-full/aspect-square
-        "shrink-0",                  // never stretch
+        "w-20 h-20 shrink-0",
         selected ? "ring-2 ring-blue-400" : "",
       ].join(" ")}
-      title={name}
     >
-      {/* Image area */}
-      <div className="absolute inset-0 p-2">
+      {/* Image area (no pointer capture) */}
+      <div className="absolute inset-0 p-2 pointer-events-none select-none">
         <div className="relative h-full w-full">
           <Image
             src={icon}
@@ -39,6 +60,7 @@ export default function Slot({ selected, name, icon, quantity }: SlotProps) {
             sizes="120px"
             className="object-contain"
             priority={false}
+            draggable={false}
           />
         </div>
       </div>
@@ -50,10 +72,21 @@ export default function Slot({ selected, name, icon, quantity }: SlotProps) {
 
       {/* Quantity badge */}
       {typeof quantity === "number" && (
-        <span className="absolute bottom-1 right-1 rounded-md bg-black/70 px-1.5 py-0.5 text-[11px] font-semibold text-white">
+        <span className="pointer-events-none absolute bottom-1 right-1 rounded-md bg-black/70 px-1.5 py-0.5 text-[11px] font-semibold text-white">
           {quantity}
         </span>
       )}
-    </div>
+
+      {/* Durability bar (bottom-center) */}
+      {hasDurability && (
+        <div className="pointer-events-none absolute left-1/2 -translate-x-1/2 bottom-1 w-16 h-1 rounded bg-black/50 overflow-hidden">
+          <div
+            className="h-full bg-emerald-400"
+            style={{ width: `${Math.round(pct * 100)}%` }}
+          />
+        </div>
+      )}
+    </button>
   );
 }
+
