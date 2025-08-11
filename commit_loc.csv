@@ -1,0 +1,69 @@
+ba781c1,2025-08-10,TheGamedev3,"🛠️🧰 Super Terrific Tools",610,367,243
+fa22698,2025-08-10,TheGamedev3,"➕🌃🏭 Industrial-Revolution & Resources",276,97,179
+c27c319,2025-08-09,TheGamedev3,"🌲🌲🌲The Woods🪵",200,55,145
+3150739,2025-08-09,TheGamedev3,"🎒✨ Polished Improved Inventory",366,120,246
+577bbf6,2025-08-09,TheGamedev3,"🏠⬇️🌲 Tile Placement Preview",96,29,67
+0b49f57,2025-08-09,TheGamedev3,"🏠⬇️🌲 Place Down Items",179,57,122
+101f18b,2025-08-08,TheGamedev3,"🔺Event Updates",89,55,34
+5a80027,2025-08-08,TheGamedev3,"💧Item Drops",81,33,48
+43f358a,2025-08-07,TheGamedev3,"🧹⤴️🪵 better session specific routes & item draft",299,119,180
+825e257,2025-08-06,TheGamedev3,"🧹🧼 Modularized the Tools Script",206,219,-13
+8f06400,2025-08-05,TheGamedev3,"🔨❌ Build & Break",278,52,226
+f09d2b8,2025-08-04,TheGamedev3,"🔨🖱️ Basic Tools & Tile Selection",367,50,317
+3647117,2025-08-04,TheGamedev3,"🏠🦗 Moving House",146,36,110
+53b9e60,2025-08-04,TheGamedev3,"🏠🦗 house in a grassy field",236,17,219
+69f524d,2025-08-03,TheGamedev3,"🎮🕹️ Play Session Client & Server",232,36,196
+53f71d2,2025-08-03,TheGamedev3,"📘Drafting of Phase2",472,6,466
+26efe8c,2025-08-02,TheGamedev3,"ℹ️ About the Project So Far,72,8,64
+b31655d,2025-08-02,TheGamedev3,"🛠️🪀 Enforced Types Better",127,87,40
+6ed8df4,2025-08-01,TheGamedev3,"🧪🧩🌐🚀 Page Explorer Test",95,4,91
+c7dd3fc,2025-08-01,TheGamedev3,"🧩🧪🛑🪳 Error Catcher & Helper Expectations",314,90,224
+5cd8cd9,2025-08-01,TheGamedev3,"🧪🧩✏️📋Edit Profile Test",231,12,219
+dcb58ed,2025-08-01,TheGamedev3,"🧪🧩📋 Signup Test & Login Errs Test Added 🥳",210,16,194
+f1baad9,2025-08-01,TheGamedev3,"🧩🧪📖Helper Types Passed through",83,46,37
+76a1304,2025-08-01,TheGamedev3,"🧩🧪👤 Account Login & Logout Helpers",97,39,58
+8ef5445,2025-07-31,TheGamedev3,"🧪🧩🛬💾 extra navigation helpers & element data",121,99,22
+8586bc1,2025-07-31,TheGamedev3,"🧩🧪✅Basic Test Check Expectors",152,22,130
+bf96830,2025-07-31,TheGamedev3,"🧩Modularized Test Helper functions",175,122,53
+c879fce,2025-07-31,TheGamedev3,"🐞🚫❓ route not found bug fixed",6,5,1
+64e8e42,2025-07-31,TheGamedev3,"🧪📃 full pagnation test",224,94,130
+f928a4a,2025-07-30,TheGamedev3,"🔨🧪Basic Test Helpers",158,20,138
+d3060da,2025-07-30,TheGamedev3,"🧱🧪 Playwright Setup",265,25,240
+416d440,2025-07-29,TheGamedev3,"🧪 the first unit test",131,0,131
+4b71eeb,2025-07-29,TheGamedev3,"🔑Password Hashing",59,18,41
+b35c0dc,2025-07-29,TheGamedev3,"👤Working player profiles!",163,41,122
+9b54d0e,2025-07-29,TheGamedev3,"👤 Player Pagnation Sorter",287,46,241
+c0196b3,2025-07-28,TheGamedev3,"🍫Player Pagnation added",159,57,102
+b5c1fd7,2025-07-28,TheGamedev3,"🌱🌳 Seed Data on Initialize",64,14,50
+478a8d0,2025-07-27,TheGamedev3,"📄🏁 dummy pages finished",102,30,72
+a0fb09a,2025-07-27,TheGamedev3,"📄 Aspect Ratio Doesn't Stretch to Entire Screen",37,110,-73
+f532530,2025-07-27,TheGamedev3,"🪧distinct entry and session headers!",153,6,147
+6eba2bd,2025-07-26,TheGamedev3,"🌐 nav header",140,1,139
+3eca53f,2025-07-26,TheGamedev3,"🛸🌃 Improved Forum UI and experience",158,75,83
+4400a79,2025-07-26,TheGamedev3,"💅 /mySettings page styled!",250,136,114
+241ea8f,2025-07-26,TheGamedev3,"✏️ on submit,20,12,8
+2afdf9c,2025-07-26,TheGamedev3,"❔change email & password!",145,28,117
+da3a534,2025-07-26,TheGamedev3,"🌄profile component patches",14,10,4
+49aa5da,2025-07-26,TheGamedev3,"🙍‍♂️ change profile picture",103,35,68
+c7820ec,2025-07-26,TheGamedev3,"✏️ oldpassword when editing email/password & editbtn tweaks",102,82,20
+24bfd79,2025-07-25,TheGamedev3,"✏️draft of user editing their profile",205,30,175
+ff1c98f,2025-07-24,TheGamedev3,"🪢API routes grouped together",5,5,0
+07034ea,2025-07-24,TheGamedev3,"❌🤖✅ better mongo errors for fields",92,48,44
+b2df2db,2025-07-24,TheGamedev3,"📋🔧 client validation,115,56,59
+c134633,2025-07-23,TheGamedev3,"🛡️ middleware route protector",133,142,-9
+7a4d13f,2025-07-23,TheGamedev3,"🧱 Grouped Request Components",80,23,57
+079fe42,2025-07-23,TheGamedev3,"login logout signup,207,85,122
+146251b,2025-07-22,TheGamedev3,"redirecting on login/signup ↗️🛬",41,24,17
+443ea15,2025-07-22,TheGamedev3,"session cookie",133,15,118
+a6c4815,2025-07-22,TheGamedev3,"signup page finished! 📋",186,40,146
+5e5d5c4,2025-07-21,TheGamedev3,"login page logic working",219,12,207
+f575188,2025-07-20,TheGamedev3,"startup and mongoURI connection! 🎩",719,15,704
+7cc11bf,2025-07-19,TheGamedev3,"extra revisions...",11,1,10
+1ba64ab,2025-07-19,TheGamedev3,"Structure from the outline! 🌃",294,2,292
+4526fbd,2025-07-19,TheGamedev3,"project initialized! 🌍",6477,0,6477
+c202d1e,2025-07-19,TheGamedev3,"step 5 finished 🥳",83,17,66
+dae9b62,2025-07-19,TheGamedev3,"step4",46,1,45
+8f89638,2025-07-18,TheGamedev3,"Step 3,45,1,44
+f0bd42a,2025-07-17,TheGamedev3,"step2 🪜",205,1,204
+1740bad,2024-11-11,TheGamedev3,"uploaded 3 ideas",50,1,49
+1a60931,2024-11-11,TheGamedev3,"Created Project",1,0,1

@@ -134,7 +134,6 @@ Next Possible Tasks?
 
 ⏭️ SKIPPED
 
-- the actual upgrading w/ cost and downgrading if it reaches 0
 
 - tiles will require special effects and sounds on being mined
     - edit the tile thingy to add the corresponding sounds???
@@ -148,6 +147,74 @@ Next Possible Tasks?
 
 
 Next Up: Crafting And Interfaces
+
+🖱️🛠️🪟 Click & Craft!
+// %! C&C(153)
+
+- Clicking buttons or certain tiles, can pull up different crafting menus
+- a menu component, clicking off it will put it away
+- it could have a scrollbar listing recipies
+- it lists recipies, which take in/list materials, and do a function
+    - these functions include healing durability
+    - or crafting new items
+    - make sure to make a list of some recipies!
+- *for certain recipies, they'll need to meet verification, like "used crafting table at xy 2-5 to create pickaxe"
+- the actual upgrading of tools w/ cost and downgrading if it reaches 0
+- all listed items needed for the crafting recipie are listed
+    - evaluated in a canAfford? function (ex: 3 stone, 5 wood, 4 metal = true, false, true)
+    - and then displayed as red or green if there's enough ingredients
+    - this will also require fetching the profile pictures of the items
+- create a temporary "3 metal ore + 1 coal -> 3 metal" recipie
+
+🖱️🛠️🪟 Click & Craft! simplified
+✅ - list the recipies
+
+✅ - make a menu component
+✅ - summon the menu component
+
+✅ - have a button on the side to bring up a recipie list using the menu component
+✅ - render the recipies
+
+✅ - recipie shows:
+    ✅ - the material cost
+    - evaluate if you can afford each item cost
+    ✅ - the output
+
+⭐ - possibly, sort recipies by can afford or not?
+⭐ - and maybe a case insensitve search bar?
+
+- on recipieBtn clicked & can afford, send request to server, to do assosiated action
+📋 - see if they have the cost, subtract it, and then do the action on success
+
+✅ - (input, cost, output) FORMAT
+✅ - this could be, healing a target tool, or giving a new item
+✅ - healing a target tool... that would imply the request cost thing would have to input the target tool, and NOT withdraw it... (target and cost will have to be separate then.... but visually similar)
+
+- summon the menu upon clicking a structure, using the interact tool.....
+
+
+
+
+🔥 Forage and Furance!
+- the furance menu will be more complicated
+    - furnace structure with a coal count and metal ore count and an output count
+    - it evaluates smelting times and stuff on its own separate time server sided
+    - itll have slots taking in amounts of metal ore and coal at certain values at the top
+    - you can withdraw or add or put in the max amount all in
+    - there's also a collect button to collect all the metal
+    - 1 coal will add in 3 smelt bars if there's any smeltable material
+    - if the material is all smelted, the smelt bars disappear
+    - timestamp logic will need to smoothen this out
+
+
+Considering Time Stamps:
+- tree growth
+- smelt times
+- break rate and holding down mouse
+
+
+
+
 
 
 

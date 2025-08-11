@@ -3,6 +3,7 @@
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import { defaultTool, Tool } from "./Tools";
 import { useGameData } from "../Looks/UpdateHook";
+import { useMenu } from "../Recipes/MenuHook";
 
 type ToolContextType = {
   selectedHighlight: string | null;
@@ -28,6 +29,9 @@ export function ToolInfoWrapper({ children }){
 
     const updater = useRef(updateGameData);
     useEffect(()=>{updater.current = updateGameData}, [updateGameData]);
+
+    const changeTool = useRef(setTool);
+    useEffect(()=>{changeTool.current = setTool}, [setTool]);
     
     const liveData = useRef(GameData);
     useEffect(()=>{liveData.current = GameData}, [GameData]);
@@ -41,7 +45,7 @@ export function ToolInfoWrapper({ children }){
             refresh: updater.current,
             GameData: gamedata(),
             slotId: selectedSlot,
-            tileId, tileStack
+            tileId, tileStack, changeTool
         });
         const gameDataNow = gamedata();
         if (eventData?.success === true && (eventData.result.timestamp > gameDataNow.timestamp)) {
@@ -65,13 +69,21 @@ export function ToolInfoWrapper({ children }){
         }
     }, [selectedTool, selectedSlot]);
 
-    useEffect(()=>selectedTool.equip(),[selectedTool]);
+    const menuHook = useMenu();
+    const currentMenu = useRef(menuHook);
+    useEffect(()=>{
+        currentMenu.current = menuHook;
+    }, [menuHook]);
+    useEffect(()=>{
+        console.log("STNF", selectedTool)
+        return selectedTool.equip({...currentMenu.current});
+    },[selectedTool]);
 
     // only update initially on a new tool being selected, or on gamedata updating!!!!
     useEffect(()=>{
         // %! BPS(193) PASS SELECTED ITEM TO HIGHLIGHT
         const tileStack = GameData?.tileBucket[selectedTile];
-        const hoverResult = selectedTool.hover({GameData, slotId: selectedSlot, tileId: selectedTile, tileStack});
+        const hoverResult = selectedTool.hover({GameData, slotId: selectedSlot, tileId: selectedTile, tileStack, changeTool});
         
         setHighlight(hoverResult?.highlight || null);
 
@@ -87,11 +99,12 @@ export function ToolInfoWrapper({ children }){
             selectedSlot,
             selectedTool,
             equipTool(tool){
+                if(tool.userId){
+                    throw new Error("GOTCHA")
+                }
                 if(selectedTool === tool && tool !== defaultTool){
-                    selectedTool.unequip();
                     setTool(defaultTool);
                 }else if(tool !== defaultTool || selectedTool !== defaultTool){
-                    selectedTool.unequip();
                     setTool(tool);
                 }
             },

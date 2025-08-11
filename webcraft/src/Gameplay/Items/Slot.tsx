@@ -31,7 +31,6 @@ export default function Slot({
   // %! STT(131) durability health bar show in the slot if it has both durability & current durability!!!
   
   const hasDurability = tool && tool.durability !== 'infinite' && tool.currentDurability > 0;
-  console.log(hasDurability, tool)
 
   const pct =
     hasDurability ? Math.max(0, Math.min(1, tool.currentDurability! / tool.durability!)) : 0;

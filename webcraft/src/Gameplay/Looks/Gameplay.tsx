@@ -5,6 +5,7 @@ import { useGameData } from "./UpdateHook";
 import { TileGrid } from "./TileGrid";
 import { Toolbar } from "../Tools/Toolbar";
 import { ItemList } from "../Items/ItemList";
+import Menu from "../Recipes/RecipeMenu";
 
 export default function Gameplay() {
   const { GameData } = useGameData();
@@ -18,6 +19,7 @@ export default function Gameplay() {
       {/* ItemList + Toolbar sit below; keep their own fixed/auto heights */}
       <ItemList />
       <Toolbar />
+      <Menu/>
     </div>
   );
 }

@@ -2,7 +2,7 @@
 
 import { Tool } from './ToolBase';
 import { getRoute } from '@/utils/request';
-import { Info, Hammer, X } from 'lucide-react';
+import { Info, Hammer, X, DraftingCompass } from 'lucide-react';
 
 export const Tools: Tool[] = [
   new Tool({
@@ -22,6 +22,12 @@ export const Tools: Tool[] = [
             highlight: interactable ? 'rgba(255, 255, 255, 0.7)' : null,
         }
     }
+
+    // %! C&C(173) ON CLICK, IF TILE HAS A MENU THINGY, REQUEST IT!
+    // getmenu tile.name, pass info to the tile, or pull up a menu!
+    // also requires a menu name...
+    // USE changeTool
+
   }),
   new Tool({
     name: 'build',
@@ -101,6 +107,27 @@ export const Tools: Tool[] = [
 
         const eventData = await getRoute({route: "DELETE /api/break", body: {slotId, tileId}});
         return eventData;
+    }
+  }),
+  new Tool({
+    name: 'crafting',
+    keybind: 'f',
+    icon: DraftingCompass,
+    borderColor: 'border-orange-500',
+    
+    onEquip({ menuRef, setMenu }){
+      if(menuRef.current === null){
+        setMenu({
+          header: 'Craft',
+          menuType: 'recipes',
+          tableType: 'default',
+          tileId: '',
+          sendRequest: true
+        });
+      }
+      return()=>{
+        setMenu(null);
+      }
     }
   }),
 ];

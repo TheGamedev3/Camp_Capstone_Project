@@ -6,8 +6,15 @@ export type MouseEvent={
   tileStack?: any[];
   GameData?: unknown;
   selectedItem?: unknown;
+
   refresh?: RefObject<Dispatch<unknown>>
+  changeTool?: RefObject<Dispatch<Tool>>
 }
+
+import { MenuContextType } from "../Recipes/MenuHook";
+type UIcontrols = MenuContextType;
+
+
 type Item = unknown;
 
 export class Tool {
@@ -37,7 +44,6 @@ export class Tool {
     onHover,
     onAction,
     onEquip,
-    onUnequip,
     usesItemTypeOf,
   }: {
     name: string;
@@ -50,8 +56,7 @@ export class Tool {
 
     onHover?: (args: MouseEvent) => any;
     onAction?: (args: MouseEvent) => Promise<any> | any;
-    onEquip?: () => void;
-    onUnequip?: () => void;
+    onEquip?: (args: UIcontrols) => void | (()=>void);
 
     usesItemTypeOf?: (item: Item)=>boolean;
   }) {
@@ -98,7 +103,6 @@ export class Tool {
       if(this._actionable)return await onAction?.(mouseEvent);
     };
     this.equip = onEquip ?? (() => {});
-    this.unequip = onUnequip ?? (() => {});
 
     // %! BPS(193) TOOL CAN SELECT ITEM OR NOT?
   }

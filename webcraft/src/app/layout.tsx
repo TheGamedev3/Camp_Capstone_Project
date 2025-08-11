@@ -20,6 +20,7 @@ export const metadata: Metadata = {
 import { Root } from "@/components/RootType";
 import { GameDataSession } from "@Gameplay/Looks/UpdateHook"
 import { ToolInfoWrapper } from "@Gameplay/Tools/ToolHook";
+import { MenuProvider } from "@Gameplay/Recipes/MenuHook";
 
 export default async function RootLayout({
   children,
@@ -33,9 +34,11 @@ export default async function RootLayout({
       >
         <Root>
           <GameDataSession>
-            <ToolInfoWrapper>
-              {children}
-            </ToolInfoWrapper>
+          <MenuProvider>
+          <ToolInfoWrapper>
+                       {children}
+          </ToolInfoWrapper>
+          </MenuProvider>
           </GameDataSession>
         </Root>
       </body>
