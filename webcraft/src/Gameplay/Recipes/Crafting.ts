@@ -50,7 +50,7 @@ export function exposeToTable(tableName: string, ...recipieList:Recipe[]){
 
             let totalCost = recipe.cost;
             if(recipe.input){
-                totalCost = recipe.input.join(' (1), ')+totalCost;
+                totalCost = [...recipe.input, totalCost].join(' (1), ');
             }
             recipe.totalCost = interpretQuantities(totalCost);
 
@@ -83,8 +83,9 @@ export const requestMenu = UnderSession(async(session, clientSide, {tableType, t
         // evaluating will be calculated on the client side
         const recipes = Categories[tableType];
         if(!recipes){return{success:false, result: `no table type ${tableType} found!`}}
-        const result = recipes.map(({totalCost, outputProfile, outputURL, outputCount})=>{
+        const result = recipes.map(({recipeId, totalCost, outputProfile, outputURL, outputCount})=>{
             return{
+                recipeId,
                 totalCost,
                 outputProfile,
                 outputURL,
@@ -143,11 +144,11 @@ export const craftRequest = UnderSession(async(session, clientSide, {tableType, 
             
             const output = recipe.output;
             if(typeof output === 'string'){
-                return await giveCommand(output);
+                await giveCommand(session, output);
             }else if(typeof output === 'function'){
                 output(session, ...targets).forEach(updatedItem=>session.itemChange(updatedItem));
-                return {success: true, result: session.ejectChanges()};
             }
+            return {success: true, result: session.ejectChanges()};
         }
     }
     return{success: false, result: `couldn't find recipe ${recipeId}`}

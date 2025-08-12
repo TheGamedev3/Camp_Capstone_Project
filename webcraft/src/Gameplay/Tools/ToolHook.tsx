@@ -35,18 +35,9 @@ export function ToolInfoWrapper({ children }){
     
     const liveData = useRef(GameData);
     useEffect(()=>{liveData.current = GameData}, [GameData]);
-
-    const fireActivate = useCallback(async (tileId: string) => {
-        const gamedata=()=>liveData.current;
-        const tileStack = gamedata()?.tileBucket[tileId];
-
-        // %! BPS(193) PASS SELECTED ITEM TO ACTION
-        const eventData = await selectedTool.action({
-            refresh: updater.current,
-            GameData: gamedata(),
-            slotId: selectedSlot,
-            tileId, tileStack, changeTool
-        });
+    const gamedata=()=>liveData.current;
+    
+    const processEventData = useCallback(async(eventData)=>{
         const gameDataNow = gamedata();
         if (eventData?.success === true && (eventData.result.timestamp > gameDataNow.timestamp)) {
             gameDataNow.tileBucket = {...gameDataNow.tileBucket, ...eventData.result.newTiles};
@@ -67,6 +58,19 @@ export function ToolInfoWrapper({ children }){
             
             updater.current({...gameDataNow});
         }
+    },[]);
+
+    const fireActivate = useCallback(async (tileId: string) => {
+        const tileStack = gamedata()?.tileBucket[tileId];
+
+        // %! BPS(193) PASS SELECTED ITEM TO ACTION
+        const eventData = await selectedTool.action({
+            refresh: updater.current,
+            GameData: gamedata(),
+            slotId: selectedSlot,
+            tileId, tileStack, changeTool
+        });
+        await processEventData(eventData);
     }, [selectedTool, selectedSlot]);
 
     const menuHook = useMenu();
@@ -75,7 +79,6 @@ export function ToolInfoWrapper({ children }){
         currentMenu.current = menuHook;
     }, [menuHook]);
     useEffect(()=>{
-        console.log("STNF", selectedTool)
         return selectedTool.equip({...currentMenu.current});
     },[selectedTool]);
 
@@ -98,10 +101,8 @@ export function ToolInfoWrapper({ children }){
         <ToolContext.Provider value={{
             selectedSlot,
             selectedTool,
+            processEventData,
             equipTool(tool){
-                if(tool.userId){
-                    throw new Error("GOTCHA")
-                }
                 if(selectedTool === tool && tool !== defaultTool){
                     setTool(defaultTool);
                 }else if(tool !== defaultTool || selectedTool !== defaultTool){

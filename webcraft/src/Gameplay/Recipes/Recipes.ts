@@ -34,6 +34,12 @@ export function createRecipes(){
             output:"mineshaft"
         },
 
+        {
+            recipeId: 'smelt-metal',
+            cost:"coal (1), metal ore (3)",
+            output:"metal (3)"
+        },
+
         /* DOESNT EXIST YET
         {
             recipeId: 'anvil',

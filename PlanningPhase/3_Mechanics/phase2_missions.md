@@ -180,11 +180,11 @@ Next Up: Crafting And Interfaces
     - evaluate if you can afford each item cost
     ✅ - the output
 
-⭐ - possibly, sort recipies by can afford or not?
-⭐ - and maybe a case insensitve search bar?
+⏭️ - possibly, sort recipies by can afford or not?
+⏭️ - and maybe a case insensitve search bar?
 
-- on recipieBtn clicked & can afford, send request to server, to do assosiated action
-📋 - see if they have the cost, subtract it, and then do the action on success
+✅ - on recipieBtn clicked & can afford, send request to server, to do assosiated action
+✅ - see if they have the cost, subtract it, and then do the action on success
 
 ✅ - (input, cost, output) FORMAT
 ✅ - this could be, healing a target tool, or giving a new item
