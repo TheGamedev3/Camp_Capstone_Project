@@ -1,5 +1,7 @@
 
 
+import { MenuContextType } from "../Recipes/MenuHook";
+type UIcontrols = MenuContextType;
 export type MouseEvent={
   slotId?: string | null;
   tileId?: string | null;
@@ -9,10 +11,8 @@ export type MouseEvent={
 
   refresh?: RefObject<Dispatch<unknown>>
   changeTool?: RefObject<Dispatch<Tool>>
-}
+} & UIcontrols;
 
-import { MenuContextType } from "../Recipes/MenuHook";
-type UIcontrols = MenuContextType;
 
 
 type Item = unknown;

@@ -36,14 +36,14 @@ export function Ingredient({ itemPair, have, affordable }: { itemPair: Ingredien
 
 export function Recipe({
   recipeId,
+  recipeName,
   outputURL,
-  outputProfile,
   outputCount,
   totalCost = [],
 }: {
   recipeId?: string;
+  recipeName?: string;
   outputURL?: string;
-  outputProfile?: string;
   outputCount?: number;
   totalCost?: IngredientPair[];
 }) {
@@ -111,7 +111,7 @@ export function Recipe({
           )}
           <div className="truncate">
             <div className="text-sm font-medium truncate">
-              {outputProfile ?? "Recipe"}
+              {recipeName ?? "Recipe"}
               {typeof outputCount === "number" ? ` × ${outputCount}` : null}
             </div>
 

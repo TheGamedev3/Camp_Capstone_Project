@@ -62,7 +62,7 @@ export function ItemList() {
 
   const { selectedTool, equipTool, setSlot } = useTools();
   return (
-    <aside className="fixed left-0 bottom-0 w-full flex justify-center pb-2">
+    <aside className="fixed left-0 bottom-0 w-full flex justify-center pb-2" style={{zIndex:20}}>
       <div className="w-full flex justify-center">
         <div
           ref={scrollRef}

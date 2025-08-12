@@ -10,5 +10,7 @@ export default class Forest extends Spawner {
     spawnStructure: string | (() => string) = 'PineTree';
     drops(){return`forest (1)`;}
 
+    health: number = 20;
+    breakType: 'stone' | 'wood' | 'metal' = 'wood';
     constructor(coords){super(coords)}
 }

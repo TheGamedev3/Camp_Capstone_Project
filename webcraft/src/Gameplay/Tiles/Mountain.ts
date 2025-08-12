@@ -17,5 +17,7 @@ export default class Mountain extends Spawner {
     };
     drops(){return`mountain (1)`;}
 
+    health: number = 20;
+    breakType: 'stone' | 'wood' | 'metal' = 'stone';
     constructor(coords){super(coords)}
 }

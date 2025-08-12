@@ -8,5 +8,7 @@ export default class Drill extends Automaton {
     breakStructures: string | string[] = ['Rock', 'CoalOre', 'MetalOre'];
     drops(){return`drill (1)`;}
 
+    health: number = 10;
+    breakType: 'stone' | 'wood' | 'metal' = 'metal';
     constructor(coords){super(coords)}
 }

@@ -190,12 +190,26 @@ Next Up: Crafting And Interfaces
 ✅ - this could be, healing a target tool, or giving a new item
 ✅ - healing a target tool... that would imply the request cost thing would have to input the target tool, and NOT withdraw it... (target and cost will have to be separate then.... but visually similar)
 
-- summon the menu upon clicking a structure, using the interact tool.....
+✅ - summon the menu upon clicking a structure, using the interact tool.....
 
 
+✅ - we still need downgrading of tools on breaking!
+✅ - remember to display the full inventory on the left!
+✅ - make sure to check the tile coordinates!
+✅ - construction site, electronic store
+✅ - correct hardness and durability values for all structures and break tools
+✅ - 🪳 tile layers are taking the mouse events away from the toolbar if they overlap!
+- item measurement change thingy!!!!
+    - inventory hook use effect on change
+    - tracking the quantities of each, even non stackables
+    - whenever something changes, alert some notification hook
+        - maybe just have it be part of the inventory hook directly every time it changes
+            - and consider memoizing it so the changes bundle together?
+    - notification element at the bottom right
+⏭️ - it may be soon possible to create a trading table once persisting data is a thing....
 
 
-🔥 Forage and Furance!
+🔥 Forage & Furance
 - the furance menu will be more complicated
     - furnace structure with a coal count and metal ore count and an output count
     - it evaluates smelting times and stuff on its own separate time server sided
@@ -205,13 +219,15 @@ Next Up: Crafting And Interfaces
     - 1 coal will add in 3 smelt bars if there's any smeltable material
     - if the material is all smelted, the smelt bars disappear
     - timestamp logic will need to smoothen this out
+    - maybe take x amounts of ticks?
+    - and then need for a tick length?
 
+
+✅ - tree growth
 
 Considering Time Stamps:
-- tree growth
 - smelt times
 - break rate and holding down mouse
-
 
 
 
@@ -226,8 +242,8 @@ Considering Time Stamps:
  - IRON THIS OUT MORE!
 
 new sections in the far future:
-⛏️ Upgradable tools, durability, and structure health
+✅ ⛏️ Upgradable tools, durability, and structure health
 🛠️ Crafting
 💱 Trading with Players
 💾 Persisting Sessions
-
+🔉 Sound Effects

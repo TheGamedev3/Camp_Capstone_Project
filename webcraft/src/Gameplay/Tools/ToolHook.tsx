@@ -1,7 +1,7 @@
 
 "use client";
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
-import { defaultTool, Tool } from "./Tools";
+import { defaultTool, Tool, Tools } from "./Tools";
 import { useGameData } from "../Looks/UpdateHook";
 import { useMenu } from "../Recipes/MenuHook";
 
@@ -26,6 +26,12 @@ export function ToolInfoWrapper({ children }){
     const[selectedTile, setHover] = useState<string | null>(null);
     const[selectedSlot, setSlot] = useState<string>('');
     // %! BPS(193) USE TOOL HOOK FOR AN OPTIONAL SELECTED ITEM, SEND IT INTO THE ACTION HOVER STUFF
+
+    const menuHook = useMenu();
+    const currentMenu = useRef(menuHook);
+    useEffect(()=>{
+        currentMenu.current = menuHook;
+    }, [menuHook, selectedTool, setTool]);
 
     const updater = useRef(updateGameData);
     useEffect(()=>{updater.current = updateGameData}, [updateGameData]);
@@ -68,25 +74,36 @@ export function ToolInfoWrapper({ children }){
             refresh: updater.current,
             GameData: gamedata(),
             slotId: selectedSlot,
-            tileId, tileStack, changeTool
+            tileId, tileStack, changeTool,
+            ...currentMenu.current
         });
         await processEventData(eventData);
     }, [selectedTool, selectedSlot]);
 
-    const menuHook = useMenu();
-    const currentMenu = useRef(menuHook);
-    useEffect(()=>{
-        currentMenu.current = menuHook;
-    }, [menuHook]);
+
     useEffect(()=>{
         return selectedTool.equip({...currentMenu.current});
     },[selectedTool]);
+
+    const menu = menuHook?.menu || null;
+    useEffect(()=>{
+        if(selectedTool !== Tools[3] && menu !== null){
+            setTool(Tools[3]);
+            return;
+        }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    },[setTool, menu]);
 
     // only update initially on a new tool being selected, or on gamedata updating!!!!
     useEffect(()=>{
         // %! BPS(193) PASS SELECTED ITEM TO HIGHLIGHT
         const tileStack = GameData?.tileBucket[selectedTile];
-        const hoverResult = selectedTool.hover({GameData, slotId: selectedSlot, tileId: selectedTile, tileStack, changeTool});
+        const hoverResult = selectedTool.hover({
+            GameData,
+            slotId: selectedSlot, tileId: selectedTile, tileStack,
+            changeTool,
+            ...currentMenu.current
+        });
         
         setHighlight(hoverResult?.highlight || null);
 

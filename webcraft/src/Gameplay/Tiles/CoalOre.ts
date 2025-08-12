@@ -9,5 +9,8 @@ export default class CoalOre extends Structure {
         const coal = Math.floor(Math.random() * (3 - 1 + 1)) + 1;
         return`coal (${coal})`;
     }
+
+    health: number = 7;
+    breakType: 'stone' | 'wood' | 'metal' = 'stone';
     constructor(coords){super(coords)}
 }

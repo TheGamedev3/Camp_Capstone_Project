@@ -66,7 +66,7 @@ export function Toolbar({
 }) {
   /* attached to the left edge with “pop-up” style tabs */
   return (
-    <aside className="fixed left-0 top-1/3 flex flex-col pl-1">
+    <aside className="fixed left-0 top-1/3 flex flex-col pl-1" style={{zIndex:20}}>
       {Tools.map((tool) => (
         <ToolTab key={tool.name} tool={tool} sizePx={tabSizePx} expandPx={expandPx} />
       ))}

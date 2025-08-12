@@ -8,5 +8,7 @@ export default class Lumbermill extends Automaton {
     breakStructures: string | string[] = ['PineTree'];
     drops(){return`lumber mill (1)`;}
 
+    health: number = 10;
+    breakType: 'stone' | 'wood' | 'metal' = 'metal';
     constructor(coords){super(coords)}
 }

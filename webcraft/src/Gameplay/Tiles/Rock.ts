@@ -9,5 +9,8 @@ export default class Rock extends Structure {
         const stone = Math.floor(Math.random() * (4 - 2 + 1)) + 2;
         return`stone (${stone})`;
     }
+
+    health: number = 5;
+    breakType: 'stone' | 'wood' | 'metal' = 'stone';
     constructor(coords){super(coords)}
 }

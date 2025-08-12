@@ -58,7 +58,7 @@ export const StructureTable: Item[] = [
     {
         name: "pine cone",
         icon:"https://tse3.mm.bing.net/th/id/OIP.gm5pLYXg2eMR6gCZGntHWAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
-        structure: "PineTree"
+        structure: "PineSappling"
     },
     {
         name: "tree",
@@ -105,6 +105,27 @@ export const StructureTable: Item[] = [
         name: "mineshaft",
         icon: "https://th.bing.com/th/id/R.02b16a23b74028b45938e1faa377bbc9?rik=PzRRvkfu%2bBODQw&riu=http%3a%2f%2fi.imgur.com%2fzPvdz.jpg&ehk=rEQ4U7SDvBUCwcBJSVJyCH6b3JH75DtSNJYqFrmOoKw%3d&risl=&pid=ImgRaw&r=0",
         structure: "Mineshaft"
+    },
+
+    {
+        name: "anvil",
+        icon: "https://images-na.ssl-images-amazon.com/images/I/71s9onWvQtL.jpg",
+        structure: "Anvil"
+    },
+    {
+        name: "beta furnace",
+        icon: "https://tse4.mm.bing.net/th/id/OIP.8fEvuhLMjvdLY279fL6oQAHaHa?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        structure: "BetaFurnace"
+    },
+    {
+        name: "land",
+        icon: "https://tse1.mm.bing.net/th/id/OIP.RrKtEYN72QSiaBlcTEzntgHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        structure: "Land"
+    },
+    {
+        name: "electronics store",
+        icon: "https://tse4.mm.bing.net/th/id/OIP.uQcCihVC3SS-OOVOL2ZqeQHaFj?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
+        structure: "ElectronicsStore"
     }
 ].map(item=>{
     (item as Item).itemType = 'structure';
@@ -146,7 +167,7 @@ export const ToolTable: Item[] = [
         name: "stone axe",
         icon:"https://th.bing.com/th/id/R.acb501c861e3ba8fe4a199a134353a10?rik=f58TE6u6ftDBmQ&pid=ImgRaw&r=0",
         tool:{
-            durability: 20,
+            durability: 35,
 
             woodDmg: 2,
 
@@ -159,7 +180,7 @@ export const ToolTable: Item[] = [
         name: "stone pickaxe",
         icon:"https://tse1.explicit.bing.net/th/id/OIP.i1xamhuhoDLr3LkML9bJjwHaEK?r=0&rs=1&pid=ImgDetMain&o=7&rm=3",
         tool:{
-            durability: 20,
+            durability: 35,
 
             stoneDmg: 2,
             metalDmg: 1,
@@ -173,7 +194,7 @@ export const ToolTable: Item[] = [
         name: "metal axe",
         icon:"https://cdn.britannica.com/93/125393-050-BA7F4807/Ax.jpg",
         tool:{
-            durability: 30,
+            durability: 60,
 
             woodDmg: 4,
 
@@ -184,7 +205,7 @@ export const ToolTable: Item[] = [
         name: "metal pickaxe",
         icon:"https://th.bing.com/th/id/R.74b1d6c43a6caf37aa5ca90807f2af28?rik=9sDso8oHsShCPg&riu=http%3a%2f%2fpreview.turbosquid.com%2fPreview%2f2015%2f04%2f10__15_07_53%2f10000.jpg9e42941e-ff0e-4a80-974b-c0b8e0b542b6Original.jpg&ehk=r481%2bqlCh4WUFNH6IqAxTP0r%2fXmW0AwSrzkVF1lMSZ4%3d&risl=&pid=ImgRaw&r=0",
         tool:{
-            durability: 30,
+            durability: 60,
 
             stoneDmg: 4,
             metalDmg: 2,
@@ -196,7 +217,7 @@ export const ToolTable: Item[] = [
         name: "wrench",
         icon:"https://m.media-amazon.com/images/I/71UQTCpwndL.jpg",
         tool:{
-            durability: 30,
+            durability: 60,
 
             metalDmg: 5,
         }

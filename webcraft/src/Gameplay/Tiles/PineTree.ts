@@ -14,5 +14,8 @@ export default class PineTree extends Structure {
 
         return`wood (${wood}), pine cone (${cones})`;
     }
+
+    health: number = 5;
+    breakType: 'stone' | 'wood' | 'metal' = 'wood';
     constructor(coords){super(coords)}
 }

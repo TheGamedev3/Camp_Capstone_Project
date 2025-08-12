@@ -19,40 +19,29 @@ export function createRecipes(){
         },
 
         {
-            recipeId: 'forest',
-            cost:"pine cone (10), wood (15)",
-            output:"forest"
-        },
-        {
-            recipeId: 'mountain',
-            cost:"stone (20)",
-            output:"mountain"
-        },
-        {
-            recipeId: 'mineshaft',
-            cost:"mountain, wood (20), stone (20)",
-            output:"mineshaft"
-        },
-
-        {
-            recipeId: 'smelt-metal',
-            cost:"coal (1), metal ore (3)",
-            output:"metal (3)"
-        },
-
-        /* DOESNT EXIST YET
-        {
             recipeId: 'anvil',
-            cost:"metal (20)",
-            output:"anvil"
+            cost:"metal (7)",
+            output:"anvil (1)"
         },
-        */
         {
-            recipeId: 'wrench',
-            cost:"metal (20)",
-            output:"wrench"
+            recipeId: 'beta-furance',
+            cost:"stone (8)",
+            output:"beta furnace (1)"
         },
+        {
+            recipeId: 'land',
+            cost:"wood(3), stone (5)",
+            output:"land"
+        },
+        {
+            recipeId: 'electronicsStore',
+            cost:"metal (10)",
+            output:"electronics store"
+        },
+    );
 
+    exposeToTable('anvil',
+        
         {
             recipeId: 'metal-axe-upgrade',
             cost:"stone axe, wood (5), metal (5)",
@@ -63,13 +52,12 @@ export function createRecipes(){
             cost:"stone pickaxe, wood (5), metal (5)",
             output:"metal pickaxe"
         },
-    );
+        {
+            recipeId: 'wrench',
+            cost:"metal (20)",
+            output:"wrench"
+        },
 
-
-
-
-
-    exposeToTable('Anvil',
         {
             recipeId: 'heal-metal-axe',
             input:['metal axe'],
@@ -81,11 +69,12 @@ export function createRecipes(){
                 }
                 return{success: true}
             },
+            recipeName: "➕ repair metal axe",
             outputProfile: "metal axe",
             output:(session, metal_axe)=>{
                 // restore it back to fullhp
                 metal_axe.tool!.currentDurability = metal_axe.tool.durability;
-                session.itemChange(metal_axe);
+                return[metal_axe];
             }
         },
         {
@@ -100,11 +89,12 @@ export function createRecipes(){
                 return{success: true}
             },
 
+            recipeName: "➕ repair metal pickaxe",
             outputProfile: "metal pickaxe",
             output:(session, metal_pickaxe)=>{
                 // restore it back to fullhp
                 metal_pickaxe.tool!.currentDurability = metal_pickaxe.tool.durability;
-                session.itemChange(metal_pickaxe);
+                return[metal_pickaxe];
             }
         },
         {
@@ -119,13 +109,57 @@ export function createRecipes(){
                 return{success: true}
             },
 
+            recipeName: "➕ repair wrench",
             outputProfile: "wrench",
             output:(session, wrench)=>{
                 // restore it back to fullhp
                 wrench.tool!.currentDurability = wrench.tool.durability;
-                session.itemChange(wrench);
+                return[wrench];
             }
         }
     );
 
+    exposeToTable('land',
+        {
+            recipeId: 'forest',
+            cost:"pine cone (10), wood (15)",
+            output:"forest"
+            // perhaps have land actually convert the tile to forest or mountain?
+            // that move would require more infrastructure though and a conditional, keep it as this as temporary
+            // focus on adding the tiles in first
+        },
+        {
+            recipeId: 'mountain',
+            cost:"stone (20)",
+            output:"mountain"
+        },
+        {
+            recipeId: 'mineshaft',
+            cost:"mountain, wood (20), stone (20)",
+            output:"mineshaft"
+        },
+    );
+    
+    exposeToTable('electronics store',
+        {
+            recipeId: 'lumbermill',
+            cost:"wood (10), metal (10)",
+            output:"lumber mill"
+        },
+        {
+            recipeId: 'drill',
+            cost:"metal (15)",
+            output:"drill"
+        }
+    );
+
+    exposeToTable('beta furnace',
+        {
+            recipeId: 'smelt-metal',
+            cost:"coal (1), metal ore (3)",
+            output:"metal (3)"
+        }
+    );
+
+    // eventually add a Trade table
 }

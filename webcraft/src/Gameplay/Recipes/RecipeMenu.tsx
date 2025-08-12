@@ -1,11 +1,8 @@
 // RecipeMenu.tsx
 "use client";
 
-import { useEffect } from "react";
-import { useMenu } from "./MenuHook";
-import { useTools } from "../Tools/ToolHook";
-import { Tools } from "../Tools/Tools";
 import { Recipe } from "./Recipe";
+import InventoryPanel from "./InventoryPanel";
 
 /** Flexible preview type — tolerant while MenuHook stabilizes */
 type RecipePreview = {
@@ -16,40 +13,12 @@ type RecipePreview = {
   totalCost?: [unknown, number][]; // e.g., [[{name:'metal'},3], ...]
 };
 
-export function Menu() {
-  const { menu, setMenu } = useMenu();
-  const { equipTool } = useTools();
+export function RecipeMenu({menu, isLoading, closeFunc}) {
 
-  const isOpen = !!menu;
-  const isLoading = !!menu?.sendRequest;
-
-  // Esc to close
-  useEffect(() => {
-    if (!isOpen) return;
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") equipTool(Tools[3]);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [isOpen, setMenu]);
-
-  if (!isOpen) return null;
-
-  // Be forgiving: accept array or single object
   const raw = (menu as any)?.recipies;
   const rows: RecipePreview[] = Array.isArray(raw) ? raw : raw ? [raw] : [];
 
   return (
-    <div
-      className="fixed inset-0 z-50"
-      onClick={() => {if(isOpen)equipTool(Tools[3])}}
-      role="dialog"
-      aria-modal="true"
-    >
-      {/* backdrop */}
-      <div className="absolute inset-0 bg-black/60" />
-
-      {/* shell */}
       <div
         className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2
                    w-[960px] max-w-[95vw] h-[600px] max-h-[90vh]
@@ -62,7 +31,7 @@ export function Menu() {
             {menu?.header ?? menu?.tableType ?? "Recipes"}
           </div>
           <button
-            onClick={() => setMenu(null)}
+            onClick={closeFunc}
             className="px-2 py-1 rounded hover:bg-neutral-800"
             aria-label="Close"
           >
@@ -74,9 +43,7 @@ export function Menu() {
         <div className="grid grid-cols-2 h-[calc(100%-48px)]">
           {/* left placeholder panel (empty for now) */}
           <div className="border-r border-neutral-800 p-3 overflow-auto">
-            <div className="h-full rounded-lg border border-neutral-800/70 bg-neutral-950/30 flex items-center justify-center text-sm text-neutral-500">
-              inventory panel (todo)
-            </div>
+            <InventoryPanel/>
           </div>
 
           {/* right: recipe list */}
@@ -97,8 +64,5 @@ export function Menu() {
           </div>
         </div>
       </div>
-    </div>
   );
 }
-
-export default Menu;

@@ -7,6 +7,10 @@ export default class BrickHouse extends Structure {
 
     swap: boolean = false;
     drops(){return`brick house (1)`}
+
+    health: number = 5;
+    breakType: 'stone' | 'wood' | 'metal' = 'stone';
+    
     constructor(coords) {
         super(coords);
         const{ x, y }: { x: number; y: number } = coords;

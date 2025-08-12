@@ -37,7 +37,6 @@ export function MenuProvider({ children }){
         currentMenu.current = menu;
         if(menu && menu.sendRequest === true){
             const{tableType, tileId}=menu;
-            console.log(tableType, tileId, "ESSSSSSSS")
             getRoute({route:`POST /api/requestMenu`, body:{tableType, tileId}})
                 .then(({success, result})=>{
                     if(success && currentMenu.current === menu){

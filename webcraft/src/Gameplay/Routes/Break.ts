@@ -44,6 +44,11 @@ export const breakAt = UnderSession(async(session, clientSide, { slotId, customD
                     // %! STT(129) SUBTRACT DURABILITY & UPDATE BREAK TOOL
                     if(breakTool.durability !== 'infinite'){
                         breakTool.currentDurability -= 1;
+                        if(breakTool.currentDurability <= 0){
+                            const downgrade = breakTool.downgradeToItem;
+                            tool.quantity = 0;
+                            if(downgrade)await giveCommand(session, `${downgrade} (1)`);
+                        }
                         session.itemChange(tool);
                     }
                 }

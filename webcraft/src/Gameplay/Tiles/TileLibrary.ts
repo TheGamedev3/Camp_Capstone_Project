@@ -10,16 +10,23 @@ import Lumbermill from "../Tiles/Lumbermill";
 import Drill from "../Tiles/Drill";
 
 import MetalOre from "../Tiles/MetalOre";
+import PineSappling from "./PineSappling";
 import PineTree from "../Tiles/PineTree";
 import Rock from "../Tiles/Rock";
+
+import { Anvil } from "./Anvil";
+import { BetaFurnace } from "./BetaFurnace";
+import { Land } from "./Land";
+import { ElectronicsStore } from "./ElectronicsStore";
 
 const tileLibrary = {
   Grass,
   BrickHouse,
-  PineTree,
+  PineSappling, PineTree,
   Rock, CoalOre, MetalOre,
   Forest, Mountain, Mineshaft,
   Lumbermill, Drill,
+  Anvil, BetaFurnace, Land, ElectronicsStore
 } as const;
 
 type TileLibrary = typeof tileLibrary;

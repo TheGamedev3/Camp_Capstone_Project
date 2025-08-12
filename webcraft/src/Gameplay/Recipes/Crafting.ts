@@ -1,5 +1,6 @@
 
 
+import "../Items/Items";
 import { Item } from "../Items/Items";
 import { PlaySession } from "../Simulator/PlaySession";
 
@@ -22,6 +23,7 @@ export type Recipe={
     conditional?: ((session: PlaySession, ...targets:Item[])=>{success: boolean, result?: string});
 
     // by default, its the first item if output is a string, otherwise it needs to be set
+    recipeName?: string;
     outputURL?: string;
     outputProfile?: string;
     outputCount?: number;
@@ -64,6 +66,7 @@ export function exposeToTable(tableName: string, ...recipieList:Recipe[]){
             }
             if(recipe.outputProfile){
                 recipe.outputURL = interpretQuantities(recipe.outputProfile)[0][0].icon;
+                if(!recipe.recipeName){recipe.recipeName = recipe.outputProfile}
             }else{
                 throw new Error(`RECIPE ${recipe.cost} IS MISSING ITS OUTPUT PROFILE!`);
             }
@@ -73,21 +76,25 @@ export function exposeToTable(tableName: string, ...recipieList:Recipe[]){
     );
 }
 
+function verifyTable(session: PlaySession, tileId: string, tableType: string): boolean{
+    if(tableType === 'default')return true;
+    const tileStack = session?.tileBucket[tileId] || [];
+    return Boolean(tileStack.find(structure=>(structure.layer === 'structure' && structure.menu === tableType)));
+}
+
 export const requestMenu = UnderSession(async(session, clientSide, {tableType, tileId})=>{
     if(clientSide && session){
         // verify the session's tileId-tileBucket has the workbench type its claiming to have
-        if(tableType !== 'default'){
-            // VERIFY HERE!!!! IF FAIL, RETURN SUCCESS FALSE
-        }
+        if(!verifyTable(session, tileId, tableType)){return{success: false, result: 'permissions not met!'}}
 
         // evaluating will be calculated on the client side
         const recipes = Categories[tableType];
         if(!recipes){return{success:false, result: `no table type ${tableType} found!`}}
-        const result = recipes.map(({recipeId, totalCost, outputProfile, outputURL, outputCount})=>{
+        const result = recipes.map(({recipeId, recipeName, totalCost, outputURL, outputCount})=>{
             return{
                 recipeId,
+                recipeName,
                 totalCost,
-                outputProfile,
                 outputURL,
                 outputCount
             }
@@ -100,9 +107,7 @@ export const requestMenu = UnderSession(async(session, clientSide, {tableType, t
 export const craftRequest = UnderSession(async(session, clientSide, {tableType, recipeId, tileId})=>{
     if(clientSide && session){
         // verify the session's tileId-tileBucket has the workbench type its claiming to have
-        if(tableType !== 'default'){
-            // VERIFY HERE!!!! IF FAIL, RETURN SUCCESS FALSE
-        }
+        if(!verifyTable(session, tileId, tableType)){return{success: false, result: 'permissions not met!'}}
 
         const recipe = CookBook[recipeId];
         if(recipe && recipe.tables?.includes(tableType)){

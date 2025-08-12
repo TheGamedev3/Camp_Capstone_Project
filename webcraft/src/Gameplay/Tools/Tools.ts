@@ -17,17 +17,36 @@ export const Tools: Tool[] = [
         if(tileId === null)return{actionable: false}
         const interactable = tileStack.find(tileDatum=>tileDatum.layer === "structure");
 
+        if(interactable?.menu){
+          return{
+            actionable: true,
+            highlight: 'rgba(255, 123, 0, 0.9)',
+          }
+        }
+
         return{
             actionable: interactable,
             highlight: interactable ? 'rgba(255, 255, 255, 0.7)' : null,
         }
-    }
+    },
 
     // %! C&C(173) ON CLICK, IF TILE HAS A MENU THINGY, REQUEST IT!
     // getmenu tile.name, pass info to the tile, or pull up a menu!
     // also requires a menu name...
     // USE changeTool
+    onAction({tileId, tileStack, setMenu}){
+        if(tileId === null)return{actionable: false}
+        const interactable = tileStack.find(tileDatum=>tileDatum.layer === "structure");
 
+        if(interactable?.menu){
+          setMenu({
+            header: interactable.header || 'UNNAMED',
+            menuType: interactable.menuType || 'recipes',
+            tableType: interactable.menu,
+            tileId, sendRequest: true
+          });
+        }
+    }
   }),
   new Tool({
     name: 'build',
@@ -68,11 +87,15 @@ export const Tools: Tool[] = [
           // %! PII(252/253)
           selectedItem.quantity -= 1;
           // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
+
           GameData.inventory = GameData.inventory.filter(item=>{
             if(item.quantity === 0)return false;
-            if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0)return false;
+            if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0){
+              return false;
+            }
             return true;
           });
+
           GameData.tileBucket[tileId].push(selectedItem.tilePreview);
           refresh({...GameData});
         }
@@ -115,8 +138,8 @@ export const Tools: Tool[] = [
     icon: DraftingCompass,
     borderColor: 'border-orange-500',
     
-    onEquip({ menuRef, setMenu }){
-      if(menuRef.current === null){
+    onEquip({ menu, setMenu }){
+      if(menu === null){
         setMenu({
           header: 'Craft',
           menuType: 'recipes',
@@ -125,9 +148,7 @@ export const Tools: Tool[] = [
           sendRequest: true
         });
       }
-      return()=>{
-        setMenu(null);
-      }
+      return()=>setMenu(null);
     }
   }),
 ];

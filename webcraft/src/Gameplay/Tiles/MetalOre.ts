@@ -9,5 +9,8 @@ export default class MetalOre extends Structure {
         const ore = Math.floor(Math.random() * (2 - 1 + 1)) + 1;
         return`metal ore (${ore})`;
     }
+
+    health: number = 10;
+    breakType: 'stone' | 'wood' | 'metal' = 'stone';
     constructor(coords){super(coords)}
 }

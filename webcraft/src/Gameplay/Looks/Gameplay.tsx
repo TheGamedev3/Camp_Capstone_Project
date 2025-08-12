@@ -5,7 +5,7 @@ import { useGameData } from "./UpdateHook";
 import { TileGrid } from "./TileGrid";
 import { Toolbar } from "../Tools/Toolbar";
 import { ItemList } from "../Items/ItemList";
-import Menu from "../Recipes/RecipeMenu";
+import Menu from "../Recipes/Menu";
 
 export default function Gameplay() {
   const { GameData } = useGameData();

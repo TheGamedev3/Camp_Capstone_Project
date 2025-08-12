@@ -17,5 +17,7 @@ export default class Mineshaft extends Spawner {
     };
     drops(){return`mineshaft (1)`;}
 
+    health: number = 20;
+    breakType: 'stone' | 'wood' | 'metal' = 'stone';
     constructor(coords){super(coords)}
 }

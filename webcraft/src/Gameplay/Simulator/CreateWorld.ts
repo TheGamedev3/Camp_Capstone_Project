@@ -23,7 +23,7 @@ export async function createWorld(userId: string){
     }
     // place down prebuilt structures
 
-    await giveCommand(newCache, "wood axe, wood pickaxe, mountain, pine cone");
+    await giveCommand(newCache, "wood axe, wood pickaxe, wood (50), stone (50), coal (50), metal ore (50), pine cone (50)");
     newCache.ejectChanges();
 
     playSessionCache[userId] = newCache;

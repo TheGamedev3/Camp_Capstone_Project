@@ -8,8 +8,9 @@ const exposedProperties = [
     'tileBucket', 'inventory'
 ] as const;
 
-import { Item } from "../Items/Items";
+import { allItems, Item } from "../Items/Items";
 import { createWorld } from "./CreateWorld";
+import { randomBytes } from "crypto";
 
 // inferred: "userId" | "gridXSize" | "gridYSize" ....
 type ExposedKeys = typeof exposedProperties[number];
@@ -93,11 +94,26 @@ export class PlaySession{
 
         // %! PII(251) CLEAR ANY QUANTITY 0 OR DURABILITY 0% ITEMS
         // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
+        const downgrades: Item[] = [];
         this.inventory = this.inventory.filter(item=>{
             if(item.quantity === 0)return false;
-            if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0)return false;
+            if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0){
+                downgrades.push(item);
+                return false;
+            }
             return true;
         });
+        downgrades.forEach(item=>{
+            const downgraded = item.tool?.downgradeToItem;
+            if(downgraded){
+                const downgradedItem = allItems.find(i=>i.name === downgraded);
+                if(downgradedItem){
+                    const replacement = {...downgradedItem, slotId: randomBytes(16).toString('hex') };
+                    this.inventory.push(replacement);
+                }
+            }
+        });
+        // DOWNGRADES HERE
 
         const data = Object.fromEntries(
             exposedProperties.map((key) => [key, this[key]])
