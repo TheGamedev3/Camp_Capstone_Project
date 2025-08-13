@@ -7,6 +7,13 @@ import { PlaySession } from "../Simulator/PlaySession";
 const CookBook:Record<string, Recipe>={};
 const Categories:Record<string, Recipe[]>={};
 
+type evaluater = {
+    session: PlaySession,
+    targets:Item[],
+    tileId: string,
+    tableType: string
+};
+
 export type Recipe={
     recipeId?: string;
     tables?: string[];
@@ -20,7 +27,7 @@ export type Recipe={
     materials?: [Item, number][];
     totalCost?: [Item, number][];
 
-    conditional?: ((session: PlaySession, ...targets:Item[])=>{success: boolean, result?: string});
+    conditional?: ((struct:evaluater)=>{success: boolean, result?: string});
 
     // by default, its the first item if output is a string, otherwise it needs to be set
     recipeName?: string;
@@ -29,7 +36,7 @@ export type Recipe={
     outputCount?: number;
 
     // a give command, or some way to transform it like adding durability to the tool inputed
-    output?: string | ((session: PlaySession, ...targets:Item[])=>Item[]);
+    output?: string | ((struct:evaluater)=>Item[]);
 }
 
 import { UnderSession } from "../Routes/UponSession";
@@ -151,7 +158,9 @@ export const craftRequest = UnderSession(async(session, clientSide, {tableType, 
             if(typeof output === 'string'){
                 await giveCommand(session, output);
             }else if(typeof output === 'function'){
-                output(session, ...targets).forEach(updatedItem=>session.itemChange(updatedItem));
+                // %! TTL(224) CHANGE TARGETS TO ITEM TARGETS! AND MAKE IT A STRUCT
+                // ALSO INCLUDE TILE DATA!
+                output({session, targets, tileId, tableType}).forEach(updatedItem=>session.itemChange(updatedItem));
             }
             return {success: true, result: session.ejectChanges()};
         }

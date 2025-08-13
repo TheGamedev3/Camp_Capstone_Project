@@ -1,6 +1,7 @@
 
 
 import { exposeToTable } from "./Crafting";
+import { spawnStructure } from "../Routes/Build";
 
 let created = false;
 export function createRecipes(){
@@ -16,6 +17,49 @@ export function createRecipes(){
             recipeId: 'stone-pickaxe-upgrade',
             cost:"wood pickaxe, wood (5), stone (5)",
             output:"stone pickaxe"
+        },
+        {
+            recipeId: 'heal-stone-axe',
+            input:['stone axe'],
+            cost:"stone (3)",
+
+            conditional({targets}){
+                const stone_axe = targets[0];
+                if(stone_axe.tool!.currentDurability === undefined || stone_axe.tool!.currentDurability === metal_axe.tool.durability){
+                    return{success: false, result:'axe already at full durability!'}
+                }
+                return{success: true}
+            },
+            recipeName: "➕ repair stone axe",
+            outputProfile: "stone axe",
+            output({targets}){
+                // restore it back to fullhp
+                const stone_axe = targets[0];
+                stone_axe.tool!.currentDurability = stone_axe.tool.durability;
+                return[stone_axe];
+            }
+        },
+        {
+            recipeId: 'heal-stone-pickaxe',
+            input:['stone pickaxe'],
+            cost:"stone (3)",
+
+            conditional({targets}){
+                const stone_pickaxe = targets[0];
+                if(stone_pickaxe.tool!.currentDurability === undefined || stone_pickaxe.tool!.currentDurability === metal_pickaxe.tool.durability){
+                    return{success: false, result:'pickaxe already at full durability!'}
+                }
+                return{success: true}
+            },
+
+            recipeName: "➕ repair stone pickaxe",
+            outputProfile: "stone pickaxe",
+            output({targets}){
+                // restore it back to fullhp
+                const stone_pickaxe = targets[0];
+                stone_pickaxe.tool!.currentDurability = stone_pickaxe.tool.durability;
+                return[stone_pickaxe];
+            }
         },
 
         {
@@ -63,7 +107,8 @@ export function createRecipes(){
             input:['metal axe'],
             cost:"metal (3)",
 
-            conditional(_, metal_axe){
+            conditional({targets}){
+                const metal_axe = targets[0];
                 if(metal_axe.tool!.currentDurability === undefined || metal_axe.tool!.currentDurability === metal_axe.tool.durability){
                     return{success: false, result:'axe already at full durability!'}
                 }
@@ -71,8 +116,9 @@ export function createRecipes(){
             },
             recipeName: "➕ repair metal axe",
             outputProfile: "metal axe",
-            output:(session, metal_axe)=>{
+            output({targets}){
                 // restore it back to fullhp
+                const metal_axe = targets[0];
                 metal_axe.tool!.currentDurability = metal_axe.tool.durability;
                 return[metal_axe];
             }
@@ -82,7 +128,8 @@ export function createRecipes(){
             input:['metal pickaxe'],
             cost:"metal (3)",
 
-            conditional(_, metal_pickaxe){
+            conditional({targets}){
+                const metal_pickaxe = targets[0];
                 if(metal_pickaxe.tool!.currentDurability === undefined || metal_pickaxe.tool!.currentDurability === metal_pickaxe.tool.durability){
                     return{success: false, result:'pickaxe already at full durability!'}
                 }
@@ -91,8 +138,9 @@ export function createRecipes(){
 
             recipeName: "➕ repair metal pickaxe",
             outputProfile: "metal pickaxe",
-            output:(session, metal_pickaxe)=>{
+            output({targets}){
                 // restore it back to fullhp
+                const metal_pickaxe = targets[0];
                 metal_pickaxe.tool!.currentDurability = metal_pickaxe.tool.durability;
                 return[metal_pickaxe];
             }
@@ -102,7 +150,8 @@ export function createRecipes(){
             input:['wrench'],
             cost:"metal (3)",
 
-            conditional(_, wrench){
+            conditional({targets}){
+                const wrench = targets[0];
                 if(wrench.tool!.currentDurability === undefined || wrench.tool!.currentDurability === wrench.tool.durability){
                     return{success: false, result:'pickaxe already at full durability!'}
                 }
@@ -111,32 +160,61 @@ export function createRecipes(){
 
             recipeName: "➕ repair wrench",
             outputProfile: "wrench",
-            output:(session, wrench)=>{
+            output({targets}){
                 // restore it back to fullhp
+                const wrench = targets[0];
                 wrench.tool!.currentDurability = wrench.tool.durability;
                 return[wrench];
             }
         }
     );
 
+    // %! TTL(222)
     exposeToTable('land',
         {
             recipeId: 'forest',
             cost:"pine cone (10), wood (15)",
-            output:"forest"
+            // output:"forest" // %! TTL(224)
             // perhaps have land actually convert the tile to forest or mountain?
             // that move would require more infrastructure though and a conditional, keep it as this as temporary
             // focus on adding the tiles in first
+            outputProfile:"forest",
+            output({session, tileId, tableType}){
+                // transform the land into a forest
+                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType)
+                land?.deleteSelf();
+                spawnStructure(session, {what:"Forest", tileId});
+                session.tileChange(tileId);
+                return[];
+            }
         },
         {
             recipeId: 'mountain',
             cost:"stone (20)",
-            output:"mountain"
-        },
+            outputProfile:"mountain",
+            output({session, tileId, tableType}){
+                // transform the land into a forest
+                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType)
+                land?.deleteSelf();
+                spawnStructure(session, {what:"Mountain", tileId});
+                session.tileChange(tileId);
+                return[];
+            }
+        }
+    );
+    exposeToTable('mountain',
         {
             recipeId: 'mineshaft',
-            cost:"mountain, wood (20), stone (20)",
-            output:"mineshaft"
+            cost:"wood (20), stone (20)",
+            outputProfile:"mineshaft",
+            output({session, tileId, tableType}){
+                // transform the land into a forest
+                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType)
+                land?.deleteSelf();
+                spawnStructure(session, {what:"Mineshaft", tileId});
+                session.tileChange(tileId);
+                return[];
+            }
         },
     );
     

@@ -189,6 +189,7 @@ Next Up: Crafting And Interfaces
 ✅ - (input, cost, output) FORMAT
 ✅ - this could be, healing a target tool, or giving a new item
 ✅ - healing a target tool... that would imply the request cost thing would have to input the target tool, and NOT withdraw it... (target and cost will have to be separate then.... but visually similar)
+✅ - tree growth
 
 ✅ - summon the menu upon clicking a structure, using the interact tool.....
 
@@ -217,6 +218,43 @@ Next Up: Crafting And Interfaces
 ⏭️ - it may be soon possible to create a trading table once persisting data is a thing....
 
 
+✅ - terraform the land // %! TTL(221)
+    ✅ - have the recipe thing for "land" have an output thingy instead of giving an item
+    ✅ - pass in the actual tiledata, tileid, and session thing
+    ✅ - refactor it to take in more args
+    ✅ - also allow for mountain to transform into mineshaft
+
+
+- break hold down
+    - track when mouse is down, send a request
+    - track when mouse is lifted, stop interval on the server side
+    - or alternatively, on hold down on client, send break request at an interval
+        - and then on the server side timestamp verify it
+
+- consider trade requests
+    - mongoose schema for the offer object
+    - offers pagnator
+    - minimal version?
+        - item selector
+        - set valid cost string
+        - take items & nonstackables data and post trade as a mongoose object
+        - give back on creator canceling
+        - take cost and give items on buy
+        - creator claiming reward on purchased (and possibly notify by lighting it up in myOffers?)
+    - polished version
+        - requires a new create trade input
+            - possibly clicking an item will post it in x1 once
+            - a +/- button for each qt
+            - a cost drop down thingy where u can set the item and the quantity, and add in more items
+                - ingredients list rendered
+                - ingredient selector and quantity adjuster
+                - add ingredient
+                - take the selected info out
+            - remember, durability/nonstackables need to transfer their durability somehow!
+                - because you can only have 1 axe and pickaxe ever, they're non tradable and will be filtered out
+            - a post button to post the trade
+
+
 🔥 Forage & Furance
 - the furance menu will be more complicated
     - furnace structure with a coal count and metal ore count and an output count
@@ -231,27 +269,10 @@ Next Up: Crafting And Interfaces
     - and then need for a tick length?
 
 
-✅ - tree growth
-
-Considering Time Stamps:
-- smelt times
-- break rate and holding down mouse
-
-
-
-
-
-
-
-🖥️ Interactable UI
- - click certain structures to pull up UI (add it in properties, and make custom ui for them, they'll mostly consist of +/- buttons of items, and an output you can click to claim)
- - coal generator (eats coal? dunno how.... we'll need a ui for it later)
- - furnace (also requires a ui)
- - IRON THIS OUT MORE!
 
 new sections in the far future:
 ✅ ⛏️ Upgradable tools, durability, and structure health
-🛠️ Crafting
+✅ 🛠️ Crafting
 💱 Trading with Players
 💾 Persisting Sessions
 🔉 Sound Effects

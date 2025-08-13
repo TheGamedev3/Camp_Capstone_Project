@@ -7,6 +7,7 @@ import { useTools } from "../Tools/ToolHook";
 import { Tools } from "../Tools/Tools";
 
 import { RecipeMenu } from "./RecipeMenu";
+import { useGameData } from "../Looks/UpdateHook";
 
 export function Menu() {
   const { menu, setMenu } = useMenu();
@@ -28,6 +29,15 @@ export function Menu() {
     window.addEventListener("keydown", onKey);
     return () => window.removeEventListener("keydown", onKey);
   }, [isOpen, setMenu]);
+
+  const{ ClientData } = useGameData();
+  useEffect(()=>{
+    if(!menu)return;
+    const myStack = ClientData?.tileBucket?.[menu.tileId] ?? null;
+    if(menu.tableType !== 'default' && !myStack.find(tile=>tile.menu === menu.tableType)){
+      closeFunc();
+    }
+  },[ClientData, menu]);
 
   if (!isOpen) return null;
 

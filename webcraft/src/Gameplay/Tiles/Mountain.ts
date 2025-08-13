@@ -17,6 +17,10 @@ export default class Mountain extends Spawner {
     };
     drops(){return`mountain (1)`;}
 
+    header: string = '⛏️ Get Minerals!';
+    menu: string = 'mountain';
+    menuType: string = 'recipes';
+
     health: number = 20;
     breakType: 'stone' | 'wood' | 'metal' = 'stone';
     constructor(coords){super(coords)}
