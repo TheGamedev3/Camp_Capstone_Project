@@ -199,13 +199,21 @@ Next Up: Crafting And Interfaces
 ✅ - construction site, electronic store
 ✅ - correct hardness and durability values for all structures and break tools
 ✅ - 🪳 tile layers are taking the mouse events away from the toolbar if they overlap!
-- item measurement change thingy!!!!
-    - inventory hook use effect on change
-    - tracking the quantities of each, even non stackables
-    - whenever something changes, alert some notification hook
-        - maybe just have it be part of the inventory hook directly every time it changes
-            - and consider memoizing it so the changes bundle together?
-    - notification element at the bottom right
+✅ - item measurement change thingy!!!!
+    ✅ - inventory hook use effect on change
+    ✅ - tracking the quantities of each, even non stackables
+    ✅ - whenever something changes, alert some notification hook
+        ✅ - maybe just have it be part of the inventory hook directly every time it changes
+            ✅ - the changes bundle together
+    ✅ - notification element at the bottom right
+✅ 🪳 - massive refactor required where client changes are stacked ontop!
+    ✅ 🪳 - this is to fix outdated game data
+    ✅ - make a new client data layer
+    ✅ - give it updates
+    ✅ - client data merges tile & item deltas with the game data to make client data
+    ✅ - have all elements using the useGameDataHook finally transfer over to using ClientData
+    ✅ - nobody can update game data directly on the client but the ping fetcher! thats a rule! they must use changeTileId, and changeItemSlotId
+    ✅ - of course, consider timestamps!
 ⏭️ - it may be soon possible to create a trading table once persisting data is a thing....
 
 

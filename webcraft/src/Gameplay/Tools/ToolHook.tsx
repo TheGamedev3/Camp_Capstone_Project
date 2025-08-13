@@ -1,4 +1,3 @@
-
 "use client";
 import { createContext, useContext, useEffect, useRef, useState, useCallback } from "react";
 import { defaultTool, Tool, Tools } from "./Tools";
@@ -12,124 +11,166 @@ type ToolContextType = {
   selectedTile: string | null;
   setHover: React.Dispatch<React.SetStateAction<string | null>>;
   setSlot: React.Dispatch<React.SetStateAction<string>>;
-  fireActivate: (x: number, y: number)=>void;
+  fireActivate: (tileId: string) => void;
+  processEventData: (eventData: any) => void;
 };
 
 const ToolContext = createContext<ToolContextType | null>(null);
 export const useTools = () => useContext(ToolContext)!;
 
-export function ToolInfoWrapper({ children }){
-    const{ updateGameData, updateHoverBucket, GameData }=useGameData();
+export function ToolInfoWrapper({ children }: { children: React.ReactNode }) {
+  const {
+    ClientData,               // merged view
+    updateGameData,           // server state setter
+    hoverBucket,              // 👈 bring current hover map so we can diff
+    updateHoverBucket,
+    pushLocalItemChange,
+    pushLocalTileChange,
+  } = useGameData();
 
-    const[selectedHighlight, setHighlight] = useState<string | null>(null);
-    const[selectedTool, setTool] = useState<Tool>(defaultTool);
-    const[selectedTile, setHover] = useState<string | null>(null);
-    const[selectedSlot, setSlot] = useState<string>('');
-    // %! BPS(193) USE TOOL HOOK FOR AN OPTIONAL SELECTED ITEM, SEND IT INTO THE ACTION HOVER STUFF
+  const [selectedHighlight, setHighlight] = useState<string | null>(null);
+  const [selectedTool, setTool] = useState<Tool>(defaultTool);
+  const [selectedTile, setHover] = useState<string | null>(null);
+  const [selectedSlot, setSlot] = useState<string>("");
 
-    const menuHook = useMenu();
-    const currentMenu = useRef(menuHook);
-    useEffect(()=>{
-        currentMenu.current = menuHook;
-    }, [menuHook, selectedTool, setTool]);
+  // menu (stable ref)
+  const menuHook = useMenu();
+  const menuRef = useRef(menuHook);
+  useEffect(() => { menuRef.current = menuHook; }, [menuHook]);
 
-    const updater = useRef(updateGameData);
-    useEffect(()=>{updater.current = updateGameData}, [updateGameData]);
+  // stable ref to updater
+  const updateRef = useRef(updateGameData);
+  useEffect(() => { updateRef.current = updateGameData; }, [updateGameData]);
 
-    const changeTool = useRef(setTool);
-    useEffect(()=>{changeTool.current = setTool}, [setTool]);
-    
-    const liveData = useRef(GameData);
-    useEffect(()=>{liveData.current = GameData}, [GameData]);
-    const gamedata=()=>liveData.current;
-    
-    const processEventData = useCallback(async(eventData)=>{
-        const gameDataNow = gamedata();
-        if (eventData?.success === true && (eventData.result.timestamp > gameDataNow.timestamp)) {
-            gameDataNow.tileBucket = {...gameDataNow.tileBucket, ...eventData.result.newTiles};
+  /** timestamp-guarded event merge */
+  const processEventData = useCallback((eventData: any) => {
+    if (!eventData?.success) return;
+    const res = eventData.result ?? {};
+    const incomingTs = Number(res.timestamp ?? 0);
 
-            const newItems = eventData.result.newItems; // Item[]
-            const overwriteItem = newItems.map(item=>item.slotId);
-            gameDataNow.inventory = gameDataNow.inventory.filter(item=>!overwriteItem.includes(item.slotId));
-           
-            // %! PII\(252/253) UPDATE NUMBERS ON THE CLIENT SIDE
-            // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
-            gameDataNow.inventory.push(...(newItems.filter(item=>{
-                if(item.quantity === 0)return false;
-                if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0)return false;
-                return true;
-            })));
+    updateRef.current(prev => {
+      if (!prev) return prev;
+      const currentTs = Number(prev.timestamp ?? 0);
+      if (incomingTs < currentTs) return prev;
 
-            gameDataNow.timestamp = eventData.result.timestamp;
-            
-            updater.current({...gameDataNow});
+      const nextTileBucket = res.newTiles ? { ...prev.tileBucket, ...res.newTiles } : prev.tileBucket;
+
+      let nextInventory = prev.inventory;
+      if (Array.isArray(res.newItems)) {
+        const bySlot = new Map(prev.inventory.map((it: any) => [it.slotId, it]));
+        for (const it of res.newItems) {
+          if (!it) continue;
+          const qty = typeof it.quantity === "number" ? it.quantity : 0;
+          const broken = it.tool && it.tool.durability !== "infinite" &&
+                         typeof it.tool.currentDurability === "number" &&
+                         it.tool.currentDurability <= 0;
+          if (qty === 0 || broken) bySlot.delete(it.slotId);
+          else bySlot.set(it.slotId, it);
         }
-    },[]);
+        nextInventory = Array.from(bySlot.values());
+      }
 
-    const fireActivate = useCallback(async (tileId: string) => {
-        const tileStack = gamedata()?.tileBucket[tileId];
+      return { ...prev, tileBucket: nextTileBucket, inventory: nextInventory, timestamp: incomingTs };
+    });
+  }, []);
 
-        // %! BPS(193) PASS SELECTED ITEM TO ACTION
-        const eventData = await selectedTool.action({
-            refresh: updater.current,
-            GameData: gamedata(),
-            slotId: selectedSlot,
-            tileId, tileStack, changeTool,
-            ...currentMenu.current
-        });
-        await processEventData(eventData);
-    }, [selectedTool, selectedSlot]);
+  /** Activate current tool */
+  const fireActivate = useCallback(async (tileId: string) => {
+    const tileStack = ClientData?.tileBucket?.[tileId];
 
+    const eventData = await selectedTool.action({
+      ClientData,
+      slotId: selectedSlot,
+      tileId,
+      tileStack,
+      changeTool: setTool,
+      ...menuRef.current,
+      pushLocalItemChange,
+      pushLocalTileChange,
+      processEventData,
+    });
 
-    useEffect(()=>{
-        return selectedTool.equip({...currentMenu.current});
-    },[selectedTool]);
+    processEventData(eventData);
+  }, [ClientData, selectedTool, selectedSlot, processEventData, pushLocalItemChange, pushLocalTileChange]);
 
-    const menu = menuHook?.menu || null;
-    useEffect(()=>{
-        if(selectedTool !== Tools[3] && menu !== null){
-            setTool(Tools[3]);
-            return;
-        }
+  /** Equip effect — run only when the tool changes */
+  useEffect(() => {
+    // pass stable references via closure; do not include them in deps
+    return selectedTool.equip({
+      ...menuRef.current,
+      pushLocalItemChange,
+      pushLocalTileChange,
+      processEventData,
+      ClientData, // read-only snapshot at the time of equip
+    });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    },[setTool, menu]);
+  }, [selectedTool]); // 👈 ONLY when tool changes
 
-    // only update initially on a new tool being selected, or on gamedata updating!!!!
-    useEffect(()=>{
-        // %! BPS(193) PASS SELECTED ITEM TO HIGHLIGHT
-        const tileStack = GameData?.tileBucket[selectedTile];
-        const hoverResult = selectedTool.hover({
-            GameData,
-            slotId: selectedSlot, tileId: selectedTile, tileStack,
-            changeTool,
-            ...currentMenu.current
-        });
-        
-        setHighlight(hoverResult?.highlight || null);
+  /** Auto-switch to menu tool when a menu opens */
+  const menu = menuHook?.menu || null;
+  useEffect(() => {
+    if (selectedTool !== Tools[3] && menu !== null) setTool(Tools[3]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [menu]);
 
-        const hoverTile = hoverResult?.hoverTile;
-        updateHoverBucket(
-            (hoverTile && selectedTile) ? {[selectedTile]:[hoverTile]} : {}
-        );
-    },[selectedTool, selectedTile, GameData, selectedSlot]);
+  /** Hover evaluation */
+  useEffect(() => {
+    const tileId = selectedTile ?? undefined;
+    const tileStack = tileId ? ClientData?.tileBucket?.[tileId] : undefined;
 
-    // %! PII(257) PROVIDE THE RELEVANT INVENTORY ASKED FROM THE TOOLS
-    return (
-        <ToolContext.Provider value={{
-            selectedSlot,
-            selectedTool,
-            processEventData,
-            equipTool(tool){
-                if(selectedTool === tool && tool !== defaultTool){
-                    setTool(defaultTool);
-                }else if(tool !== defaultTool || selectedTool !== defaultTool){
-                    setTool(tool);
-                }
-            },
-            selectedTile, setHover, selectedHighlight, setSlot,
-            fireActivate
-        }}>
-            {children}
-        </ToolContext.Provider>
-    );
+    const hoverResult = selectedTool.hover({
+      ClientData,
+      slotId: selectedSlot,
+      tileId,
+      tileStack,
+      changeTool: setTool,
+      ...menuRef.current,
+      pushLocalItemChange,
+      pushLocalTileChange,
+      processEventData,
+    });
+
+    const nextHighlight = hoverResult?.highlight || null;
+    setHighlight(prev => (prev === nextHighlight ? prev : nextHighlight));
+
+    // Build next hover map
+    const nextHoverMap = (hoverResult?.hoverTile && tileId)
+      ? { [tileId]: [hoverResult.hoverTile] }
+      : {};
+
+    updateHoverBucket(prev=>{
+        if(JSON.stringify(nextHoverMap) === JSON.stringify(prev))return prev;
+        return nextHoverMap;
+    })
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [
+    selectedTool,
+    selectedTile,
+    ClientData,          // depend on merged data (this can change)
+    selectedSlot,
+    pushLocalItemChange, // these are used but their identity should be memoized in provider
+    pushLocalTileChange,
+    processEventData,
+  ]);
+
+  return (
+    <ToolContext.Provider
+      value={{
+        selectedSlot,
+        selectedTool,
+        processEventData,
+        equipTool(tool) {
+          if (selectedTool === tool && tool !== defaultTool) setTool(defaultTool);
+          else if (tool !== defaultTool || selectedTool !== defaultTool) setTool(tool);
+        },
+        selectedTile,
+        setHover,
+        selectedHighlight,
+        setSlot,
+        fireActivate,
+      }}
+    >
+      {children}
+    </ToolContext.Provider>
+  );
 }

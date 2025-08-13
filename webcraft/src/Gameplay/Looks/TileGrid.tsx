@@ -10,12 +10,12 @@ type Tile = {
 import { useGameData } from "./UpdateHook"
 
 export function TileGrid() {
-  const{ GameData } = useGameData();
+  const{ ClientData } = useGameData();
 
   const tiles: Tile[] = [];
 
-  for (let y = 0; y < GameData.gridYSize; y++) {
-    for (let x = 0; x < GameData.gridXSize; x++) {
+  for (let y = 0; y < ClientData.gridYSize; y++) {
+    for (let x = 0; x < ClientData.gridXSize; x++) {
       tiles.push({ id: `${x}-${y}` });
     }
   }
@@ -25,7 +25,7 @@ export function TileGrid() {
       <div
         className="grid gap-1 w-[min(90vw,500px)]"
         style={{
-          gridTemplateColumns: `repeat(${GameData.gridXSize}, 1fr)`,
+          gridTemplateColumns: `repeat(${ClientData.gridXSize}, 1fr)`,
         }}
       >
         {tiles.map(({ id }) => (

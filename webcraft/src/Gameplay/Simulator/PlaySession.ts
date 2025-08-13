@@ -113,13 +113,13 @@ export class PlaySession{
                 }
             }
         });
-        // DOWNGRADES HERE
 
+        const timestamp = Date.now();
         const data = Object.fromEntries(
             exposedProperties.map((key) => [key, this[key]])
         ) as Pick<PlaySession, ExposedKeys>;
 
-        return { ...data, timestamp: Date.now() };
+        return { ...data, timestamp };
     }
 
     static async getPlaySession(userId: string){

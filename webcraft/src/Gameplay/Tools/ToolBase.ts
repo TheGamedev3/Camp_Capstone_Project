@@ -1,12 +1,13 @@
 
 
 import { MenuContextType } from "../Recipes/MenuHook";
+import { ClientData } from "../Looks/UpdateHook";
 type UIcontrols = MenuContextType;
 export type MouseEvent={
   slotId?: string | null;
   tileId?: string | null;
   tileStack?: any[];
-  GameData?: unknown;
+  ClientData?: ClientData;
   selectedItem?: unknown;
 
   refresh?: RefObject<Dispatch<unknown>>
@@ -72,9 +73,9 @@ export class Tool {
     this.usesItemTypeOf = usesItemTypeOf;
 
     function fitMouseEvent(mouseEvent: MouseEvent){
-      const {slotId, GameData} = mouseEvent;
+      const {slotId, ClientData} = mouseEvent;
       if(slotId){
-        const item = GameData?.inventory?.find(item=>item.slotId===slotId);
+        const item = ClientData?.inventory?.find(item=>item.slotId===slotId);
         // pass in the most up to date selected item
         if(item){
           mouseEvent.selectedItem = item;

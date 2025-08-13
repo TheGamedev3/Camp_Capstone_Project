@@ -6,10 +6,11 @@ import { TileGrid } from "./TileGrid";
 import { Toolbar } from "../Tools/Toolbar";
 import { ItemList } from "../Items/ItemList";
 import Menu from "../Recipes/Menu";
+import ItemNotif from "../Items/ItemNotif";
 
 export default function Gameplay() {
-  const { GameData } = useGameData();
-  if (GameData === null) return <div>Loading</div>;
+  const { ClientData } = useGameData();
+  if (ClientData === null) return <div>Loading</div>;
 
   return (
     <div className="h-screen flex flex-col gap-2 p-2">
@@ -18,6 +19,7 @@ export default function Gameplay() {
 
       {/* ItemList + Toolbar sit below; keep their own fixed/auto heights */}
       <ItemList />
+      <ItemNotif/>
       <Toolbar />
       <Menu/>
     </div>

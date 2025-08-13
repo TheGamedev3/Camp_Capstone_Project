@@ -4,6 +4,8 @@ import { Tool } from './ToolBase';
 import { getRoute } from '@/utils/request';
 import { Info, Hammer, X, DraftingCompass } from 'lucide-react';
 
+const tilesTaken: Record<string, boolean> = {};
+
 export const Tools: Tool[] = [
   new Tool({
     name: 'interact',
@@ -14,7 +16,7 @@ export const Tools: Tool[] = [
     // %! PII(255) CREATE FILTER HERE
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
     onHover({tileId, tileStack}){
-        if(tileId === null)return{actionable: false}
+        if(!tileId)return{actionable: false}
         const interactable = tileStack.find(tileDatum=>tileDatum.layer === "structure");
 
         if(interactable?.menu){
@@ -35,7 +37,7 @@ export const Tools: Tool[] = [
     // also requires a menu name...
     // USE changeTool
     onAction({tileId, tileStack, setMenu}){
-        if(tileId === null)return{actionable: false}
+        if(!tileId)return{actionable: false}
         const interactable = tileStack.find(tileDatum=>tileDatum.layer === "structure");
 
         if(interactable?.menu){
@@ -57,7 +59,7 @@ export const Tools: Tool[] = [
     // %! PII(255) CREATE FILTER HERE
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
     onHover({selectedItem, tileId, tileStack}){
-        if(tileId === null || !selectedItem)return{actionable: false}
+        if(!tileId)return{actionable: false}
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         
         
@@ -71,36 +73,34 @@ export const Tools: Tool[] = [
         return{
             actionable,
             highlight: actionable ? 'rgba(0, 255, 34, 0.7)' : 'rgba(136, 0, 0, 0.7)',
-            hoverTile: {...selectedItem.tilePreview, key:tileId} // (w/ a default transparency of 40)
+            hoverTile: selectedItem ? {...selectedItem.tilePreview, key:tileId} : null // (w/ a default transparency of 40)
         }
     },
 
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
-    async onAction({GameData, refresh, selectedItem, slotId, tileId, tileStack}){
-        if(!tileStack || !selectedItem || !GameData)return;
+    async onAction({ClientData, selectedItem, slotId, tileId, tileStack, pushLocalItemChange, pushLocalTileChange}){
+        if(!tileStack || !selectedItem || !ClientData)return;
         const collision = tileStack.find(tileDatum=>tileDatum.layer === "structure");
-        if(collision){return}
+        if(collision || tilesTaken[tileId]){return}
+
+        tilesTaken[tileId] = true;
 
         // %! BPS(200) CLIENT SIDE QUICK PLACE (AND QUICK SUBTRACT MAYBE?)
         // instantly temporarily place the preview down while waiting for the server response
+        let changeA = null; let changeB = null;
         if(selectedItem?.tilePreview){
           // %! PII(252/253)
           selectedItem.quantity -= 1;
           // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
 
-          GameData.inventory = GameData.inventory.filter(item=>{
-            if(item.quantity === 0)return false;
-            if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0){
-              return false;
-            }
-            return true;
-          });
-
-          GameData.tileBucket[tileId].push(selectedItem.tilePreview);
-          refresh({...GameData});
+          changeA = pushLocalItemChange(selectedItem);
+          changeB = pushLocalTileChange(tileId, selectedItem.tilePreview);
         }
 
         const eventData = await getRoute({route: "POST /api/build", body: {slotId, tileId}});
+        changeA?.unmount();
+        changeB?.unmount();
+        delete tilesTaken[tileId];
         return eventData;
     }
   }),
@@ -113,7 +113,7 @@ export const Tools: Tool[] = [
     // %! PII(255) CREATE FILTER HERE
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
     onHover({tileId, tileStack}){
-        if(tileId === null)return{actionable: false}
+        if(!tileId)return{actionable: false}
         const breakTarget = tileStack.find(tileDatum=>tileDatum.layer === "structure");
 
         return{
