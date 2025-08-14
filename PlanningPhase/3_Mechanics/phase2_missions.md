@@ -225,11 +225,12 @@ Next Up: Crafting And Interfaces
     ✅ - also allow for mountain to transform into mineshaft
 
 
-- break hold down
-    - track when mouse is down, send a request
-    - track when mouse is lifted, stop interval on the server side
-    - or alternatively, on hold down on client, send break request at an interval
-        - and then on the server side timestamp verify it
+✅ - break hold down
+    ✅ - track when mouse is down, send a request
+    ✅ - track when mouse is lifted, stop interval on the server side
+    ✅ - or alternatively, on hold down on client, send break request at an interval
+        ✅ - and then on the server side timestamp verify it (using server timestamp)
+        ✅ - spam click debounce
 
 - consider trade requests
     - mongoose schema for the offer object

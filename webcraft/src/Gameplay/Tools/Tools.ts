@@ -123,14 +123,17 @@ export const Tools: Tool[] = [
     },
 
     // %! BPS(193) ACCEPT ARGS AS STRUCT TO ALLOW FOR slotId
-    async onAction({tileId, tileStack, slotId}){
+    async whileHeld({tileId, tileStack, slotId}){
         if(!tileStack)return;
         const breakTarget = tileStack.find(tileDatum=>tileDatum.layer === "structure");
         if(!breakTarget){return}
 
         const eventData = await getRoute({route: "DELETE /api/break", body: {slotId, tileId}});
+        // (print any possible errors)
+        if(eventData && !Boolean(eventData.success)){console.log(eventData.result)}
         return eventData;
-    }
+    },
+    holdRate:1000
   }),
   new Tool({
     name: 'crafting',

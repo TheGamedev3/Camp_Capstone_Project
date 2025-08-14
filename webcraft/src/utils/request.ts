@@ -11,7 +11,7 @@ type APIResponse<T = unknown> =
 
 export async function getRoute<T = unknown>({
   route,
-  body,
+  body = {},
 }: GetRouteArgs): Promise<APIResponse<T>> {
   const [method, path] = route.trim().split(" ") as [HTTPMethod, string];
 
@@ -22,13 +22,14 @@ export async function getRoute<T = unknown>({
     };
   }
 
+  
   try {
     const res = await fetch(path, {
       method,
       headers: {
         "Content-Type": "application/json",
       },
-      ...(method !== "GET" && body ? { body: JSON.stringify(body) } : {}),
+      ...(method !== "GET" && { body: JSON.stringify({...body, claim: Date.now()}) }),
     });
     console.log(method)
 

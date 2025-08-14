@@ -196,7 +196,7 @@ export const ToolTable: Item[] = [
         tool:{
             durability: 60,
 
-            woodDmg: 4,
+            woodDmg: 5,
 
             downgradeToItem: "stone pickaxe",
         }
@@ -207,7 +207,7 @@ export const ToolTable: Item[] = [
         tool:{
             durability: 60,
 
-            stoneDmg: 4,
+            stoneDmg: 5,
             metalDmg: 2,
 
             downgradeToItem: "stone pickaxe",

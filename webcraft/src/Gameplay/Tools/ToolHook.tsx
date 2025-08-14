@@ -12,6 +12,8 @@ type ToolContextType = {
   setHover: React.Dispatch<React.SetStateAction<string | null>>;
   setSlot: React.Dispatch<React.SetStateAction<string>>;
   fireActivate: (tileId: string) => void;
+  holdDown: (tileId: string) => void;
+  letGo: (tileId: string) => void;
   processEventData: (eventData: any) => void;
 };
 
@@ -20,9 +22,8 @@ export const useTools = () => useContext(ToolContext)!;
 
 export function ToolInfoWrapper({ children }: { children: React.ReactNode }) {
   const {
-    ClientData,               // merged view
-    updateGameData,           // server state setter
-    hoverBucket,              // 👈 bring current hover map so we can diff
+    ClientData,
+    updateGameData,
     updateHoverBucket,
     pushLocalItemChange,
     pushLocalTileChange,
@@ -74,11 +75,9 @@ export function ToolInfoWrapper({ children }: { children: React.ReactNode }) {
     });
   }, []);
 
-  /** Activate current tool */
-  const fireActivate = useCallback(async (tileId: string) => {
+  const passToolStruct = useCallback((tileId: string) => {
     const tileStack = ClientData?.tileBucket?.[tileId];
-
-    const eventData = await selectedTool.action({
+    return{
       ClientData,
       slotId: selectedSlot,
       tileId,
@@ -87,11 +86,9 @@ export function ToolInfoWrapper({ children }: { children: React.ReactNode }) {
       ...menuRef.current,
       pushLocalItemChange,
       pushLocalTileChange,
-      processEventData,
-    });
+    };
 
-    processEventData(eventData);
-  }, [ClientData, selectedTool, selectedSlot, processEventData, pushLocalItemChange, pushLocalTileChange]);
+  }, [ClientData, selectedSlot, pushLocalItemChange, pushLocalTileChange]);
 
   /** Equip effect — run only when the tool changes */
   useEffect(() => {
@@ -116,19 +113,7 @@ export function ToolInfoWrapper({ children }: { children: React.ReactNode }) {
   /** Hover evaluation */
   useEffect(() => {
     const tileId = selectedTile ?? undefined;
-    const tileStack = tileId ? ClientData?.tileBucket?.[tileId] : undefined;
-
-    const hoverResult = selectedTool.hover({
-      ClientData,
-      slotId: selectedSlot,
-      tileId,
-      tileStack,
-      changeTool: setTool,
-      ...menuRef.current,
-      pushLocalItemChange,
-      pushLocalTileChange,
-      processEventData,
-    });
+    const hoverResult = selectedTool.hover(passToolStruct(tileId));
 
     const nextHighlight = hoverResult?.highlight || null;
     setHighlight(prev => (prev === nextHighlight ? prev : nextHighlight));
@@ -143,15 +128,101 @@ export function ToolInfoWrapper({ children }: { children: React.ReactNode }) {
         return nextHoverMap;
     })
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [
-    selectedTool,
-    selectedTile,
-    ClientData,          // depend on merged data (this can change)
-    selectedSlot,
-    pushLocalItemChange, // these are used but their identity should be memoized in provider
-    pushLocalTileChange,
-    processEventData,
-  ]);
+  }, [selectedTile, passToolStruct]);
+
+  /** Activate current tool */
+  const fireActivate = useCallback(async (tileId: string) => {
+    if(!selectedTool.action)return;
+    const eventData = await selectedTool.action(passToolStruct(tileId));
+    if(eventData)processEventData(eventData);
+    
+  }, [selectedTool, processEventData, passToolStruct]);
+
+  /** Hold down current tool */
+  const heldEvent = useRef<{tool: Tool, tileId: string, whileHeld?: ReturnType<typeof setInterval> }|null>(null);
+  const cooldowns = useRef<Record<string, number>>({});
+  const holdDown = useCallback(async (tileId: string) => {
+    
+    const current = heldEvent.current;
+    if(current){
+      const{tileId:currentId, whileHeld} = current;
+      if(currentId !== tileId){
+        if(whileHeld){clearInterval(whileHeld)}
+        heldEvent.current = null;
+        // ADD A TIMESTAMP HERE
+        // DETECT ELAPSED....
+        // HELD EVENT SHOULD BE PERSISTENT AND CONTAIN MORE INFO
+      }else{
+        return;
+      }
+    }
+    heldEvent.current = {
+      tileId,
+      tool: selectedTool
+    }
+    // AWAIT AFTER CURRENT IS SET TO PREVENT RACE CONDITIONS!
+    if(selectedTool.onHold){
+      const eventData = await selectedTool.onHold(passToolStruct(tileId));
+      if(eventData)processEventData(eventData);
+    }
+    // AND ON HELD DOESNT BREAK
+    // STILL GOTTA FIGURE OUT DEBOUNCE TO PREVENT SPAM CLICKING!
+    if(selectedTool.whileHeld){
+      if(!heldEvent.current)return;
+
+      // prevents spam clicking
+      const previousEvent = cooldowns.current[tileId];
+      if(previousEvent){
+        const since = Date.now()-previousEvent
+        if(since < selectedTool.holdRate){
+          await new Promise((res)=>setTimeout(res, selectedTool.holdRate-since));
+        }
+        if(!heldEvent.current || cooldowns.current[tileId] !== previousEvent)return;
+      }
+
+      // repeatedly triggers onheld
+      cooldowns.current[tileId] = Date.now();
+      let eventData = await selectedTool.whileHeld(passToolStruct(tileId));
+      if(eventData)processEventData(eventData);
+      if(heldEvent.current){
+        heldEvent.current.whileHeld = setInterval(async()=>{
+          if(!heldEvent.current || heldEvent.current.tileId !== tileId)return;
+          cooldowns.current[tileId] = Date.now();
+          eventData = await selectedTool.whileHeld(passToolStruct(tileId));
+          if(eventData)processEventData(eventData);
+        }, selectedTool.holdRate);
+      }
+    }
+  }, [selectedTool, processEventData, passToolStruct]);
+
+  /** Lift current tool */
+  const letGo = useCallback(async (tileId: string) => {
+    if(heldEvent.current){
+      const{tool, whileHeld, tileId:currentId} = heldEvent.current;
+      if(whileHeld){clearInterval(whileHeld)}
+      if(tool.onLetGo){
+        const eventData = await tool.onLetGo(passToolStruct(currentId));
+        if(eventData)processEventData(eventData);
+      }
+      heldEvent.current = null;
+    }else{
+      // if for some reason there's only a onLetGo event on the tool and no while hold
+      if(selectedTool.onLetGo){
+        const eventData = await selectedTool.onLetGo(passToolStruct(tileId));
+        if(eventData)processEventData(eventData);
+      }
+    }
+  }, [processEventData, passToolStruct, selectedTool]);
+
+  // cleanup on tool being changed
+  useEffect(() => {
+    return () => {
+      const current = heldEvent.current;
+      if (current?.holdInterval) clearInterval(current.holdInterval);
+      heldEvent.current = null;
+      cooldowns.current = {};
+    };
+  }, [selectedTool]);
 
   return (
     <ToolContext.Provider
@@ -168,6 +239,8 @@ export function ToolInfoWrapper({ children }: { children: React.ReactNode }) {
         selectedHighlight,
         setSlot,
         fireActivate,
+
+        holdDown, letGo
       }}
     >
       {children}

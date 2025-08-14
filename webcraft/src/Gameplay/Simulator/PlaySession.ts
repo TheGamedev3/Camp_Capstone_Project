@@ -23,6 +23,8 @@ export class PlaySession{
     tileBucket: Record<string, TileStack>;
     inventory: Item[];
 
+    cooldownTileStamps: Record<string, {claim: number; clean:ReturnType<typeof setTimeout>; }> = {}; // used by "Break.ts"!
+
     private eventChanges: {
         newTiles: string[];
         newItems: Item[];

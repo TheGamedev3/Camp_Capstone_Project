@@ -57,7 +57,7 @@ function blendColors(colors: string[]): string {
 
 export const Tile = React.memo(function Tile({ id }: TileProps) {
   const myTileStack = useTile(id) as TileDatum[] | null;
-  const { selectedTile, selectedTool, setHover, selectedHighlight, fireActivate } = useTools();
+  const { selectedTile, setHover, selectedHighlight, fireActivate, holdDown, letGo } = useTools();
 
   /* --------  Derived display data  ------------------------------------ */
   const { bgColor, bgTexture, structures } = useMemo(() => {
@@ -108,7 +108,7 @@ export const Tile = React.memo(function Tile({ id }: TileProps) {
 
   /* --------  Handlers  ------------------------------------------------- */
   const handleMouseEnter = () => setHover(id);
-  const handleMouseLeave = () => { if (selectedTile === id) setHover(null); };
+  const handleMouseLeave = () => { letGo(id); if (selectedTile === id) setHover(null); };
   const handleClick = () => { if (selectedTile === id) fireActivate(id); };
 
   /* --------  Render  --------------------------------------------------- */
@@ -180,6 +180,8 @@ export const Tile = React.memo(function Tile({ id }: TileProps) {
       <div
         onMouseEnter={handleMouseEnter}
         onMouseLeave={handleMouseLeave}
+        onMouseDown={() => holdDown(id)}
+        onMouseUp={() => letGo(id)}
         onClick={handleClick}
         style={{ position: "absolute", inset: "-2px", zIndex: 10, backgroundColor: "transparent", pointerEvents: "auto" }}
       />

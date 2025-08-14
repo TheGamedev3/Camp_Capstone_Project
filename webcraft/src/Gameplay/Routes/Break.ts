@@ -9,7 +9,7 @@ interface BreakAtParams {
 }
 
 import { giveCommand } from "../Items/ItemGive";
-export const breakAt = UnderSession(async(session, clientSide, { slotId, customDamage, tileId, x, y }: BreakAtParams)=>{
+export const breakAt = UnderSession(async(session, clientSide, { slotId, claim, customDamage, tileId, x, y }: BreakAtParams)=>{
     let tx: number, ty: number;
     if (tileId) {
         [tx, ty] = tileId.split('-').map(Number);
@@ -20,6 +20,29 @@ export const breakAt = UnderSession(async(session, clientSide, { slotId, customD
     } else {
         throw new Error("Must provide either tileId or x/y coordinates.");
     }
+
+    if(claim > Date.now())return{success: false, result: 'cant be from the future...'}
+    if(claim < Date.now()-2000)return{success: false, result: 'took too long to reach the server!'}
+
+    const lastTime = session.cooldownTileStamps[tileId];
+    if(lastTime){
+        // did the last hit REALLY take place a second ago?
+        // (5% margin of error)
+        const since = Date.now()-lastTime.claim;
+        if(since < 950){
+            return{success: false, result: `request spamming faster than 1 per second! ${since}ms since...`}
+        }
+
+        clearTimeout(lastTime.clean);
+        delete session.cooldownTileStamps[tileId];
+    }
+    session.cooldownTileStamps[tileId]={
+        claim,
+        clean:setTimeout(()=>{
+            // auto clean up self
+            delete session.cooldownTileStamps[tileId];
+        },2000)
+    };
 
     const tileStack = session.tileBucket[tileId] || [];
     const breakTarget = tileStack.find(stackLayer=>stackLayer.layer === 'structure');

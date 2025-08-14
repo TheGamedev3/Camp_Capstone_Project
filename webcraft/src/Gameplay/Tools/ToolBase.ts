@@ -45,6 +45,8 @@ export class Tool {
     onHover,
     onAction,
     onEquip,
+    onHeld, whileHeld, onLetGo,
+    holdRate = 1000,
     usesItemTypeOf,
   }: {
     name: string;
@@ -55,9 +57,15 @@ export class Tool {
     defaultTool?: boolean;
     selectsItems?: boolean;
 
+    onEquip?: (args: UIcontrols) => void | (()=>void);
+
     onHover?: (args: MouseEvent) => any;
     onAction?: (args: MouseEvent) => Promise<any> | any;
-    onEquip?: (args: UIcontrols) => void | (()=>void);
+
+    onHeld?: (args: MouseEvent) => Promise<any> | any;
+    whileHeld?: (args: MouseEvent) => Promise<any> | any;
+    onLetGo?: (args: MouseEvent) => Promise<any> | any;
+    holdRate: number;
 
     usesItemTypeOf?: (item: Item)=>boolean;
   }) {
@@ -84,6 +92,11 @@ export class Tool {
         }
       }
     }
+
+    this.onHeld = onHeld;
+    this.whileHeld = whileHeld;
+    this.onLetGo = onLetGo;
+    this.holdRate = holdRate;
 
     this.hover = (mouseEvent: MouseEvent) => {
       fitMouseEvent(mouseEvent);
