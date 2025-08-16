@@ -148,7 +148,7 @@ export const craftRequest = UnderSession(async(session, clientSide, {tableType, 
             }
 
             if(recipe.conditional){
-                const{success, result} = recipe.conditional(session, ...targets);
+                const{success, result} = recipe.conditional({session, targets, tileId, tableType});
                 if(!success)return{success, result};
             }
             // THEN SUBTRACT AFTERWARDS

@@ -232,6 +232,13 @@ Next Up: Crafting And Interfaces
         ✅ - and then on the server side timestamp verify it (using server timestamp)
         ✅ - spam click debounce
 
+✅ - persisting data
+    ✅ - detect when data is changed
+    ✅ - auto save every 3 ticks
+    ✅ - save on leave
+    ✅ - write it into the user's mongoose schema
+    ✅ - retrieve it from the user's mongoose schema
+
 - consider trade requests
     - mongoose schema for the offer object
     - offers pagnator

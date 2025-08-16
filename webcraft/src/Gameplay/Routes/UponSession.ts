@@ -24,7 +24,7 @@ export function UnderSession<R = unknown>(
       const userId = (await getSession())?._id;
       if (!userId) return { success: false, err: { server: "no session found!" } };
 
-      const session = await PlaySession.getPlaySession(userId);
+      const session = (await PlaySession.getPlaySession(userId))!;
 
       // Parse JSON body; spread arrays, single-arg for non-arrays
       let body: unknown;

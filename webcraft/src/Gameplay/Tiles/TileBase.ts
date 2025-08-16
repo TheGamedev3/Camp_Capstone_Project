@@ -55,6 +55,7 @@ export class TileBase {
             }
         });
         this.myListeners = [];
+        this.session.changed();
         return true;
     }
 

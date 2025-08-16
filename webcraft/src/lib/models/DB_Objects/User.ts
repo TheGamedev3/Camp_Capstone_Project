@@ -11,6 +11,7 @@ interface UserSchema {
   password: string;
   profile?: string;
   created: Date;
+  playData?: string;
 }
 
 interface UserModel extends Model<UserSchema>{
@@ -60,7 +61,11 @@ export const User = (db_object<UserSchema>(
         created: {
             type: Date,
             default: Date.now
-        }
+        },
+        playData: {
+            type: String,
+            required: false
+        },
     },
     {
         async fetchUser(id: string){
