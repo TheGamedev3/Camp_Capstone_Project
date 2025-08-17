@@ -11,7 +11,6 @@ interface BreakAtParams {
 }
 
 import { giveCommand } from "../Items/ItemGive";
-import { PlaySession } from "../Simulator/PlaySession";
 export const breakAt = ReqFit<BreakAtParams>(({session, origin, slotId, claim, customDamage, tileId, x, y })=>{
     let tx: number, ty: number;
     if (tileId) {
@@ -24,7 +23,7 @@ export const breakAt = ReqFit<BreakAtParams>(({session, origin, slotId, claim, c
         throw new Error("Must provide either tileId or x/y coordinates.");
     }
 
-    if(!claim)return{success: false, result: 'invalid claim!'}
+    if(!claim && origin === 'api')return{success: false, result: 'invalid claim!'}
     if(claim > Date.now())return{success: false, result: 'cant be from the future...'}
     if(claim < Date.now()-2000)return{success: false, result: 'took too long to reach the server!'}
 

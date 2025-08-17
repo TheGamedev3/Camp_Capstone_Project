@@ -10,14 +10,14 @@ export default class Automaton extends Structure {
 
     constructor(coords) {
         super(coords);
-        const{ x, y, session, name }: { x: number; y: number, session: PlaySession, name: string } = coords;
+        const{ x, y, session }: { x: number; y: number, session: PlaySession } = coords;
 
         this.onTick(2, () => {
             // check for power later?
             const breakList = typeof this.breakStructures === 'string' ? [this.breakStructures] : this.breakStructures;
             const isSpaceValid = (tileId: string) => {
                 const stack = session?.tileBucket[tileId];
-                // space exists and has no structure on it
+                // space exists and has the breakable structure on it
                 return !!stack && stack.find(d => breakList.includes(d.name));
             };
 
@@ -29,7 +29,7 @@ export default class Automaton extends Structure {
                 const y2 = y + dy;
                 const tileId = `${x2}-${y2}`;
                 if (isSpaceValid(tileId)) {
-                    breakAt(session, { customDamage: this.customDamage, tileId });
+                    breakAt({ session, customDamage: this.customDamage, tileId });
                     return; // done for this tick
                 }
             }

@@ -239,11 +239,11 @@ Next Up: Crafting And Interfaces
     ✅ - write it into the user's mongoose schema
     ✅ - retrieve it from the user's mongoose schema
 
-- weak points:
-    - the whole under session thing and it being async everywhere is weird
-    - make that whole req thing separate, or just a branch of the function (replaced with ReqFit.ts)
-        - handle the function thingy differently for returning arguments if needed
-            - example: giveItems(session, itemCmd); alteratively: await giveItems.req(req)
+✅ - weak points:
+    ✅ - the whole under session thing and it being async everywhere is weird
+    ✅ - make that whole req thing separate, or just a branch of the function (replaced with ReqFit.ts)
+        ✅ - handle the function thingy differently for returning arguments if needed
+            ✅ - example: giveItems(session, itemCmd); alteratively: await giveItems.req(req)
     - give item just giving item
         - it should change all sorts of quantities
             - especially handling unique logic of adding unstackables
@@ -252,9 +252,9 @@ Next Up: Crafting And Interfaces
         - perhaps also take the actual item data and extract it in a separate function?
             - extract items from inventory
             - merge item data into inventory
-        - should NOT be async
+        ✅ - should NOT be async
         - as we know, the trade stuff shouldnt be as hard as it is....
-    - make sure to test it as its refactored!
+    ✅ - make sure to test it as its refactored!
 
 - consider trade requests
     - mongoose schema for the offer object
