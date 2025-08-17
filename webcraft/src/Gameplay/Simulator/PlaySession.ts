@@ -1,7 +1,5 @@
 
 
-export const playSessionCache: Record<string, PlaySession> = {};
-
 const exposedProperties = [
     'userId',
     'gridXSize', 'gridYSize',
@@ -13,6 +11,9 @@ import { createWorld } from "./CreateWorld";
 import { randomBytes } from "crypto";
 import { User } from "@Chemicals";
 import { createTile } from "../Tiles/TileLibrary";
+import { ObjectId } from "mongoose";
+
+export const playSessionCache: Record<string, PlaySession> = {};
 
 // inferred: "userId" | "gridXSize" | "gridYSize" ....
 type ExposedKeys = typeof exposedProperties[number];
@@ -175,7 +176,7 @@ export class PlaySession{
         return { ...data, timestamp };
     }
 
-    static async getPlaySession(userId: string): PlaySession | undefined{
+    static async getPlaySession(userId: ObjectId): PlaySession | undefined{
         const found = playSessionCache[userId];
         if(found)return found;
 
@@ -189,7 +190,7 @@ export class PlaySession{
             const saveString = who.playData;
             if(!saveString){
                 console.log(`💾🌎 CREATE WORLD FOR ${userId}`);
-                return await createWorld(userId);
+                return createWorld(userId);
             }else{
                 const{
                     userId,

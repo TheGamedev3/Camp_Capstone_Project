@@ -4,7 +4,7 @@ import { giveCommand } from "../Items/ItemGive";
 import { spawnStructure } from "../Routes/Build";
 import { playSessionCache } from "./PlaySession";
 
-export async function createWorld(userId: string){
+export function createWorld(userId: string){
     const islandPreset = { gridXSize: 6, gridYSize: 6, defaultTile: "Grass" };
 
     const newCache = new PlaySession({
@@ -18,12 +18,12 @@ export async function createWorld(userId: string){
     // place down spaces
     for (let y = 0; y < islandPreset.gridYSize; y++) {
         for (let x = 0; x < islandPreset.gridXSize; x++) {
-            await spawnStructure(newCache, {what: islandPreset.defaultTile, x, y});
+            spawnStructure({session:newCache, what: islandPreset.defaultTile, x, y});
         }
     }
     // place down prebuilt structures
 
-    await giveCommand(newCache, "wood axe, wood pickaxe, wood (50), stone (50), coal (50), metal ore (50), pine cone (50)");
+    giveCommand({session:newCache, itemCmd:"wood axe, wood pickaxe, wood (50), stone (50), coal (50), metal ore (50), pine cone (50)"});
     newCache.ejectChanges();
 
     playSessionCache[userId] = newCache;

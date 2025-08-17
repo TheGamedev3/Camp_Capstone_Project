@@ -84,10 +84,10 @@ export function getErrs(errMsg: string): ErrorResult {
  * Attempts a request and catches errors with mongoErr tags.
  */
 export async function attemptRequest(
-  func: () => Promise<Record<string, string>>
+  func: () => Promise<unknown> | unknown
 ) {
   try {
-    return await func();
+    return Response.json(await func());
   } catch (err: unknown) {
     let message = "";
     if (err instanceof Error) {
@@ -104,6 +104,6 @@ export async function attemptRequest(
       console.warn(err);
     }
 
-    return { success: false, err: errObject };
+    return Response.json({ success: false, err: errObject });
   }
 }

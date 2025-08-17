@@ -10,7 +10,7 @@ const PerPage = 3;
 
 // (uses params instead of body args, so the sort info will be visible at the top of the pagnator page and easily sent to the request route)
 export async function GET(req: Request) {
-  return Response.json(await attemptRequest(async () => {
+  return await attemptRequest(async () => {
     
     const { searchParams } = new URL(req.url);
 
@@ -66,5 +66,5 @@ export async function GET(req: Request) {
         page, totalPages
       }
     };
-  }));
+  });
 }

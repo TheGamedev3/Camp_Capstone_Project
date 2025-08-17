@@ -1,7 +1,7 @@
 
-import { UnderSession } from "./UponSession";
+import { ReqFit } from "./ReqFit";
 
-export const ping = UnderSession((session)=>{
+export const ping = ReqFit(({session})=>{
     session.ping();
     return{
         success: true,

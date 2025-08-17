@@ -47,7 +47,7 @@ export default class Spawner extends Structure {
                             newStructure = this.spawnStructure;
                         }
                         if(!newStructure)return;
-                        spawnStructure(session, { who: "server", what: newStructure, tileId });
+                        spawnStructure({session, who: "server", what: newStructure, tileId });
                         return; // done for this tick
                     }
                 }

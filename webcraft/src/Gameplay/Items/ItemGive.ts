@@ -28,7 +28,7 @@ export function interpretQuantities(itemList: string): [Item, number][] {
     });
 }
 
-import { UnderSession } from "../Routes/UponSession";
+import { ReqFit } from "../Routes/ReqFit";
 import { PlaySession } from "../Simulator/PlaySession";
 import { randomBytes } from 'crypto';
 
@@ -43,8 +43,8 @@ function supposeItem(session: PlaySession, itemBase: Item, create: boolean=true)
     return (item as Item);
 }
 
-export const giveCommand = UnderSession((session, clientSide, itemList: string)=>{
-    interpretQuantities(itemList).forEach(([item, quantity])=>{
+export const giveCommand = ReqFit<{itemCmd: string}>(({session, itemCmd})=>{
+    interpretQuantities(itemCmd).forEach(([item, quantity])=>{
       if(item.itemType === 'breakTool'){
         if(quantity < 0)throw new Error(`ATTEMPTED TO SUBTRACT A NONSTACKABLE TOOL! ${item} (${quantity})`);
         // non stackable
@@ -62,10 +62,10 @@ export const giveCommand = UnderSession((session, clientSide, itemList: string)=
     });
 });
 
-export const exchange = UnderSession((session, clientSide, costList: string, outputList: string, conditions: ()=>boolean)=>{
+//export const exchange = ReqFit((session, clientSide, costList: string, outputList: string, conditions: ()=>boolean)=>{
     
     // return{success, tileData: session.tileBucket[tileId]}
-});
+//});
 
 
 

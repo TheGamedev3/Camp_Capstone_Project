@@ -1,17 +1,18 @@
 
-import { UnderSession } from "./UponSession";
+import { ReqFit } from "./ReqFit";
 import { isTileName, createTile } from "../Tiles/TileLibrary";
 
 interface PlaceAtParams {
   who?: string; // can narrow this if needed
   what: string;
   tileId?: string;
+  slotId?: string;
   x?: number;
   y?: number;
 }
 
 // %! BPS(204) spawn structure
-export const spawnStructure = UnderSession(async(session, clientSide, { who, what, tileId, x, y }:PlaceAtParams)=>{
+export const spawnStructure = ReqFit<PlaceAtParams, {success: boolean}>(({session, who, what, tileId, x, y })=>{
     let tx: number, ty: number;
     if (tileId) {
         [tx, ty] = tileId.split('-').map(Number);
@@ -54,7 +55,7 @@ export const spawnStructure = UnderSession(async(session, clientSide, { who, wha
 
 
 // %! BPS(204) PLACE ITEM FUNCTION AND SESSION
-export const placeItem = UnderSession(async(session, clientSide, { slotId, tileId, x, y }:PlaceAtParams)=>{
+export const placeItem = ReqFit<PlaceAtParams>(({session, slotId, tileId, x, y })=>{
     // %! BPS(205) SUBTRACT AWAY WHAT WAS NESSECARY
     // GET THE ITEM
     // PLUG IT INTO SPAWN STRUCTURE
@@ -62,9 +63,10 @@ export const placeItem = UnderSession(async(session, clientSide, { slotId, tileI
     // FIX THE BUILD ROUTE PLACER TO SPAWN INSTEAD OF PLACE
     const item = session.getItem(slotId);
     let result = null;
-    if(item && item.quantity > 0 && item.itemType === 'structure' && item.structure){
+    if(item && item.quantity !== undefined && item.quantity > 0 && item.itemType === 'structure' && item.structure){
         
-        result = await spawnStructure(session, {
+        result = spawnStructure({
+            session,
             who: 'player',
             what: item.structure,
             tileId, x, y

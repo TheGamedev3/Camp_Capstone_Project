@@ -39,7 +39,7 @@ export type Recipe={
     output?: string | ((struct:evaluater)=>Item[]);
 }
 
-import { UnderSession } from "../Routes/UponSession";
+import { ReqFit } from "../Routes/ReqFit";
 import { giveCommand, interpretQuantities } from "../Items/ItemGive";
 import { randomBytes } from "crypto";
 
@@ -89,8 +89,10 @@ function verifyTable(session: PlaySession, tileId: string, tableType: string): b
     return Boolean(tileStack.find(structure=>(structure.layer === 'structure' && structure.menu === tableType)));
 }
 
-export const requestMenu = UnderSession(async(session, clientSide, {tableType, tileId})=>{
-    if(clientSide && session){
+type CraftInfo = {tableType: string; recipeId: string; tileId: string;}
+
+export const requestMenu = ReqFit<CraftInfo>(({session, origin, tableType, tileId})=>{
+    if(origin === 'api' && session){
         // verify the session's tileId-tileBucket has the workbench type its claiming to have
         if(!verifyTable(session, tileId, tableType)){return{success: false, result: 'permissions not met!'}}
 
@@ -111,8 +113,8 @@ export const requestMenu = UnderSession(async(session, clientSide, {tableType, t
     return{success: false, result: 'failed to verify'}
 });
 
-export const craftRequest = UnderSession(async(session, clientSide, {tableType, recipeId, tileId})=>{
-    if(clientSide && session){
+export const craftRequest = ReqFit<CraftInfo>(async({session, origin, tableType, recipeId, tileId})=>{
+    if(origin === 'api' && session){
         // verify the session's tileId-tileBucket has the workbench type its claiming to have
         if(!verifyTable(session, tileId, tableType)){return{success: false, result: 'permissions not met!'}}
 
@@ -120,25 +122,26 @@ export const craftRequest = UnderSession(async(session, clientSide, {tableType, 
         if(recipe && recipe.tables?.includes(tableType)){
             let targets: Item[] = [];
             if(recipe.input){
-                targets = recipe.input.map(input=>{
+                const findTargets = recipe.input.map(input=>{
                     return session.inventory.find(item=>item.name === input);
                 });
                 // doesn't have the required targets!
-                if(targets.find(t=>t===undefined)){return{success:false, result:'not enough materials!'}}
+                if(findTargets.find(t=>t===undefined)){return{success:false, result:'not enough materials!'}}
+                else{targets = (findTargets as Item[])}
             }
 
             // CHECK THE INVENTORY IF THEY HAVE ENOUGH OF ALL ON SERVER SIDE
             const subtractCost:(()=>void)[] = [];
-            if(recipe.cost){
+            if(recipe.materials){
                 // THIS ALSO ASSUMES YOU HAVENT MISTAKENLY PUT THE SAME ITEM IN TWICE FOR THE COST
                 for(const[itemBase, qt] of recipe.materials){
                     if(itemBase.itemType === 'breakTool' && qt > 1){
                         throw new Error('CANT REQUEST OUT MORE THAN 1 OF A NONSTACKABLE!');
                     }
                     const found = session.inventory.find(item=>item.name===itemBase.name);
-                    if(found && found.quantity >= qt){
+                    if(found  && found.quantity && found.quantity >= qt){
                         subtractCost.push(()=>{
-                            found.quantity-=qt;
+                            found.quantity!-=qt;
                             session.itemChange(found);
                         });
                         continue;
@@ -156,7 +159,7 @@ export const craftRequest = UnderSession(async(session, clientSide, {tableType, 
             
             const output = recipe.output;
             if(typeof output === 'string'){
-                await giveCommand(session, output);
+                giveCommand({session, itemCmd: output});
             }else if(typeof output === 'function'){
                 // %! TTL(224) CHANGE TARGETS TO ITEM TARGETS! AND MAKE IT A STRUCT
                 // ALSO INCLUDE TILE DATA!

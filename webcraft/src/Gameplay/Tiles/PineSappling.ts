@@ -17,7 +17,7 @@ export default class PineSappling extends Structure {
         // every one tick, it has a 25% to grow up
         this.onTick(1, async() => {
             if(Math.random() > 0.75 && this.removeSelf()){
-                await spawnStructure(session, {what:"PineTree", x, y});
+                spawnStructure({session, what:"PineTree", x, y});
             }
         });
     }

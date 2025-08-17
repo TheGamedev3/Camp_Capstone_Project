@@ -3,8 +3,7 @@ import { User } from "@Chemicals";
 import { attemptRequest } from "@MongooseSys";
 
 export async function GET(req: Request, { params }: {params: Promise<{ id: string }>;}) {
-  return Response.json(
-    await attemptRequest(async () => {
+  return await attemptRequest(async () => {
       const profile = await User.fetchUser((await params).id);
       if (profile) {
         return { success: true, result: profile };
@@ -15,6 +14,5 @@ export async function GET(req: Request, { params }: {params: Promise<{ id: strin
           err: { id: "player id not found" },
         };
       }
-    })
-  );
+  });
 }
