@@ -6,9 +6,22 @@ import { Item, allItems } from "./Items";
 import { randomBytes } from "crypto";
 import { PlaySession } from "../Simulator/PlaySession";
 
-// Matches: "Stone (3)" → name="Stone", qty="3"
-// Ignores / protects: "<ID>" or "{CONTENTS}" → whole thing stays in group 1, no split
-const rx = /^\s*(?![<{])([^()]+?)\s*(?:\(\s*([+-]?\d+)\s*\))?\s*$/;
+// name is one of:
+//   1) <...>     (protected token)
+//   2) {...}     (protected token)
+//   3) anything without parentheses
+// followed by optional "(±int)" quantity
+const rx = /^\s*(<[^>]+>|\{[^}]+\}|[^()]+?)\s*(?:\(\s*([+-]?\d+)\s*\))?\s*$/;
+/*
+EXAMPLES:
+"Stone (3)"            // => ["Stone (3)", "Stone", "3"]
+"Stone"                // => ["Stone", "Stone", undefined]
+"<abc123> (1)"         // => ["<abc123> (1)", "<abc123>", "1"]
+"<abc123>"             // => ["<abc123>", "<abc123>", undefined]
+'{"name":"Iron"} (2)'  // => ['{"name":"Iron"} (2)', '{"name":"Iron"}', '2']
+'{"name":"Iron"}'      // => ['{"name":"Iron"}', '{"name":"Iron"}', undefined]
+*/
+
 
 function interpretQuantities(itemCmd: string): [string, number][] {
   return itemCmd
@@ -131,15 +144,18 @@ export const ItemCmd = (({ session, cmd }: { session?: PlaySession; cmd: string 
         if (base === undefined) {
           throw new Error(`"${name}" NOT FOUND IN GIVE CMD ${cmd}`);
         }
-        base.quantity = base.quantity ?? 0;
-        item = base;
         // update cached entry with the concrete item
-        chain.existing![i].item = item;
-        session.inventory.push(item);
+        if (base.itemType !== "breakTool") {
+          base.quantity = base.quantity ?? 0;
+          chain.existing![i].item = base;
+          session.inventory.push(base);
+        }
+        item = base;
       }
 
+
       // (an unstackable)
-      if ((item as any).itemType === "breakTool") {
+      if ((item as Item).itemType === "breakTool") {
         for (let t = 0; t < delta; t++) {
           const targetItem = itemBase(name);
           if (!targetItem) throw new Error(`"${name}" NOT FOUND IN GIVE CMD ${cmd}`);

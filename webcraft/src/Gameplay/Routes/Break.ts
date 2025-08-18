@@ -74,11 +74,10 @@ export const breakAt = ReqFit<BreakAtParams>(({session, origin, slotId, claim, c
                         }
                         breakTool.currentDurability -= 1;
                         if(breakTool.currentDurability <= 0){
+                            ItemCmd({session, cmd:`<${tool.slotId}> (1)`}).take();
                             const downgrade = breakTool.downgradeToItem;
-                            tool.quantity = 0;
                             if(downgrade)ItemCmd({session, cmd: `${downgrade} (1)`}).give();
                         }
-                        session.itemChange(tool);
                     }
                 }
             }

@@ -55,6 +55,7 @@ export const spawnStructure = ReqFit<PlaceAtParams, {success: boolean}>(({sessio
 
 
 // %! BPS(204) PLACE ITEM FUNCTION AND SESSION
+import { ItemCmd } from "../Items/ItemFlow";
 export const placeItem = ReqFit<PlaceAtParams>(({session, slotId, tileId, x, y })=>{
     // %! BPS(205) SUBTRACT AWAY WHAT WAS NESSECARY
     // GET THE ITEM
@@ -74,8 +75,7 @@ export const placeItem = ReqFit<PlaceAtParams>(({session, slotId, tileId, x, y }
 
         if(result && result.success){
             // instead of using the give command, subtract it out manually, as to use the correct slotId reference
-            item.quantity -= 1;
-            session.itemChange(item);
+            ItemCmd({session, cmd:`<${item.slotId}> (1)`}).take();
             return{success: result.success, result: session.ejectChanges()}
         }
     }
