@@ -10,7 +10,7 @@ interface BreakAtParams {
   y?: number;
 }
 
-import { giveCommand } from "../Items/ItemGive";
+import { ItemCmd } from "../Items/ItemFlow";
 export const breakAt = ReqFit<BreakAtParams>(({session, origin, slotId, claim, customDamage, tileId, x, y })=>{
     let tx: number, ty: number;
     if (tileId) {
@@ -76,7 +76,7 @@ export const breakAt = ReqFit<BreakAtParams>(({session, origin, slotId, claim, c
                         if(breakTool.currentDurability <= 0){
                             const downgrade = breakTool.downgradeToItem;
                             tool.quantity = 0;
-                            if(downgrade)giveCommand({session, itemCmd: `${downgrade} (1)`});
+                            if(downgrade)ItemCmd({session, cmd: `${downgrade} (1)`}).give();
                         }
                         session.itemChange(tool);
                     }
@@ -91,7 +91,7 @@ export const breakAt = ReqFit<BreakAtParams>(({session, origin, slotId, claim, c
         if(breakTarget.currentHealth <= 0){
             // %! IRR(242) GET DROP DATA FROM FUNCTION HERE
             const drops = breakTarget?.dropSelf();
-            if(drops)giveCommand({session, itemCmd: drops});
+            if(drops)ItemCmd({session, cmd: drops}).give();
         }
         session.tileChange(tileId);
     }

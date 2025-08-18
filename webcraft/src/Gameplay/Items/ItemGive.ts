@@ -53,6 +53,8 @@ export const giveCommand = ReqFit<{itemCmd: string}>(({session, itemCmd})=>{
           targetItem.quantity=1;
           session.itemChange(targetItem);
         }
+        // FIX FIX FIX, IF SUBTRACT, THEN TAKE
+        // CONSIDER MERGING HERE
       }else{
         const targetItem = supposeItem(session, item, true);
         targetItem.quantity??=0;
@@ -66,6 +68,22 @@ export const giveCommand = ReqFit<{itemCmd: string}>(({session, itemCmd})=>{
     
     // return{success, tileData: session.tileBucket[tileId]}
 //});
+
+
+// EXCHANGE LOGIC
+
+// Get Items...
+// Has Items?
+// Take Items (string? or Item[]?)
+
+// Get Items -> Item map
+// Item map.affords("string (3), iron (5)")
+// (cache the afford value)
+// Item map.take()
+  // reevaluate the afford value if its false
+  // then take away
+
+// refactor crafting to allow that
 
 
 

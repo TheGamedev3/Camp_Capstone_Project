@@ -143,11 +143,9 @@ export class PlaySession{
     getData(): Pick<PlaySession, ExposedKeys> & { timestamp: number } {
 
         let change = false;
-        // %! PII(251) CLEAR ANY QUANTITY 0 OR DURABILITY 0% ITEMS
         // %! STT(130) ALSO REMOVE DURABILITY 0% ITEMS
         const downgrades: Item[] = [];
         this.inventory = this.inventory.filter(item=>{
-            if(item.quantity === 0)return false;
             if(item.tool && item.tool.durability !== 'infinite' && item.tool.currentDurability <= 0){
                 downgrades.push(item);
                 change = true

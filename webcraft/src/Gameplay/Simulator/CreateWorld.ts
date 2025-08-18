@@ -1,6 +1,6 @@
 
 import { PlaySession } from "./PlaySession";
-import { giveCommand } from "../Items/ItemGive";
+import { ItemCmd } from "../Items/ItemFlow";
 import { spawnStructure } from "../Routes/Build";
 import { playSessionCache } from "./PlaySession";
 
@@ -23,7 +23,7 @@ export function createWorld(userId: string){
     }
     // place down prebuilt structures
 
-    giveCommand({session:newCache, itemCmd:"wood axe, wood pickaxe, wood (50), stone (50), coal (50), metal ore (50), pine cone (50)"});
+    ItemCmd({session:newCache, cmd:"wood axe, wood pickaxe, wood (50), stone (50), coal (50), metal ore (50), pine cone (50)"}).give();
     newCache.ejectChanges();
 
     playSessionCache[userId] = newCache;

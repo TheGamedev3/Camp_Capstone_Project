@@ -24,7 +24,6 @@ export type Recipe={
 
     // list out the materials that will subtracted
     cost: string;
-    materials?: [Item, number][];
     totalCost?: [Item, number][];
 
     conditional?: ((struct:evaluater)=>{success: boolean, result?: string});
@@ -40,7 +39,7 @@ export type Recipe={
 }
 
 import { ReqFit } from "../Routes/ReqFit";
-import { giveCommand, interpretQuantities } from "../Items/ItemGive";
+import { ItemCmd, getBaseItems } from "../Items/ItemFlow";
 import { randomBytes } from "crypto";
 
 export function exposeToTable(tableName: string, ...recipieList:Recipe[]){
@@ -55,24 +54,24 @@ export function exposeToTable(tableName: string, ...recipieList:Recipe[]){
             }
             (recipe.tables??=[]).push(tableName);
 
-            recipe.materials = interpretQuantities(recipe.cost);
-
+            // (for the client to calculate)
             let totalCost = recipe.cost;
             if(recipe.input){
                 totalCost = [...recipe.input, totalCost].join(' (1), ');
             }
-            recipe.totalCost = interpretQuantities(totalCost);
+            // eslint-disable-next-line @typescript-eslint/no-unused-vars
+            recipe.totalCost = ItemCmd({cmd:totalCost}).getQuantities().map(([_name, delta, item])=>[item!, delta]);
 
             if(!recipe.outputProfile && typeof recipe.output === 'string'){
-                const qt = interpretQuantities(recipe.output);
+                const qt = getBaseItems(recipe.output);
                 if(qt.length > 0){
                     // set the profile to the first item of the output
-                    recipe.outputProfile = qt[0][0].name;
-                    recipe.outputCount = qt[0][1];
+                    recipe.outputProfile = qt[0][0]; // item name
+                    recipe.outputCount = qt[0][1]; // item delta
                 }
             }
             if(recipe.outputProfile){
-                recipe.outputURL = interpretQuantities(recipe.outputProfile)[0][0].icon;
+                recipe.outputURL = getBaseItems(recipe.outputProfile)[0][2].icon;
                 if(!recipe.recipeName){recipe.recipeName = recipe.outputProfile}
             }else{
                 throw new Error(`RECIPE ${recipe.cost} IS MISSING ITS OUTPUT PROFILE!`);
@@ -121,45 +120,30 @@ export const craftRequest = ReqFit<CraftInfo>(async({session, origin, tableType,
         const recipe = CookBook[recipeId];
         if(recipe && recipe.tables?.includes(tableType)){
             let targets: Item[] = [];
+
+            // can it afford 1 of each input?
+            // if so get the inputs, else error
             if(recipe.input){
-                const findTargets = recipe.input.map(input=>{
-                    return session.inventory.find(item=>item.name === input);
-                });
-                // doesn't have the required targets!
-                if(findTargets.find(t=>t===undefined)){return{success:false, result:'not enough materials!'}}
-                else{targets = (findTargets as Item[])}
+                const inputChain = ItemCmd({session, cmd: recipe.input.join(' (1),')});
+                if(!inputChain.affordable())return{success:false, result:'not enough materials!'}
+                targets = (inputChain.getItems() as Item[]);
             }
 
-            // CHECK THE INVENTORY IF THEY HAVE ENOUGH OF ALL ON SERVER SIDE
-            const subtractCost:(()=>void)[] = [];
-            if(recipe.materials){
-                // THIS ALSO ASSUMES YOU HAVENT MISTAKENLY PUT THE SAME ITEM IN TWICE FOR THE COST
-                for(const[itemBase, qt] of recipe.materials){
-                    if(itemBase.itemType === 'breakTool' && qt > 1){
-                        throw new Error('CANT REQUEST OUT MORE THAN 1 OF A NONSTACKABLE!');
-                    }
-                    const found = session.inventory.find(item=>item.name===itemBase.name);
-                    if(found  && found.quantity && found.quantity >= qt){
-                        subtractCost.push(()=>{
-                            found.quantity!-=qt;
-                            session.itemChange(found);
-                        });
-                        continue;
-                    }
-                    else{return{success: false, result: 'not enough materials!'}}
-                };
-            }
+            // check if it can afford recipe.cost
+            const materialChain = ItemCmd({session, cmd: recipe.cost});
+            if(!materialChain.affordable())return{success: false, result: 'not enough materials!'};
 
             if(recipe.conditional){
                 const{success, result} = recipe.conditional({session, targets, tileId, tableType});
                 if(!success)return{success, result};
             }
+            
             // THEN SUBTRACT AFTERWARDS
-            subtractCost.forEach(subtracter=>subtracter());
+            materialChain.take();
             
             const output = recipe.output;
             if(typeof output === 'string'){
-                giveCommand({session, itemCmd: output});
+                ItemCmd({session, cmd: output}).give();
             }else if(typeof output === 'function'){
                 // %! TTL(224) CHANGE TARGETS TO ITEM TARGETS! AND MAKE IT A STRUCT
                 // ALSO INCLUDE TILE DATA!
