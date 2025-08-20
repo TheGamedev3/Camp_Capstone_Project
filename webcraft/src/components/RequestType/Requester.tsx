@@ -65,13 +65,13 @@ export function Requester<T = unknown>({
     const submit = async()=>{
         if(clientValidation){
             let success2 = true;
-            let err2 = {};
+            let errs = {};
             function err(field, reason){
                 success2 = false;
-                err2[field] = reason;
+                errs[field] = reason;
             }
-            await clientValidation({ ...bodyArgs.current, err });
-            setErrors(err2);
+            await clientValidation({ ...bodyArgs.current, err, errs });
+            setErrors(errs);
             if(!success2){return}
         }
 
@@ -123,14 +123,14 @@ export function Requester<T = unknown>({
                     if(debounceCheck && clientValidation){
                         if(preTimeout.current){clearTimeout(preTimeout.current)}
                         preTimeout.current = setTimeout(async()=>{
-                            let err2 = {};
+                            let errs = {};
                             function err(field2, reason){
                                 if(!bodyArgs.current[field2])return;
-                                err2[field2] = reason;
+                                errs[field2] = reason;
                             }
-                            await clientValidation({ ...bodyArgs.current, err });
-                            setErrors(err2);
-                            func?.(err2[field] === undefined, value);
+                            await clientValidation({ ...bodyArgs.current, err, errs });
+                            setErrors(errs);
+                            func?.(errs[field] === undefined, value);
                         }, debounceCheck);
                     }else{func?.(true, value)}
                 },

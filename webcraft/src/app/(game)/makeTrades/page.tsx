@@ -3,7 +3,20 @@
 import InventoryPanel from "@/Gameplay/Recipes/InventoryPanel";
 import { Forum, SubmitBtn } from "@Req";
 
-export default function TradeMaker() {
+import { ItemCmd, existingInfo } from "@/Gameplay/Items/ItemFlow";
+import { useGameData } from "@/Gameplay/Looks/UpdateHook";
+
+
+function processString(itemCmd: string):[boolean, existingInfo[]]{
+  const chain = ItemCmd({cmd: itemCmd});
+  const list = chain.getExisting();
+  return [chain.failedToParse!, list];
+}
+
+export default function TradeMaker(){
+  const { ClientData } = useGameData();
+  if (ClientData === null) return <div>Loading</div>;
+
   return (
     <div className="p-8">
 
@@ -30,25 +43,80 @@ export default function TradeMaker() {
         <Forum
 
           debounceCheck={500}
-          clientValidation={({buy, sell, err})=>{
+          clientValidation={({buy, sell, err, errs})=>{
             if(!buy) err('buy',"buy can't be blank!");
             if(!sell) err('sell',"sell can't be blank!");
             if(buy && buy === sell) err('sell', "can't trade for the same items back?");
-            // VERIFY QUANTITIES HERE
-            // CHECK IF ITEMS ACTUALLY EXIST
-            if(buy === "ABC") err('buy', "ABC FOUND");
+
+            function clientCheck(field: string, value: string, errLines:{
+              lessThan: string,
+              tooMany: string,
+              nonWhole: string
+            }, afterOk:()=>void){
+              if(errs[field] !== undefined)return;
+
+              const[failed, list] = processString(value);
+              if(failed){
+                err(field,`Failed to parse! Invalid syntax! example: metal ore (5), stone (7)`);
+              }else{
+                
+                const passed: Record<string, boolean> = {};
+                for(const {name, item, delta} of list){
+                  // Item exists?
+                  if(item === undefined){
+                    err(field,`Item "${name}" doesn't exist!`);
+                    break;
+                  }
+
+                  // Only registerd once?
+                  if(passed[name] === true){
+                    err(field, `Item "${name}" is put in more than once!`); break;
+                  } passed[name] = true;
+
+                  // Quantity makes sense?
+                  if(delta <= 0){
+                    err(field, errLines.lessThan); break;
+                  }else if(delta > 100){
+                    err(field, errLines.tooMany); break;
+                  }else if(Math.ceil(delta) !== delta){
+                    err(field, errLines.nonWhole); break;
+                  }
+                }
+              }
+              if(errs[field] === undefined)afterOk?.();
+            }
+
+            clientCheck('buy', buy, {
+              lessThan:"can't give away less than 1?",
+              tooMany:"can't give away more than 100!",
+              nonWhole:"can't give away a non whole number!"
+            },
+            ()=>{
+              const affordChain = ItemCmd({session: ClientData, cmd: buy});
+              if(!affordChain.affordable()){
+                const lacking = Array.from(affordChain.specificAffordable().entries())
+                  .filter(([_item, bool])=>!bool)
+                  .map(([item])=>item.name);
+                  console.log(lacking)
+                err('buy', `You are lacking the ${lacking.join('/')} that you specified!`)
+              }
+            });
+
+            clientCheck('sell', sell, {
+              lessThan:"can't cost less than 1?",
+              tooMany:"can't cost more than 100!",
+              nonWhole:"can't cost a non whole number!"
+            });
+
           }}
           forumName="createTrade"
           request="POST /api/trade"
 
           body={({buy, sell})=>{
-            return{buy, sell, USER_ID}
+            return{buy, sell, userId: ClientData.userId}
           }}
 
-          onSuccess={()=>{
-            // clear the forum onSuccess?
-          }}
-          // debounce clientValidation constantly after each change detected, instead of just on submit?
+          clearOnSuccess={true}
           
           fields={[
             {label: 'Buy:', field:'buy', placeholder:'ex: "stone (3), metal ore (5)"', inputType:"items"},

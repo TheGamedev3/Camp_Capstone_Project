@@ -31,7 +31,7 @@ function interpretQuantities(itemCmd: string): [string, number][] {
     .flatMap(entry => {
       const m = entry.match(rx);
       if (!m) {
-        console.error(`Could not parse entry: "${entry}"`);
+        throw new Error(`Could not parse entry: "${entry}"`);
         return [];
       }
       const itemName = m[1].trim();
@@ -49,15 +49,17 @@ function itemBase(itemName: string): Item{
 
 // new itemFlow implementation smartly allows for: caching & traversing the items more efficiently
 
-type existingInfo = { name: string; item?: Item; delta: number; dataItem?: Item };
+export type existingInfo = { name: string; item?: Item; delta: number; dataItem?: Item };
 export type ItemFlow = {
   existing?: existingInfo[];
+  failedToParse?: boolean
 
   getExisting: () => existingInfo[];
   getItems: () => (Item | undefined)[];
   getQuantities: () => [string, number, Item | undefined][];
 
   give: () => void;
+  specificAffordable: () => Map<Item | undefined, boolean>;
   affordable: () => boolean;
   take: () => void;
 };
@@ -68,44 +70,50 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
 
   chain.getExisting = () => {
     if (chain.existing) return chain.existing;
-    chain.existing = interpretQuantities(cmd).map(([name, delta]) => {
-      // parse, if name looks like "{CONTENTS}"
-      let dataItem: Item | undefined = undefined;
-      if (name && name.startsWith("{") && name.endsWith("}")) {
-        // assuming its always a successful json
-        try {
-          dataItem = (JSON.parse(name) as Item);
-          if (dataItem?.name) name = dataItem.name;
-          if (typeof (dataItem as any).quantity === "number") delta = (dataItem as any).quantity as number;
-        } catch (e) {
-          console.error("Bad JSON item token:", name, e);
+    try{
+      chain.existing = interpretQuantities(cmd).map(([name, delta]) => {
+        // parse, if name looks like "{CONTENTS}"
+        let dataItem: Item | undefined = undefined;
+        if (name && name.startsWith("{") && name.endsWith("}")) {
+          // assuming its always a successful json
+          try {
+            dataItem = (JSON.parse(name) as Item);
+            if (dataItem?.name) name = dataItem.name;
+            if (typeof (dataItem as any).quantity === "number") delta = (dataItem as any).quantity as number;
+          } catch (e) {
+            console.error("Bad JSON item token:", name, e);
+          }
         }
-      }
 
-      const itemPool = session ? session.inventory : allItems;
+        const itemPool = session ? session.inventory : allItems;
 
-      // name = "<ID>"
-      let item: Item | undefined = undefined;
-      if (name && /^<[^>]+>$/.test(name)) {
-        const id = name.slice(1, -1).trim();
-        if(session){
-          item = itemPool.find(i => String(i.slotId) === id);
-        }else{
-          item = dataItem;
+        // name = "<ID>"
+        let item: Item | undefined = undefined;
+        if (name && /^<[^>]+>$/.test(name)) {
+          const id = name.slice(1, -1).trim();
+          if(session){
+            item = itemPool.find(i => String(i.slotId) === id);
+          }else{
+            item = dataItem;
+          }
+          // keep a human name available for error messages & displays
+          name = item?.name ?? name;
+        } else {
+          item = itemPool.find(i => i.name === name);
         }
-        // keep a human name available for error messages & displays
-        name = item?.name ?? name;
-      } else {
-        item = itemPool.find(i => i.name === name);
-      }
 
-      return {
-        name,
-        item,
-        delta,
-        dataItem
-      };
-    });
+        return {
+          name,
+          item,
+          delta,
+          dataItem
+        };
+      });
+      chain.failedToParse = false;
+    }catch{
+      chain.existing = [];
+      chain.failedToParse = true;
+    }
     return chain.existing;
   };
 
@@ -177,15 +185,23 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
   // ASSUMES THE SAME ITEM ISNT ADDED IN MULTIPLE TIMES
   // ONLY ALLOWS FOR CHECKING/SUBTRACTING FOR 1 TYPE OF STACKABLE TOOL, NOT 2 OR MORE
 
-  chain.affordable = () => {
-    if (chain.canAfford !== undefined) return chain.canAfford;
-    chain.canAfford = chain.getExisting().every(({ item, delta }) => (
-      delta === 0 ||
-      (item !== undefined
-        && item.quantity !== undefined
-        && item.quantity >= delta)
-    ));
+  chain.specificAffordable = () => {
+    if (chain.canAfford === undefined){
+      const affordTable = new Map<Item | undefined, boolean>();
+      chain.getExisting().forEach(({ item, delta }) => affordTable.set(item, (
+        delta === 0 ||
+        (item !== undefined
+          && item.quantity !== undefined
+          && item.quantity >= delta)
+      )));
+      chain.canAfford = affordTable;
+    }
     return chain.canAfford;
+  };
+
+  chain.affordable = () => {
+    const affordTable = Array.from(chain.specificAffordable().entries());
+    return affordTable.every(([_item, bool])=>bool);
   };
 
   chain.take = () => {

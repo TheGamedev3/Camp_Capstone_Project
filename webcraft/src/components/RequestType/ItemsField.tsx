@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import Slot from "@Gameplay/Items/Slot";
-import { Item } from "@/Gameplay/Items/Items";
+import type { Item } from "@/Gameplay/Items/Items";
 import { ItemCmd } from "@/Gameplay/Items/ItemFlow";
 import { TextField, TextFieldProps } from "./TextField";
 
@@ -22,6 +22,10 @@ export function ItemsField(struct:TextFieldProps){
         setItems(processString(text));
       }}
     />
-    {items.map((item, i)=><Slot {...item} key={i}/>)}
+    <div className="w-full flex flex-wrap justify-start items-start gap-2 rounded-xl bg-neutral-800/70 p-2">
+      {items.filter(Boolean).map((item, i) => (
+        <Slot {...item} key={item.slotId ?? i} />
+      ))}
+    </div>
   </>);
 }
