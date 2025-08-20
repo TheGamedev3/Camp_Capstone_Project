@@ -2,7 +2,7 @@
 
 "use client"
 
-import { useState, createContext, useContext, useRef, useEffect } from 'react';
+import { useState, createContext, useContext, useRef, useEffect, useCallback } from 'react';
 import { TextField } from './TextField';
 import { ImageField } from './ImageField';
 import { Requester } from './Requester';
@@ -15,20 +15,42 @@ type FormFields = {
   fields: {field: string, inputType?: string, placeholder?: string, defaultText?: string}[]
   above?: React.ReactNode;
   below?: React.ReactNode;
+  clearOnSuccess?: boolean;
+  debounceCheck?: number;
+  onSuccess?: (result:T) => void | Promise<void>;
 }
 
 type ForumType = RequesterType & FormFields;
 
 export function Forum<T = unknown>({
     above, fields, below,
+    clearOnSuccess=false,
+    debounceCheck,
+    onSuccess,
     ...rest
 }:ForumType){
+    const uponSuccess = useRef<(()=>void)[]>([]);
     return(
-        <Requester<T> {...rest}>
+        <Requester<T>
+          onSuccess={async(result: T)=>{
+            if(onSuccess)await onSuccess(result);
+          }}
+          debounceCheck={debounceCheck}
+          {...rest}
+        >
             <InnerForum
                 fields={fields}
                 above={above}
                 below={below}
+                debounceCheck={debounceCheck}
+                clearOnSuccess={clearOnSuccess}
+                uponSuccess={(func:()=>void)=>{
+                  uponSuccess.current.push(func);
+                  return()=>{
+                    const i = uponSuccess.current.indexOf(func);
+                    uponSuccess.current.splice(i, 1);
+                  }
+                }}
             />
         </Requester>
     );
@@ -36,20 +58,27 @@ export function Forum<T = unknown>({
 
 import { useRequesterContext } from './Requester';
 
-function InnerForum({fields, above, below}:FormFields){
-  const { setField, errors, submit, getSubmitBtn } = useRequesterContext();
+// move reset on default up here!
+function InnerForum({fields, above, below, clearOnSuccess, debounceCheck, uponSuccess}:FormFields&{uponSuccess:(func:()=>void)=>void}){
+  const { setDefault, errors, getSubmitBtn } = useRequesterContext();
   const refs = useRef<HTMLInputElement[]>([]);
 
   useEffect(() => {
-    fields.forEach(({ field, defaultText }) => {
-      if (field && defaultText) setField(field, defaultText);
-    });
+    function setToDefault(){
+      fields.forEach(({ field, defaultText }) => {
+        if (field && defaultText) setDefault(field, defaultText);
+      });
+    }
+
+    setToDefault();
+    if(clearOnSuccess){
+      return uponSuccess(setToDefault);
+    }
   }, []);
 
   const handleKeyDown = (e: React.KeyboardEvent, index: number) => {
     if (e.key === "Enter") {
       e.preventDefault();
-      console.log(index, refs.current.length)
       // Move to next or submit
       if (index < refs.current.length-1) {
         refs.current[index + 1]?.focus();
@@ -61,13 +90,15 @@ function InnerForum({fields, above, below}:FormFields){
   };
 
   useEffect(() => {
+    if(debounceCheck)return;
+
     // Focus earliest error
     const firstErrorField = Object.keys(errors)[0];
     if (firstErrorField) {
       const idx = fields.findIndex(f => f.field === firstErrorField);
       if (idx !== -1) refs.current[idx]?.focus();
     }
-  }, [errors]);
+  }, [debounceCheck, errors]);
 
   return (
     <div className="flex flex-col gap-4">

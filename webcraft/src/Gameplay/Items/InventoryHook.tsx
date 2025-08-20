@@ -9,9 +9,9 @@ export function useInventory() {
 
   // Sorted snapshot (stable)
   const sortedInventory = useMemo(() => {
-    const arr = Array.isArray(ClientData.inventory) ? ClientData.inventory : [];
+    const arr = ClientData && Array.isArray(ClientData.inventory) ? ClientData.inventory : [];
     return [...arr].sort((a, b) => a.name.localeCompare(b.name));
-  }, [ClientData.inventory]);
+  }, [ClientData?.inventory]);
 
   const backpack = useMemo(() => ({ inventory: sortedInventory }), [sortedInventory]);
 

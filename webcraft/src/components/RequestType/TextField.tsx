@@ -2,7 +2,7 @@
 
 import { useRequesterContext } from "./Requester";
 
-type TextFieldProps = {
+export type TextFieldProps = {
   label?: string;
   bodyField: string;
   defaultText?: string;
@@ -10,6 +10,8 @@ type TextFieldProps = {
   inputType?: string;
   inputRef?: (el: HTMLInputElement | null) => void; // optional ref function
   onKeyDown?: (e: React.KeyboardEvent<HTMLInputElement>) => void; // optional key handler
+
+  onChange?: (success: boolean, text: string) => void;
 };
 
 export function TextField({
@@ -18,7 +20,9 @@ export function TextField({
   defaultText = "",
   placeholderText = "",
   inputType='text',
-  inputRef, onKeyDown
+  inputRef, onKeyDown,
+
+  onChange,
 }: TextFieldProps) {
   const { errors, setField } = useRequesterContext();
 
@@ -33,7 +37,7 @@ export function TextField({
         placeholder={placeholderText}
         className="w-full px-4 py-2 border border-gray-300 rounded text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
         onChange={(e) => {
-          setField(bodyField, e.target.value);
+          setField(bodyField, e.target.value, onChange);
         }}
 
         // for selecting the next field:

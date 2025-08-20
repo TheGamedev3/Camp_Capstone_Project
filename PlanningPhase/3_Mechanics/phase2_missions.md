@@ -280,6 +280,58 @@ Next Up: Crafting And Interfaces
             - a post button to post the trade
 
 
+
+Create New Trade UI
+    - perhaps a buy/sell table? or separate tab at the top? gotta decide...
+        - ive decided a separate tab is best
+        - create the offer and offers tabs
+            - the create offer tab first
+    - the left hand side shows items you're willing to give (can't give axes or pickaxes since you only have 1)
+        - show the inventory component on the left
+        - have each slot be clickable again
+            - and on slot click add it to the right hand side
+            - on the right hand side click subtract -1 until its 0 then it disappears from the right side and vise versa
+    - and at the bottom, type what you want to purchase
+        - get the strings, parse them, render them on the bottom
+        - verify no axes or pickaxes are traded locally since everyone only ever has 1
+        - of course, names only, no fancy ids or json data or whatever
+    - post trade button
+
+Upload/send data
+    - send the slotId strings over
+        - take the quantity ones as normal
+        - breakTools/nonstackables get fully taken their data and stored as json into the exchange string
+        - convert into a prize exchange string
+    - upload the cost string too
+        - make sure it doesnt include axes or pickaxes
+
+The Trade Schema
+    - display pagnating offers
+        - offer display component
+    - combine the exchange string and cost string into a mongoose Trade Schema thing
+    - make a request to accept a target trade, locally detect if you have enough of each item in the cost
+        - the cost is gonna have to therefore send over to the user in [Item, qt][] format so the client can determine if it has enough or not on its side
+        - determine if the user can afford it on the server side
+        - take the items
+        - give the exchange string
+
+Trade Recieving
+        - give the cost string then to the user who made the trade
+            - (requires temporarily reloading the user's session?)
+            - (or somehow notifying the user when they come back online? (prefered route))
+                - on loading session, check if any trades have been accepted 1 sec in, if so clear them and give the prize then
+                - if they're online while the trade takes place, just access their session and add it in easily!
+
+tada! trading! celebrate!
+
+⚠️ worried that:
+    - tool data for items is just shallow copied and might have the same reference
+    - the client checking for items separate from how the server is, is really not good duplicating logic
+        - for example sending [Item, number][] to verify the quantities instead of simply "metal (4)" or something...
+        - if so there'd be an affordable each
+
+
+
 🔥 Forage & Furance
 - the furance menu will be more complicated
     - furnace structure with a coal count and metal ore count and an output count

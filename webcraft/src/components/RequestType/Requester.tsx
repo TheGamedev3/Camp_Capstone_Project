@@ -3,13 +3,11 @@
 "use client"
 
 import { useState, createContext, useContext, useRef, useEffect } from 'react';
-import { TextField } from './TextField';
-import { ImageField } from './ImageField';
 
 type RequesterContextType = {
   forumName: string;
   submit: () => Promise<boolean>;
-  setField: (field: string, value: unknown) => void;
+  setField: (field: string, value: unknown, func?: (success: boolean, text: string)=>void) => void;
   errors: Record<string, string>;
 
   registerSubmitBtn: (ref: HTMLButtonElement | null) => void;
@@ -34,6 +32,8 @@ export type RequesterType<T = unknown> = {
     onSuccess?: (result:T) => void | Promise<void>;
     onFinish?: (success:boolean, result:T) => void | Promise<void>;
     exitEditField: boolean; triggerOnStart: boolean;
+
+    debounceCheck?: number;
 }
 
 import { getRoute } from '@/utils/request';
@@ -42,7 +42,9 @@ import { useEditArea } from './Editable';
 export function Requester<T = unknown>({
     forumName,
     clientValidation, request, body, fields, goTo, children, onSuccess, onFinish,
-    exitEditField=true, triggerOnStart=false
+    exitEditField=true, triggerOnStart=false,
+
+    debounceCheck
 }: RequesterType<T>
 ){
     const bodyArgs = useRef({});
@@ -106,14 +108,33 @@ export function Requester<T = unknown>({
     }
     useEffect(()=>{
         if(triggerOnStart){submit()}
-    },[])
+    },[]);
+
+    const preTimeout = useRef(null);
 
     return(
         <RequesterContext.Provider value={
             {
                 forumName,
                 errors,
-                setField(field, value){
+                setField(field, value, func){
+                    bodyArgs.current[field] = value;
+                    // refresh check timeout
+                    if(debounceCheck && clientValidation){
+                        if(preTimeout.current){clearTimeout(preTimeout.current)}
+                        preTimeout.current = setTimeout(async()=>{
+                            let err2 = {};
+                            function err(field2, reason){
+                                if(!bodyArgs.current[field2])return;
+                                err2[field2] = reason;
+                            }
+                            await clientValidation({ ...bodyArgs.current, err });
+                            setErrors(err2);
+                            func?.(err2[field] === undefined, value);
+                        }, debounceCheck);
+                    }else{func?.(true, value)}
+                },
+                setDefault(field, value){
                     bodyArgs.current[field] = value;
                 },
                 submit,

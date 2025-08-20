@@ -3,17 +3,17 @@
 import Slot from "../Items/Slot";
 import { useMemo } from "react";
 import { useInventory } from "../Items/InventoryHook";
+import { Item } from "../Items/Items";
 
-export default function InventoryPanel({ filterTo }: { filterTo?: string[] }) {
+export default function InventoryPanel({ itemFilter }: { itemFilter?: (item: Item)=>boolean }) {
   const { backpack } = useInventory();
 
   // filter if requested
   const items = useMemo(() => {
     const inv = backpack?.inventory ?? [];
-    if (!filterTo || filterTo.length === 0) return inv;
-    const allow = new Set(filterTo.map((n) => n.toLowerCase()));
-    return inv.filter((i) => allow.has(i.name.toLowerCase()));
-  }, [backpack?.inventory, filterTo]);
+    if (!itemFilter) return inv;
+    return inv.filter(itemFilter);
+  }, [backpack?.inventory, itemFilter]);
 
   // grid layout settings
   const colCount = 4; // adjust columns
@@ -24,7 +24,7 @@ export default function InventoryPanel({ filterTo }: { filterTo?: string[] }) {
     <div className="h-full rounded-lg border border-neutral-800/70 bg-neutral-950/30 p-2 overflow-auto">
       {items.length === 0 ? (
         <div className="h-full grid place-items-center text-sm text-neutral-500">
-          {filterTo ? "No matching items" : "Inventory is empty"}
+          {itemFilter ? "No matching items" : "Inventory is empty"}
         </div>
       ) : (
         <div
