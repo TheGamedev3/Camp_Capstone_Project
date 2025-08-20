@@ -2,7 +2,7 @@
 
 import "../Items/Items";
 import { Item } from "../Items/Items";
-import { PlaySession } from "../Simulator/PlaySession";
+import type { PlaySession } from "../Simulator/PlaySession";
 
 const CookBook:Record<string, Recipe>={};
 const Categories:Record<string, Recipe[]>={};
@@ -137,7 +137,7 @@ export const craftRequest = ReqFit<CraftInfo>(async({session, origin, tableType,
                 const{success, result} = recipe.conditional({session, targets, tileId, tableType});
                 if(!success)return{success, result};
             }
-            
+
             // THEN SUBTRACT AFTERWARDS
             materialChain.take();
             

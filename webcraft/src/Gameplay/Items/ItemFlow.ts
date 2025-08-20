@@ -2,9 +2,9 @@
 // collect all items from the item list, example, cobblestone (3), metals (4s), ...
 // add or subtract them accordingly
 
-import { Item, allItems } from "./Items";
+import { Item, allItems } from "./ItemsClient";
 import { randomBytes } from "crypto";
-import { PlaySession } from "../Simulator/PlaySession";
+import type { PlaySession } from "../Simulator/PlaySession";
 
 // name is one of:
 //   1) <...>     (protected token)
@@ -50,7 +50,7 @@ function itemBase(itemName: string): Item{
 // new itemFlow implementation smartly allows for: caching & traversing the items more efficiently
 
 type existingInfo = { name: string; item?: Item; delta: number; dataItem?: Item };
-type ItemFlow = {
+export type ItemFlow = {
   existing?: existingInfo[];
 
   getExisting: () => existingInfo[];
@@ -63,7 +63,7 @@ type ItemFlow = {
 };
 
 // if session is undefined, itll just get the regular Item profile from allItems
-export const ItemCmd = (({ session, cmd }: { session?: PlaySession; cmd: string }): ItemFlow => {
+export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }):ItemFlow{
   const chain = {};
 
   chain.getExisting = () => {
@@ -207,7 +207,7 @@ export const ItemCmd = (({ session, cmd }: { session?: PlaySession; cmd: string 
   };
 
   return (chain as ItemFlow);
-});
+};
 
 export const getBaseItems = (cmd)=>{
   return ItemCmd({cmd}).getQuantities();

@@ -51,8 +51,8 @@ export default function TradeMaker() {
           // debounce clientValidation constantly after each change detected, instead of just on submit?
           
           fields={[
-            {label: 'Buy:', field:'buy', placeholder:'ex: "stone (3), metal ore (5)"'}, // CUSTOM ITEM INPUT TYPE
-            {label: 'Sell:', field:'sell', placeholder:'ex: "stone (3), metal ore (5)"', defaultText:''},
+            {label: 'Buy:', field:'buy', placeholder:'ex: "stone (3), metal ore (5)"', inputType:"items"},
+            {label: 'Sell:', field:'sell', placeholder:'ex: "stone (3), metal ore (5)"', defaultText:'', inputType:"items"},
           ]}
           below={
             <SubmitBtn text="Submit" styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" disableOnSuccess={false} />

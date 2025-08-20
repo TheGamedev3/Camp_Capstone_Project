@@ -1,5 +1,5 @@
 
-import { PlaySession } from "../Simulator/PlaySession";
+import type { PlaySession } from "../Simulator/PlaySession";
 import { Structure } from "./Structure";
 import { spawnStructure } from "../Routes/Build";
 

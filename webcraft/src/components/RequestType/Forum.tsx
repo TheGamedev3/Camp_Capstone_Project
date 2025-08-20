@@ -5,6 +5,7 @@
 import { useState, createContext, useContext, useRef, useEffect, useCallback } from 'react';
 import { TextField } from './TextField';
 import { ImageField } from './ImageField';
+import { ItemsField } from './ItemsField';
 import { Requester } from './Requester';
 
 import { getRoute } from '@/utils/request';
@@ -113,11 +114,11 @@ function InnerForum({fields, above, below, clearOnSuccess, debounceCheck, uponSu
           inputRef: (el: HTMLInputElement) => (refs.current[i] = el),
           onKeyDown: (e: React.KeyboardEvent) => handleKeyDown(e, i),
         };
-        return inputType === "image" ? (
-            <ImageField key={i} {...commonProps} />
-        ) : (
-            <TextField key={i} {...commonProps} />
-        );
+        switch(inputType){
+          case"image": return <ImageField key={i} {...commonProps} />;
+          case"items": return <ItemsField key={i} {...commonProps} />;
+          default: return <TextField key={i} {...commonProps} />;
+        }
       })}
       {below}
     </div>

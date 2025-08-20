@@ -1,4 +1,4 @@
-import { PlaySession } from "../Simulator/PlaySession";
+import type { PlaySession } from "../Simulator/PlaySession";
 
 export class TileBase {
     x: number; y: number;
