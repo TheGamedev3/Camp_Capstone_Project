@@ -103,7 +103,7 @@ export function ItemList() {
                   }
                   setSlot(item.slotId);
                 }}
-                {...item}
+                item={item}
               />
             );
           })}

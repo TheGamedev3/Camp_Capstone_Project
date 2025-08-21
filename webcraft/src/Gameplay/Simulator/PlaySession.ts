@@ -6,7 +6,9 @@ const exposedProperties = [
     'tileBucket', 'inventory'
 ] as const;
 
-import { allItems, Item } from "../Items/Items";
+import { allItems, Item, addTilePreviews } from "../Items/Items";
+addTilePreviews();
+
 import { createWorld } from "./CreateWorld";
 import { randomBytes } from "crypto";
 import { User } from "@Chemicals";

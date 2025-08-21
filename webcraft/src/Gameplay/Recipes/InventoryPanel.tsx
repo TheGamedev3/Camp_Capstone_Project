@@ -5,7 +5,7 @@ import { useMemo } from "react";
 import { useInventory } from "../Items/InventoryHook";
 import { Item } from "../Items/Items";
 
-export default function InventoryPanel({ itemFilter }: { itemFilter?: (item: Item)=>boolean }) {
+export default function InventoryPanel({ itemFilter, slotClicked }: { itemFilter?: (item: Item)=>boolean, slotClicked?: (item: Item)=>void }) {
   const { backpack } = useInventory();
 
   // filter if requested
@@ -39,8 +39,9 @@ export default function InventoryPanel({ itemFilter }: { itemFilter?: (item: Ite
         >
           {items.map((item) => (
             <Slot
+              item={item}
               key={item.slotId ?? `${item.name}-${Math.random()}`}
-              {...(item as any)}
+              onClick={slotClicked}
             />
           ))}
         </div>

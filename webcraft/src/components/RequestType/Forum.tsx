@@ -2,13 +2,11 @@
 
 "use client"
 
-import { useState, createContext, useContext, useRef, useEffect, useCallback } from 'react';
+import { useRef, useEffect } from 'react';
 import { TextField } from './TextField';
 import { ImageField } from './ImageField';
-import { ItemsField } from './ItemsField';
+import { ItemsField, BuyItemsField } from './ItemsField';
 import { Requester } from './Requester';
-
-import { getRoute } from '@/utils/request';
 
 import { RequesterType } from './Requester';
 
@@ -104,7 +102,7 @@ function InnerForum({fields, above, below, clearOnSuccess, debounceCheck, uponSu
   return (
     <div className="flex flex-col gap-4">
       {above}
-      {fields.map(({ label, field, inputType, placeholder, defaultText }, i) => {
+      {fields.map(({ label, field, inputType, placeholder, defaultText, ...rest }, i) => {
         const commonProps = {
           label,
           bodyField: field,
@@ -115,12 +113,23 @@ function InnerForum({fields, above, below, clearOnSuccess, debounceCheck, uponSu
           onKeyDown: (e: React.KeyboardEvent) => handleKeyDown(e, i),
         };
         switch(inputType){
-          case"image": return <ImageField key={i} {...commonProps} />;
-          case"items": return <ItemsField key={i} {...commonProps} />;
-          default: return <TextField key={i} {...commonProps} />;
+          case"image": return <ImageField key={i} {...commonProps} {...rest} />;
+          case"items": return <ItemsField key={i} {...commonProps} {...rest} />;
+          case"buyItems": return <BuyItemsField key={i} {...commonProps} {...rest} />;
+          default: return <TextField key={i} {...commonProps} {...rest} />;
         }
       })}
       {below}
     </div>
   );
+}
+
+export function SetTextInput(forum:string, input:string, setter:(pre:string)=>string){
+  const el = document.querySelector(`[data-forum="${forum}"] input[name="${input}"]`);
+  const prev = el.value;
+
+  if(prev === input)return;
+  Object.getOwnPropertyDescriptor(Object.getPrototypeOf(el), 'value').set.call(el, setter(prev));
+  // let React know & mark this as our own change
+  el.dispatchEvent(new InputEvent('input', { bubbles: true, data: "__CLIENT_SET__" }));
 }

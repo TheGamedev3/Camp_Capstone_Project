@@ -11,6 +11,7 @@ export type Item = {
     tilePreview?: string;
 
     tool?: ToolStats;
+    untradable?: boolean;
 };
 
 export type ToolStats={
@@ -142,7 +143,8 @@ export const ToolTable: Item[] = [
 
             upgradeToItem: "stone axe",
             upgradeCost: "5 wood, 10 stone",
-        }
+        },
+        untradable: true
     },
     {
         name: "wood pickaxe",
@@ -155,7 +157,8 @@ export const ToolTable: Item[] = [
 
             upgradeToItem: "stone axe",
             upgradeCost: "5 wood, 10 stone",
-        }
+        },
+        untradable: true
     },
     {
         name: "stone axe",
@@ -168,7 +171,8 @@ export const ToolTable: Item[] = [
             upgradeToItem: "metal axe",
             upgradeCost: "5 wood, 10 metal",
             downgradeToItem: "wood axe",
-        }
+        },
+        untradable: true
     },
     {
         name: "stone pickaxe",
@@ -182,7 +186,8 @@ export const ToolTable: Item[] = [
             upgradeToItem: "metal axe",
             upgradeCost: "5 wood, 10 metal",
             downgradeToItem: "wood pickaxe",
-        }
+        },
+        untradable: true
     },
     {
         name: "metal axe",
@@ -193,7 +198,8 @@ export const ToolTable: Item[] = [
             woodDmg: 5,
 
             downgradeToItem: "stone pickaxe",
-        }
+        },
+        untradable: true
     },
     {
         name: "metal pickaxe",
@@ -205,7 +211,8 @@ export const ToolTable: Item[] = [
             metalDmg: 2,
 
             downgradeToItem: "stone pickaxe",
-        }
+        },
+        untradable: true
     },
     {
         name: "wrench",

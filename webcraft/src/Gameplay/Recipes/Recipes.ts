@@ -181,9 +181,9 @@ export function createRecipes(){
             outputProfile:"forest",
             output({session, tileId, tableType}){
                 // transform the land into a forest
-                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType)
+                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType);
                 land?.deleteSelf();
-                spawnStructure(session, {what:"Forest", tileId});
+                spawnStructure({session, what:"Forest", tileId});
                 session.tileChange(tileId);
                 return[];
             }
@@ -193,10 +193,10 @@ export function createRecipes(){
             cost:"stone (20)",
             outputProfile:"mountain",
             output({session, tileId, tableType}){
-                // transform the land into a forest
-                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType)
+                // transform the land into a mountain
+                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType);
                 land?.deleteSelf();
-                spawnStructure(session, {what:"Mountain", tileId});
+                spawnStructure({session, what:"Mountain", tileId});
                 session.tileChange(tileId);
                 return[];
             }
@@ -208,10 +208,10 @@ export function createRecipes(){
             cost:"wood (20), stone (20)",
             outputProfile:"mineshaft",
             output({session, tileId, tableType}){
-                // transform the land into a forest
-                const land = session.tileBucket[tileId].find(tile=>tile.menu === tableType)
-                land?.deleteSelf();
-                spawnStructure(session, {what:"Mineshaft", tileId});
+                // transform the land into a mineshaft
+                const mountain = session.tileBucket[tileId].find(tile=>tile.menu === tableType);
+                mountain?.deleteSelf();
+                spawnStructure({session, what:"Mineshaft", tileId});
                 session.tileChange(tileId);
                 return[];
             }

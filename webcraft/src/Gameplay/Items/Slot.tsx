@@ -5,30 +5,26 @@
 // %! PII(260) SHRINK ITEM PROFILE TO A SPECIFIC ASPECT
 
 import Image from "next/image";
+import type { Item } from "./ItemsClient";
 
 type SlotProps = {
   selected: boolean;
-  slotId?: string | number;
-  name: string;
-  icon: string;       // image url
-  quantity?: number;
-  onClick?: MouseEventHandler<HTMLButtonElement>;
-  tool?:{
-    durability: number | 'infinite';
-    currentDurability: number;
-  }
+  onClick?: (item?: Item)=>void
+  item: Item;
 };
 
 // Slot.tsx
 export default function Slot({
   selected,
-  name,
-  icon,
-  quantity,
-  tool,
   onClick,
+  item,
 }: SlotProps) {
-  // %! STT(131) durability health bar show in the slot if it has both durability & current durability!!!
+  const{
+    name,
+    icon,
+    quantity,
+    tool
+  } = item;
   
   const hasDurability = tool && tool.durability !== 'infinite' && tool.currentDurability > 0;
 
@@ -38,7 +34,7 @@ export default function Slot({
   return (
     <button
       type="button"
-      onClick={onClick}
+      onClick={()=>onClick?.(item)}
       title={name}
       className={[
         "group relative rounded-md border",

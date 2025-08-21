@@ -1,22 +1,53 @@
 "use client"
 
 import InventoryPanel from "@/Gameplay/Recipes/InventoryPanel";
-import { Forum, SubmitBtn } from "@Req";
+import { Forum, SubmitBtn, SetTextInput } from "@Req";
 
 import { ItemCmd, existingInfo } from "@/Gameplay/Items/ItemFlow";
 import { useGameData } from "@/Gameplay/Looks/UpdateHook";
+import type { PlaySession } from "@/Gameplay/Simulator/PlaySession";
+import { useCallback } from "react";
 
 
-function processString(itemCmd: string):[boolean, existingInfo[]]{
-  const chain = ItemCmd({cmd: itemCmd});
+function processString(itemCmd: string, session: PlaySession):[boolean, existingInfo[]]{
+  const chain = ItemCmd({cmd: itemCmd, session});
   const list = chain.getExisting();
   return [chain.failedToParse!, list];
 }
 
 export default function TradeMaker(){
   const { ClientData } = useGameData();
-  if (ClientData === null) return <div>Loading</div>;
 
+  const slotSubtract = useCallback((field)=>(slotItem)=>{
+    if(!slotItem)return;
+    SetTextInput(
+      "createTrade", field,
+      (pre)=>{
+        const[failed, list] = processString(pre, field==='buy' ? ClientData : null);
+        if(failed)return pre;
+
+        const unstackable = slotItem.itemType === 'breakTool';
+        let found = null;
+        if(unstackable){
+          found = list.find(({item})=>item && item.slotId === slotItem.slotId)?.item;
+        }else{
+          found = list.find(({item})=>item && item.name === slotItem.name)?.item;
+        }
+        if(!found)return pre;
+
+        return list.map(({name, item, delta})=>{
+          if(item === found && delta > 0){
+            if(delta-1 <= 0)return null;
+            return`${name} (${delta-1})`;
+          };
+          if(item?.itemType === 'breakTool')return`<${item.slotId}>`;
+          return`${name} (${delta})`;
+        }).filter(Boolean).join(', ');
+      }
+    )
+  },[]);
+
+  if (ClientData === null) return <div>Loading</div>;
   return (
     <div className="p-8">
 
@@ -24,16 +55,43 @@ export default function TradeMaker(){
         <div className="grid grid-cols-2 h-[calc(100%-48px)]">
           {/* left placeholder panel (empty for now) */}
           <div className="border-r border-neutral-800 p-3 overflow-auto">
-            <InventoryPanel itemFilter={({name})=>{
-              return ![
-                "wood axe",
-                "wood pickaxe",
-                "stone axe",
-                "stone pickaxe",
-                "metal axe",
-                "metal pickaxe",
-              ].includes(name.toLowerCase());
-            }}/>
+            <InventoryPanel
+              itemFilter={({untradable})=>untradable!==true}
+              slotClicked={(slotItem)=>{
+                if(!slotItem)return;
+                SetTextInput(
+                  "createTrade", "buy",
+                  (pre)=>{
+                    const[failed, list] = processString(pre, ClientData);
+                    if(failed)return pre;
+
+                    const unstackable = slotItem.itemType === 'breakTool';
+                    let found = null;
+                    if(unstackable){
+                      found = list.find(({item})=>item && item.slotId === slotItem.slotId)?.item;
+                    }else{
+                      found = list.find(({item})=>item && item.name === slotItem.name)?.item;
+                    }
+                    if(!found){
+                      const append = unstackable 
+                        ? `<${slotItem.slotId}>` 
+                        : `${slotItem.name} (1)`;
+                      if(pre.trim() === "")return append;
+                      return pre+`, ${append}`;
+                    }
+                    if(found && unstackable)return pre;
+
+                    return list.map(({name, item, delta})=>{
+                      if(item === found && delta+1 <= slotItem.quantity){
+                        return`${name} (${delta+1})`;
+                      };
+                      if(item?.itemType === 'breakTool')return`<${item.slotId}>`;
+                      return`${name} (${delta})`;
+                    }).join(', ');
+                  }
+                )
+              }}
+            />
           </div>
 
           {/* right: create trades */}
@@ -48,23 +106,34 @@ export default function TradeMaker(){
             if(!sell) err('sell',"sell can't be blank!");
             if(buy && buy === sell) err('sell', "can't trade for the same items back?");
 
-            function clientCheck(field: string, value: string, errLines:{
-              lessThan: string,
-              tooMany: string,
-              nonWhole: string
-            }, afterOk:()=>void){
+            function clientCheck(
+              field: string, value: string,
+              errLines:{
+                lessThan: string,
+                tooMany: string,
+                nonWhole: string
+              },
+              afterOk:()=>void
+            ){
               if(errs[field] !== undefined)return;
 
-              const[failed, list] = processString(value);
+              const[failed, list] = processString(value, field==='buy' ? ClientData : null);
               if(failed){
                 err(field,`Failed to parse! Invalid syntax! example: metal ore (5), stone (7)`);
               }else{
                 
                 const passed: Record<string, boolean> = {};
                 for(const {name, item, delta} of list){
+                  
                   // Item exists?
                   if(item === undefined){
                     err(field,`Item "${name}" doesn't exist!`);
+                    break;
+                  }
+
+                  // Isn't untradable?
+                  if(item.untradable === true){
+                    err(field,`Not allowed to exchange "${name}"!`);
                     break;
                   }
 
@@ -97,7 +166,6 @@ export default function TradeMaker(){
                 const lacking = Array.from(affordChain.specificAffordable().entries())
                   .filter(([_item, bool])=>!bool)
                   .map(([item])=>item.name);
-                  console.log(lacking)
                 err('buy', `You are lacking the ${lacking.join('/')} that you specified!`)
               }
             });
@@ -119,8 +187,12 @@ export default function TradeMaker(){
           clearOnSuccess={true}
           
           fields={[
-            {label: 'Buy:', field:'buy', placeholder:'ex: "stone (3), metal ore (5)"', inputType:"items"},
-            {label: 'Sell:', field:'sell', placeholder:'ex: "stone (3), metal ore (5)"', defaultText:'', inputType:"items"},
+            {label: 'Buy:', field:'buy', placeholder:'ex: "stone (3), metal ore (5)"', inputType:"buyItems",
+              slotClicked:slotSubtract('buy')
+            },
+            {label: 'Sell:', field:'sell', placeholder:'ex: "stone (3), metal ore (5)"', defaultText:'', inputType:"items",
+              slotClicked:slotSubtract('sell')
+            }
           ]}
           below={
             <SubmitBtn text="Submit" styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" disableOnSuccess={false} />

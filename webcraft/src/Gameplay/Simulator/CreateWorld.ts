@@ -1,5 +1,5 @@
 
-import type { PlaySession } from "./PlaySession";
+import { PlaySession } from "./PlaySession";
 import { ItemCmd } from "../Items/ItemFlow";
 import { spawnStructure } from "../Routes/Build";
 import { playSessionCache } from "./PlaySession";

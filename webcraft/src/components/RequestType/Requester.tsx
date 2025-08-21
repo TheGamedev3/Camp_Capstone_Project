@@ -7,7 +7,7 @@ import { useState, createContext, useContext, useRef, useEffect } from 'react';
 type RequesterContextType = {
   forumName: string;
   submit: () => Promise<boolean>;
-  setField: (field: string, value: unknown, func?: (success: boolean, text: string)=>void) => void;
+  setField: (field: string, value: unknown, func?: (success: boolean, text: string)=>void, instant?: boolean) => void;
   errors: Record<string, string>;
 
   registerSubmitBtn: (ref: HTMLButtonElement | null) => void;
@@ -117,12 +117,13 @@ export function Requester<T = unknown>({
             {
                 forumName,
                 errors,
-                setField(field, value, func){
+                setField(field, value, func, instant){
                     bodyArgs.current[field] = value;
                     // refresh check timeout
                     if(debounceCheck && clientValidation){
                         if(preTimeout.current){clearTimeout(preTimeout.current)}
-                        preTimeout.current = setTimeout(async()=>{
+                        // instant
+                        const reverify = async()=>{
                             let errs = {};
                             function err(field2, reason){
                                 if(!bodyArgs.current[field2])return;
@@ -131,7 +132,12 @@ export function Requester<T = unknown>({
                             await clientValidation({ ...bodyArgs.current, err, errs });
                             setErrors(errs);
                             func?.(errs[field] === undefined, value);
-                        }, debounceCheck);
+                        }
+                        if(instant !== true){
+                            preTimeout.current = setTimeout(reverify, debounceCheck);
+                        }else{
+                            reverify();
+                        }
                     }else{func?.(true, value)}
                 },
                 setDefault(field, value){

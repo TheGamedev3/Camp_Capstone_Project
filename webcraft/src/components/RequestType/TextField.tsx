@@ -37,7 +37,7 @@ export function TextField({
         placeholder={placeholderText}
         className="w-full px-4 py-2 border border-gray-300 rounded text-black placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
         onChange={(e) => {
-          setField(bodyField, e.target.value, onChange);
+          setField(bodyField, e.target.value, onChange, (e.nativeEvent as InputEvent).data === "__CLIENT_SET__");
         }}
 
         // for selecting the next field:

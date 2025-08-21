@@ -56,6 +56,7 @@ export type ItemFlow = {
 
   getExisting: () => existingInfo[];
   getItems: () => (Item | undefined)[];
+  getDeltaItems: () => (Item | undefined)[];
   getQuantities: () => [string, number, Item | undefined][];
 
   give: () => void;
@@ -119,6 +120,12 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
 
   chain.getItems = () => {
     return chain.getExisting().map(({ item }) => item);
+  };
+  chain.getDeltaItems = () => {
+    return chain.getExisting().map(({ item, delta }) => {
+      if(!item)return;
+      return{...item, quantity: delta}
+    });
   };
   chain.getQuantities = () => {
     return chain.getExisting().map(({ name, delta, item }) => [name, delta, item]);
