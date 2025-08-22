@@ -195,12 +195,16 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
   chain.specificAffordable = () => {
     if (chain.canAfford === undefined){
       const affordTable = new Map<Item | undefined, boolean>();
-      chain.getExisting().forEach(({ item, delta }) => affordTable.set(item, (
-        delta === 0 ||
-        (item !== undefined
-          && item.quantity !== undefined
-          && item.quantity >= delta)
-      )));
+      chain.getExisting().forEach(({ item, delta, name }) => {
+        if(item === undefined){
+          item = { ...(allItems.find(i=>i.name === name) as Item), quantity: 0 } as Item;
+        }
+        affordTable.set(item, (
+          delta === 0 ||
+          (item.quantity !== undefined
+            && item.quantity >= delta)
+        ))}
+      );
       chain.canAfford = affordTable;
     }
     return chain.canAfford;
@@ -226,6 +230,9 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
       if (cleanUp) {
         session.inventory = session.inventory.filter(item => (item.quantity ?? 0) > 0);
       }
+
+      // unknown if still affordable!
+      delete chain.canAfford;
     }
   };
 

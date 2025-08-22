@@ -28,11 +28,12 @@ export function Forum<T = unknown>({
     onSuccess,
     ...rest
 }:ForumType){
-    const uponSuccess = useRef<(()=>void)[]>([]);
+    const uponSuccess = useRef<((result: T)=>void)[]>([]);
     return(
         <Requester<T>
           onSuccess={async(result: T)=>{
             if(onSuccess)await onSuccess(result);
+            uponSuccess.current.forEach((func,i)=>func(result));
           }}
           debounceCheck={debounceCheck}
           {...rest}
@@ -65,7 +66,7 @@ function InnerForum({fields, above, below, clearOnSuccess, debounceCheck, uponSu
   useEffect(() => {
     function setToDefault(){
       fields.forEach(({ field, defaultText }) => {
-        if (field && defaultText) setDefault(field, defaultText);
+        if (field && defaultText!==undefined) setDefault(field, defaultText);
       });
     }
 

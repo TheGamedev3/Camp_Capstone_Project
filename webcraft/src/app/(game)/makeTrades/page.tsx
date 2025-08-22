@@ -5,9 +5,11 @@ import { Forum, SubmitBtn, SetTextInput } from "@Req";
 
 import { ItemCmd, existingInfo } from "@/Gameplay/Items/ItemFlow";
 import { useGameData } from "@/Gameplay/Looks/UpdateHook";
+import { useTools } from "@/Gameplay/Tools/ToolHook";
 import type { PlaySession } from "@/Gameplay/Simulator/PlaySession";
 import { useCallback } from "react";
 
+import { validateTrade } from "@/Gameplay/Trades/validateTrade";
 
 function processString(itemCmd: string, session: PlaySession):[boolean, existingInfo[]]{
   const chain = ItemCmd({cmd: itemCmd, session});
@@ -17,6 +19,7 @@ function processString(itemCmd: string, session: PlaySession):[boolean, existing
 
 export default function TradeMaker(){
   const { ClientData } = useGameData();
+  const { processEventData } = useTools();
 
   const slotSubtract = useCallback((field)=>(slotItem)=>{
     if(!slotItem)return;
@@ -101,93 +104,21 @@ export default function TradeMaker(){
         <Forum
 
           debounceCheck={500}
-          clientValidation={({buy, sell, err, errs})=>{
-            if(!buy) err('buy',"buy can't be blank!");
-            if(!sell) err('sell',"sell can't be blank!");
-            if(buy && buy === sell) err('sell', "can't trade for the same items back?");
-
-            function clientCheck(
-              field: string, value: string,
-              errLines:{
-                lessThan: string,
-                tooMany: string,
-                nonWhole: string
-              },
-              afterOk:()=>void
-            ){
-              if(errs[field] !== undefined)return;
-
-              const[failed, list] = processString(value, field==='buy' ? ClientData : null);
-              if(failed){
-                err(field,`Failed to parse! Invalid syntax! example: metal ore (5), stone (7)`);
-              }else{
-                
-                const passed: Record<string, boolean> = {};
-                for(const {name, item, delta} of list){
-                  
-                  // Item exists?
-                  if(item === undefined){
-                    err(field,`Item "${name}" doesn't exist!`);
-                    break;
-                  }
-
-                  // Isn't untradable?
-                  if(item.untradable === true){
-                    err(field,`Not allowed to exchange "${name}"!`);
-                    break;
-                  }
-
-                  // Only registerd once?
-                  if(passed[name] === true){
-                    err(field, `Item "${name}" is put in more than once!`); break;
-                  } passed[name] = true;
-
-                  // Quantity makes sense?
-                  if(delta <= 0){
-                    err(field, errLines.lessThan); break;
-                  }else if(delta > 100){
-                    err(field, errLines.tooMany); break;
-                  }else if(Math.ceil(delta) !== delta){
-                    err(field, errLines.nonWhole); break;
-                  }
-                }
-              }
-              if(errs[field] === undefined)afterOk?.();
-            }
-
-            clientCheck('buy', buy, {
-              lessThan:"can't give away less than 1?",
-              tooMany:"can't give away more than 100!",
-              nonWhole:"can't give away a non whole number!"
-            },
-            ()=>{
-              const affordChain = ItemCmd({session: ClientData, cmd: buy});
-              if(!affordChain.affordable()){
-                const lacking = Array.from(affordChain.specificAffordable().entries())
-                  .filter(([_item, bool])=>!bool)
-                  .map(([item])=>item.name);
-                err('buy', `You are lacking the ${lacking.join('/')} that you specified!`)
-              }
-            });
-
-            clientCheck('sell', sell, {
-              lessThan:"can't cost less than 1?",
-              tooMany:"can't cost more than 100!",
-              nonWhole:"can't cost a non whole number!"
-            });
-
-          }}
+          clientValidation={({buy, sell, err, errs})=>{validateTrade(ClientData, {buy, sell, err, errs})}}
           forumName="createTrade"
           request="POST /api/trade"
 
           body={({buy, sell})=>{
-            return{buy, sell, userId: ClientData.userId}
+            return{buy, sell}
           }}
 
+          onSuccess={(eventData)=>{
+            processEventData(eventData);
+          }}
           clearOnSuccess={true}
           
           fields={[
-            {label: 'Buy:', field:'buy', placeholder:'ex: "stone (3), metal ore (5)"', inputType:"buyItems",
+            {label: 'Buy:', field:'buy', placeholder:'ex: "stone (3), metal ore (5)"', defaultText:'', inputType:"buyItems",
               slotClicked:slotSubtract('buy')
             },
             {label: 'Sell:', field:'sell', placeholder:'ex: "stone (3), metal ore (5)"', defaultText:'', inputType:"items",
@@ -195,7 +126,13 @@ export default function TradeMaker(){
             }
           ]}
           below={
-            <SubmitBtn text="Submit" styling="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600" disableOnSuccess={false} />
+            <SubmitBtn
+              text="Create Trade!"
+              styling="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
+              pendingText="Posting..."
+              pendingStyle="bg-blue-800 text-white px-4 py-2 rounded"
+              disableOnSuccess={false}
+            />
           }
         />
       </div>

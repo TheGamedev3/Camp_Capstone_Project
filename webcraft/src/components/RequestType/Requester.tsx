@@ -3,6 +3,7 @@
 "use client"
 
 import { useState, createContext, useContext, useRef, useEffect } from 'react';
+import { SetTextInput } from './Forum';
 
 type RequesterContextType = {
   forumName: string;
@@ -30,7 +31,7 @@ export type RequesterType<T = unknown> = {
     goTo?: string,
     children: React.ReactNode,
     onSuccess?: (result:T) => void | Promise<void>;
-    onFinish?: (success:boolean, result:T) => void | Promise<void>;
+    onFinish?: ({success, result, err}:{success:boolean, result:T, err:Record<string, string>}) => void | Promise<void>;
     exitEditField: boolean; triggerOnStart: boolean;
 
     debounceCheck?: number;
@@ -102,8 +103,8 @@ export function Requester<T = unknown>({
                 }
             }
         }
-        if(onFinish)await onFinish(success, result);
-        console.log(request, success, success ? result : err, goTo)
+        if(onFinish)await onFinish({success, result, err});
+        console.log(request, success, success ? result : err, goTo);
         return success;
     }
     useEffect(()=>{
@@ -141,6 +142,10 @@ export function Requester<T = unknown>({
                     }else{func?.(true, value)}
                 },
                 setDefault(field, value){
+                    SetTextInput(
+                        forumName, field,
+                        (pre)=>value
+                    );
                     bodyArgs.current[field] = value;
                 },
                 submit,

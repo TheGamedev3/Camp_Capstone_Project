@@ -21,6 +21,7 @@ import { Root } from "@/components/RootType";
 import { GameDataSession } from "@Gameplay/Looks/UpdateHook"
 import { ToolInfoWrapper } from "@Gameplay/Tools/ToolHook";
 import { MenuProvider } from "@Gameplay/Recipes/MenuHook";
+import ItemPopUp from "@/Gameplay/Items/ItemNotif";
 
 export default async function RootLayout({
   children,
@@ -37,6 +38,7 @@ export default async function RootLayout({
           <MenuProvider>
           <ToolInfoWrapper>
                        {children}
+                       <ItemPopUp/>
           </ToolInfoWrapper>
           </MenuProvider>
           </GameDataSession>

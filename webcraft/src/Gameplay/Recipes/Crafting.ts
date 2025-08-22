@@ -112,7 +112,7 @@ export const requestMenu = ReqFit<CraftInfo>(({session, origin, tableType, tileI
     return{success: false, result: 'failed to verify'}
 });
 
-export const craftRequest = ReqFit<CraftInfo>(async({session, origin, tableType, recipeId, tileId})=>{
+export const craftRequest = ReqFit<CraftInfo>(({session, origin, tableType, recipeId, tileId})=>{
     if(origin === 'api' && session){
         // verify the session's tileId-tileBucket has the workbench type its claiming to have
         if(!verifyTable(session, tileId, tableType)){return{success: false, result: 'permissions not met!'}}
@@ -157,8 +157,3 @@ export const craftRequest = ReqFit<CraftInfo>(async({session, origin, tableType,
 
 import { createRecipes } from "./Recipes";
 createRecipes();
-
-// default crafting (upgrade tools)
-// construction site (creates structures)
-// Anvil (repair), Electronics Store
-// betaFurnace (smelt)

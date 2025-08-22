@@ -1,5 +1,4 @@
 
-
 const exposedProperties = [
     'userId',
     'gridXSize', 'gridYSize',

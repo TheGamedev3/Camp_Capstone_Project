@@ -6,7 +6,6 @@ import { TileGrid } from "./TileGrid";
 import { Toolbar } from "../Tools/Toolbar";
 import { ItemList } from "../Items/ItemList";
 import Menu from "../Recipes/Menu";
-import ItemNotif from "../Items/ItemNotif";
 
 export default function Gameplay() {
   const { ClientData } = useGameData();
@@ -19,7 +18,6 @@ export default function Gameplay() {
 
       {/* ItemList + Toolbar sit below; keep their own fixed/auto heights */}
       <ItemList />
-      <ItemNotif/>
       <Toolbar />
       <Menu/>
     </div>

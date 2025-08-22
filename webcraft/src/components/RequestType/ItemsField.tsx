@@ -12,12 +12,26 @@ function processString(session?: PlaySession, itemCmd: string):Item[]{
   return ItemCmd({session, cmd: itemCmd}).getDeltaItems();
 }
 
-function ItemDisplay({items, slotClicked}:{items: Item[]; slotClicked?: (item?:Item)=>void}){
-  return(
+function ItemDisplay({
+  items,
+  slotClicked,
+}: { items: Item[]; slotClicked?: (item?: Item) => void }) {
+  const visible = items.filter(Boolean);
+  const hasItems = visible.length > 0;
+
+  return (
     <div className="w-full flex flex-wrap justify-start items-start gap-2 rounded-xl bg-neutral-800/70 p-2">
-      {items.filter(Boolean).map((item, i) => (
-        <Slot item={item} key={item.slotId ?? i} onClick={slotClicked} />
-      ))}
+      {hasItems ? (
+        visible.map((item, i) => (
+          <Slot item={item} key={item.slotId ?? i} onClick={slotClicked} />
+        ))
+      ) : (
+        // Placeholder the same size as a Slot: w-20 h-20
+        <div
+          aria-hidden
+          className="w-20 h-20 shrink-0 rounded-md border bg-neutral-900/40 border-neutral-700 opacity-0 pointer-events-none"
+        />
+      )}
     </div>
   );
 }
