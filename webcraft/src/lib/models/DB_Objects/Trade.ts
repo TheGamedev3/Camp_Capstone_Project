@@ -3,7 +3,7 @@
 import { db_object, Model } from "@MongooseSys";
 import { ObjectId } from "mongoose";
 
-interface TradeSchema {
+export interface TradeSchema {
   _id: ObjectId;
   buy: string;
   sell: string;
@@ -30,7 +30,11 @@ export const Trade = (db_object<TradeSchema>(
             type: ObjectId,
             required: true,
             ref: "User",
-        }
+        },
+        created: {
+            type: Date,
+            default: Date.now
+        },
     },
     {}
 ) as TradeModel);
