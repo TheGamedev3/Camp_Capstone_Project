@@ -37,17 +37,8 @@ export const Session = (db_object<SessionSchema>(
       const session = await (this as SessionModel).findOne({ sid });
       if (!session) return null;
 
-      const user = await User.findById(session.userId).lean();
-      if (!user) return null;
-
-      // sanitize
-      return {
-        _id: user._id.toString(),
-        profile: user.profile,
-        username: user.username,
-        email: user.email,
-        created: user.created?.toISOString?.() ?? null
-      };
+      const user = await User.fetchUserProfile(session.userId);
+      return user;
     }
   }
 ) as SessionModel);

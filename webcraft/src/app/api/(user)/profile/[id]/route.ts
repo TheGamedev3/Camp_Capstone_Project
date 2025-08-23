@@ -4,7 +4,7 @@ import { attemptRequest } from "@MongooseSys";
 
 export async function GET(req: Request, { params }: {params: Promise<{ id: string }>;}) {
   return await attemptRequest(async () => {
-      const profile = await User.fetchUser((await params).id);
+      const profile = await User.fetchUserProfile((await params).id);
       if (profile) {
         return { success: true, result: profile };
       } else {

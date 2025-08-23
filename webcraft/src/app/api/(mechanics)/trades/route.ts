@@ -20,6 +20,9 @@ export async function GET(req: Request) {
     const skip = (page - 1) * PerPage;
 
     const pipeline: any[] = [
+      // Filter only trades that are not exchanged
+      { $match: { exchanged: { $ne: true } } },
+
       // Join Trade.seller (ObjectId) -> User._id
       {
         $lookup: {
@@ -36,13 +39,12 @@ export async function GET(req: Request) {
         ? [{ $match: { "sellerDoc.username": { $regex: search, $options: "i" } } }]
         : []),
 
-      // Expose buy/sell and embed minimal seller info
       {
         $project: {
           _id: 1,
           buy: 1,
           sell: 1,
-          created: 1, // keep if you have timestamps or a created field; otherwise remove
+          created: 1,
           seller: {
             _id: "$sellerDoc._id",
             username: "$sellerDoc.username",

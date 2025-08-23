@@ -5,5 +5,6 @@ export type PlayerType = {
   _id: string,
   created: string,
   email?: string, // only exposed to your own session, not to others
+  trades: unknown[]
 }
 

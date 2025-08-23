@@ -36,6 +36,10 @@ export const Trade = (db_object<TradeSchema>(
             type: Date,
             default: Date.now
         },
+        exchanged: {
+            type: Boolean,
+            default: false
+        },
     },
     {
         // add optional functions here if any
@@ -62,6 +66,7 @@ export const Trade = (db_object<TradeSchema>(
                     _id: 1,
                     buy: 1,
                     sell: 1,
+                    exchanged: 1,
                     created: 1,
                     seller: {
                         _id: "$sellerDoc._id",
@@ -74,7 +79,7 @@ export const Trade = (db_object<TradeSchema>(
                 .exec();
 
             return doc ?? null;
-        },
+        }
     }
 ) as TradeModel);
 

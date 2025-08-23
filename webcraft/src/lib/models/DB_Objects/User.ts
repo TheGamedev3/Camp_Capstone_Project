@@ -3,6 +3,7 @@
 import { db_object, Types, Model, mongoErr } from "@MongooseSys";
 import { isEmail } from "validator";
 import { ObjectId } from "mongoose";
+import { Trade } from "./Trade";
 
 interface UserSchema {
   _id: ObjectId;
@@ -70,6 +71,25 @@ export const User = (db_object<UserSchema>(
     {
         async fetchUser(id: string){
             return await (this as Model<UserSchema>).findOne({ _id:id });
+        },
+        // FETCH USER WITH TRADES
+        async fetchUserProfile(id: string) {
+            // get base user
+            const me = await (this as Model<UserSchema>)
+                .findOne({ _id: id })
+                .select("username email profile created _id")
+                .lean();
+
+            if (!me) return null;
+
+            // get their trades
+            const trades = await Trade.find({ seller: new Types.ObjectId(id) })
+                .select("buy sell created exchanged _id") // only expose safe fields
+                .lean();
+            
+            trades.forEach(trade=>trade.seller = me);
+
+            return { ...me, trades };
         },
         async signup({ username, profile, email, password }: { profile: string, username: string, email: string, password: string }){
             if(password.length < 6){throw new Error(mongoErr('password', "Minimum password length is 6 characters").id)}

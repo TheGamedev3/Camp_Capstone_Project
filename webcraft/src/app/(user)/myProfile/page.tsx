@@ -5,9 +5,10 @@ import { useState } from "react";
 import { useRequesterContext, Requester, SubmitBtn, CustomProfile } from "@Req";
 import { useSession } from "@/components/RootType/UserSession";
 import { redirect } from "next/navigation";
+import { TradeIcon } from "@/app/(game)/trades/TradeIcon";
 
 export default function MyProfile() {
-  const { user, updateUser } = useSession();
+  const { user } = useSession();
   if (!user) return redirect("/login");
 
   return (
@@ -36,6 +37,18 @@ export default function MyProfile() {
           >
               <LogoutLink/>
           </Requester>
+        </div>
+
+        <div className="text-center">
+          <h1 className="text-2xl font-bold text-gray-800">{user.username}{"'s Trades"}</h1>
+        </div>
+
+        <div className="flex-1 min-h-0">
+          <div className="grid grid-cols-1 gap-4 mt-4 h-96 overflow-y-auto">
+            {user.trades.map((trade) => (
+              <TradeIcon key={trade._id} {...trade} />
+            ))}
+          </div>
         </div>
       </div>
     </div>

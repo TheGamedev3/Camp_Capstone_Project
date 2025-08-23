@@ -351,5 +351,13 @@ new sections in the far future:
 ✅ ⛏️ Upgradable tools, durability, and structure health
 ✅ 🛠️ Crafting
 💱 Trading with Players
-💾 Persisting Sessions
+✅ 💾 Persisting Sessions
 🔉 Sound Effects
+
+
+
+
+
+TRADE/CANCEL TRADES
+GIVE CORRESPONDING TRANSACTIONS
+Handle giving trade rewards if the seller isnt currently online, store it in their db for later!!!!

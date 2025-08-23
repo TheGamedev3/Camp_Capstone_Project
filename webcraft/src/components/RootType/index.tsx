@@ -21,7 +21,7 @@ export async function Root({
 }>) {
   const session = await getSession();
   return (
-    <UserSession session={session}>
+    <UserSession session={JSON.parse(JSON.stringify(session))}>
         <NavBar/>
         <Aspect>{children}</Aspect>
     </UserSession>
