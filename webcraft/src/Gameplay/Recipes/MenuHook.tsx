@@ -15,7 +15,7 @@ type MenuDetails = {
     sendRequest?: boolean;
 
     recipies?:{
-        totalCost: [unknown, number][];
+        cost: string;
         outputURL: string;
     };
 }

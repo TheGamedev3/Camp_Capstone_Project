@@ -1,16 +1,17 @@
 
 // %! C&C(186) SEPARATE OUT THE INGREDENT THING
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useInventory } from "../Items/InventoryHook";
 import { useTools } from "../Tools/ToolHook";
 import { useMenu } from "./MenuHook";
 import { getRoute } from "@/utils/request";
+import { useGameData } from "../Looks/UpdateHook";
+import { ItemCmd } from "../Items/ItemFlow";
+import type { Item } from "../Items/ItemsClient";
 
-type IngredientPair = [{ name: string; icon?: string }, number];
-
-export function Ingredient({ itemPair, have, affordable }: { itemPair: IngredientPair, have: number, affordable: boolean }) {
-  const [{ name, icon }, need] = itemPair;
+function Ingredient({ displayItem, have, affordable }: { displayItem: Item, have: number, affordable: boolean }) {
+  const { name, icon, quantity: need } = displayItem;
 
   return (
     <span
@@ -34,42 +35,56 @@ export function Ingredient({ itemPair, have, affordable }: { itemPair: Ingredien
   );
 }
 
+export function IngredientsList({cost, isAffordable}:{cost:string, isAffordable:((yesNo:boolean)=>void)}){
+  const { ClientData } = useGameData();
+
+  const costChain = ItemCmd({session: ClientData, cmd:cost});
+  const ingredients = costChain.getDeltaItems(true);
+  const affordableMap = costChain.specificAffordable(true);
+  const items = costChain.getItems();
+  const affordable = costChain.affordable();
+
+  useEffect(()=>{
+    isAffordable?.(affordable);
+  },[affordable, isAffordable]);
+
+  return(
+      <>
+        {ingredients.length > 0 && (
+          <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]">
+            {ingredients.map((item, i) => (
+              <Ingredient
+                key={`${item?.name ?? "item"}-${i}`}
+                displayItem={item}
+                have={items[i]?.quantity || 0}
+                affordable={affordableMap.get(items[i]) || false}
+              />
+            ))}
+          </div>
+        )}
+      </>
+  );
+}
+
 export function Recipe({
   recipeId,
   recipeName,
   outputURL,
   outputCount,
-  totalCost = [],
+  cost = '',
 }: {
   recipeId?: string;
   recipeName?: string;
   outputURL?: string;
   outputCount?: number;
-  totalCost?: IngredientPair[];
+  cost?: string;
 }) {
-  const { backpack } = useInventory();
   const { processEventData } = useTools(); // assumes this exists in your hook
   const { menu } = useMenu();
 
-  // Build a name→qty map once; avoids N×find per row
-  const qtyMap = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const it of backpack?.inventory ?? []) map.set(it.name, it.quantity ?? 0);
-    return map;
-  }, [backpack?.inventory]);
-
-  const haveMap = useMemo(
-    () => totalCost.map(([ing]) => qtyMap.get(ing.name) ?? 0),
-    [totalCost, qtyMap]
-  );
-  const affordableMap = useMemo(
-    () => totalCost.map(([, need], i) => haveMap[i] >= need),
-    [totalCost, haveMap]
-  );
-  const allAffordable = affordableMap.every(Boolean);
-
   const [pending, setPending] = useState(false);
-  const disabled = !recipeId || !allAffordable || pending;
+  const [affordable, setAfford] = useState(false);
+  const disabled = !recipeId || pending || !affordable;
 
   async function onCraft() {
     if (!recipeId || !menu) return;
@@ -115,18 +130,7 @@ export function Recipe({
               {typeof outputCount === "number" ? ` × ${outputCount}` : null}
             </div>
 
-            {totalCost.length > 0 && (
-              <div className="mt-1 flex flex-wrap gap-1.5 text-[11px]">
-                {totalCost.map((pair, i) => (
-                  <Ingredient
-                    key={`${pair[0]?.name ?? "item"}-${i}`}
-                    itemPair={pair}
-                    have={haveMap[i]}
-                    affordable={affordableMap[i]}
-                  />
-                ))}
-              </div>
-            )}
+            <IngredientsList cost={cost} isAffordable={(yesNo:boolean)=>setAfford(yesNo)}/>
           </div>
         </div>
 

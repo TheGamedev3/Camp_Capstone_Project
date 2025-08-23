@@ -18,12 +18,10 @@ export function Trades(){
         })();
     },[queryString]);
     return(
-        <>
-            {PageData && PageData.trades && (
-                <div className="grid grid-cols-3 gap-4 mt-6">
-                    {PageData.trades.map((trade) => (<TradeIcon key={trade._id} {...trade}/>))}
-                </div>
-            )}
-        </>
+        <div className="grid grid-cols-1 gap-4 mt-6">
+            {PageData.trades.map((trade) => (
+                <TradeIcon key={trade._id} {...trade} />
+            ))}
+        </div>
     );
 }

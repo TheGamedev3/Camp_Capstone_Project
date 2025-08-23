@@ -24,7 +24,6 @@ export type Recipe={
 
     // list out the materials that will subtracted
     cost: string;
-    totalCost?: [Item, number][];
 
     conditional?: ((struct:evaluater)=>{success: boolean, result?: string});
 
@@ -53,14 +52,6 @@ export function exposeToTable(tableName: string, ...recipieList:Recipe[]){
                 recipe.recipeId = newId;
             }
             (recipe.tables??=[]).push(tableName);
-
-            // (for the client to calculate)
-            let totalCost = recipe.cost;
-            if(recipe.input){
-                totalCost = [...recipe.input, totalCost].join(' (1), ');
-            }
-            // eslint-disable-next-line @typescript-eslint/no-unused-vars
-            recipe.totalCost = ItemCmd({cmd:totalCost}).getQuantities().map(([_name, delta, item])=>[item!, delta]);
 
             if(!recipe.outputProfile && typeof recipe.output === 'string'){
                 const qt = getBaseItems(recipe.output);
@@ -98,11 +89,11 @@ export const requestMenu = ReqFit<CraftInfo>(({session, origin, tableType, tileI
         // evaluating will be calculated on the client side
         const recipes = Categories[tableType];
         if(!recipes){return{success:false, result: `no table type ${tableType} found!`}}
-        const result = recipes.map(({recipeId, recipeName, totalCost, outputURL, outputCount})=>{
+        const result = recipes.map(({recipeId, recipeName, cost, outputURL, outputCount})=>{
             return{
                 recipeId,
                 recipeName,
-                totalCost,
+                cost,
                 outputURL,
                 outputCount
             }

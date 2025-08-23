@@ -54,14 +54,14 @@ export type ItemFlow = {
   existing?: existingInfo[];
   failedToParse?: boolean
 
-  getExisting: () => existingInfo[];
-  getItems: () => (Item | undefined)[];
-  getDeltaItems: () => (Item | undefined)[];
-  getQuantities: () => [string, number, Item | undefined][];
+  getExisting: (recalculate?: boolean) => existingInfo[];
+  getItems: (recalculate?: boolean) => (Item | undefined)[];
+  getDeltaItems: (recalculate?: boolean) => (Item | undefined)[];
+  getQuantities: (recalculate?: boolean) => [string, number, Item | undefined][];
 
   give: () => void;
-  specificAffordable: () => Map<Item | undefined, boolean>;
-  affordable: () => boolean;
+  specificAffordable: (recalculate?: boolean) => Map<Item | undefined, boolean>;
+  affordable: (recalculate?: boolean) => boolean;
   take: () => void;
 };
 
@@ -69,8 +69,8 @@ export type ItemFlow = {
 export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }):ItemFlow{
   const chain = {};
 
-  chain.getExisting = () => {
-    if (chain.existing) return chain.existing;
+  chain.getExisting = (recalculate?: boolean) => {
+    if (chain.existing && !recalculate) return chain.existing;
     try{
       chain.existing = interpretQuantities(cmd).map(([name, delta]) => {
         // parse, if name looks like "{CONTENTS}"
@@ -118,17 +118,21 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
     return chain.existing;
   };
 
-  chain.getItems = () => {
-    return chain.getExisting().map(({ item }) => item);
+  chain.getItems = (recalculate?: boolean) => {
+    return chain.getExisting(recalculate).map(({ item }) => item);
   };
-  chain.getDeltaItems = () => {
-    return chain.getExisting().map(({ item, delta }) => {
-      if(!item)return;
+  chain.getDeltaItems = (recalculate?: boolean) => {
+    return chain.getExisting(recalculate).map(({ name, item, delta }) => {
+      if(!item){
+        const baseItem = itemBase(name);
+        if(!baseItem)return;
+        return{...baseItem, quantity: delta}
+      }
       return{...item, quantity: delta}
     });
   };
-  chain.getQuantities = () => {
-    return chain.getExisting().map(({ name, delta, item }) => [name, delta, item]);
+  chain.getQuantities = (recalculate?: boolean) => {
+    return chain.getExisting(recalculate).map(({ name, delta, item }) => [name, delta, item]);
   };
 
   chain.give = () => {
@@ -192,10 +196,10 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
   // ASSUMES THE SAME ITEM ISNT ADDED IN MULTIPLE TIMES
   // ONLY ALLOWS FOR CHECKING/SUBTRACTING FOR 1 TYPE OF STACKABLE TOOL, NOT 2 OR MORE
 
-  chain.specificAffordable = () => {
-    if (chain.canAfford === undefined){
+  chain.specificAffordable = (recalculate?: boolean) => {
+    if (chain.canAfford === undefined || recalculate){
       const affordTable = new Map<Item | undefined, boolean>();
-      chain.getExisting().forEach(({ item, delta, name }) => {
+      chain.getExisting(recalculate).forEach(({ item, delta, name }) => {
         if(item === undefined){
           item = { ...(allItems.find(i=>i.name === name) as Item), quantity: 0 } as Item;
         }
@@ -210,8 +214,8 @@ export function ItemCmd({ session, cmd }: { session?: PlaySession; cmd: string }
     return chain.canAfford;
   };
 
-  chain.affordable = () => {
-    const affordTable = Array.from(chain.specificAffordable().entries());
+  chain.affordable = (recalculate?: boolean) => {
+    const affordTable = Array.from(chain.specificAffordable(recalculate).entries());
     return affordTable.every(([_item, bool])=>bool);
   };
 
