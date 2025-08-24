@@ -4,19 +4,17 @@ import { ItemCmd } from "../Items/ItemFlow";
 import { ReqFit } from "../Routes/ReqFit";
 import { Trade } from "@Chemicals"
 
-// send tradeId via params!
-
 // PATCH
-export const HandleTrade = ReqFit(async({session, origin, tradeId, ...rest})=>{
-    if(origin !== 'api' || !session)return{success:false};
+export const HandleTrade = ReqFit(async({session, origin, tradeId})=>{
+    if(origin !== 'api' || !session)return{success: false, err:{server:"trades only come from clients!"}};
     // if user owns trade, then exchange, else claim
 
     const trade = await Trade.fetchTrade({ _id: tradeId });
     if(!trade)return{success:false};
 
-    const ownsTrade = trade.seller === session.userId;
-    if(ownsTrade){return await Claim({session, trade, ...rest})}
-    else{return await Exchange({session, trade, ...rest})}
+    const ownsTrade = trade.seller.toString() === session.userId;
+    if(ownsTrade){return await Claim({session, trade})}
+    else{return await Exchange({session, trade})}
 });
 
 const Exchange = ReqFit(async({session, trade})=>{
@@ -42,22 +40,23 @@ const Claim = ReqFit(async({session, trade})=>{
     if(!trade.exchanged)return{success: false}
 
     ItemCmd({session, cmd: trade.buy}).give();
-    await Trade.deleteOne({ _id: tradeId });
+    await Trade.deleteOne({ _id: trade._id });
     return{success: true, result: session.ejectChanges()}
 });
 
 // DELETE
 export const Cancel = ReqFit(async({session, origin, tradeId})=>{
-    if(origin !== 'api' || !session)return;
+    if(origin !== 'api' || !session)return{success: false, err:{server:"trades only come from clients!"}};
     // isn't claimed yet?
     // delete the trade, get refunded
     // put a debounce so the request can't be spammed
 
     const trade = await Trade.fetchTrade({ _id: tradeId });
-    if(!trade)return;
+    if(!trade)return{success: false, err:{tradeId:"Trade doesn't exist!"}};
 
-    const ownsTrade = trade.seller === session.userId;
-    if(!ownsTrade)return;
+    const ownsTrade = trade.seller.toString() === session.userId;
+    console.log(trade.seller.toString(), session.userId, trade.seller === session.userId)
+    if(!ownsTrade)return{success: false, err:{tradeId:"Trade isn't yours to cancel!"}};
 
     ItemCmd({session, cmd: trade.buy}).give();
     await Trade.deleteOne({ _id: tradeId });

@@ -11,6 +11,7 @@ type SubmitBtnProps = {
   pendingStyle?: string; // Tailwind or className string
 
   disableOnSuccess?: boolean;
+  disable?: boolean
 };
 
 // eslint-disable-next-line react/display-name
@@ -22,13 +23,16 @@ export const SubmitBtn = forwardRef<HTMLButtonElement, SubmitBtnProps>(
       pendingText,
       pendingStyle,
       disableOnSuccess = true,
+      disable = false,
     },
     ref
   ) => {
     const { forumName, submit, registerSubmitBtn } = useRequesterContext();
     const [disabled, setDisabled] = useState(false);
 
-    const handleClick = async () => {
+    const handleClick = async(e) => {
+      e?.stopPropagation();
+
       if (disabled) return;
       setDisabled(true);
 
@@ -50,12 +54,13 @@ export const SubmitBtn = forwardRef<HTMLButtonElement, SubmitBtnProps>(
       registerSubmitBtn(btn || null); // Register to context
     }, [ref, registerSubmitBtn]);
 
+    const off = disabled || disable;
     // pick styles/text depending on disabled state
-    const currentClass = disabled
+    const currentClass = off
       ? pendingStyle ?? styling
       : styling;
 
-    const currentText = disabled
+    const currentText = off
       ? pendingText ?? text
       : text;
 
@@ -64,7 +69,8 @@ export const SubmitBtn = forwardRef<HTMLButtonElement, SubmitBtnProps>(
         name={`${forumName}-submit`}
         ref={ref || localRef}
         onClick={handleClick}
-        disabled={disabled}
+        onKeyDown={handleClick}
+        disabled={off}
         className={currentClass}
       >
         {currentText}

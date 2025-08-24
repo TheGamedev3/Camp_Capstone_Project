@@ -15,7 +15,7 @@ export function ReqFit<P extends object = Record<string, unknown>, R = unknown>(
   fn: ReqFitFn<P, R>
 ) {
   // ---- API handler ----
-  async function reqHandler(req: Request): Promise<AttemptReturn> {
+  async function reqHandler(req: Request, extraArgs?: Record<string, unknown>): Promise<AttemptReturn> {
     return attemptRequest(async () => {
       const userId = (await getSession())?._id;
       if (!userId) {
@@ -36,7 +36,7 @@ export function ReqFit<P extends object = Record<string, unknown>, R = unknown>(
       const payload: P =
         (body && typeof body === "object" && !Array.isArray(body) ? (body as P) : ({} as P));
 
-      const result = await fn({ ...payload, session, origin: "api" });
+      const result = await fn({ ...(extraArgs || {}), ...payload, session, origin: "api" });
       return result as any; // attemptRequest will wrap it
     });
   }
