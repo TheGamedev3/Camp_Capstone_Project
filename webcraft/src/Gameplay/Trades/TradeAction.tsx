@@ -13,8 +13,11 @@ Can't Afford! / Exchange?
 import { useSession } from "@/components/RootType/UserSession";
 import { SubmitBtn, Requester } from "@Req";
 import { useState } from "react";
+import { useTools } from "../Tools/ToolHook";
 
 type Tone = "green" | "red";
+
+type Tone = "green" | "red" | "yellow";
 
 const BTN: Record<Tone, {
   base: string;
@@ -34,13 +37,20 @@ const BTN: Record<Tone, {
     disabled: "bg-red-700",
     pending: "bg-red-700",
   },
+  yellow: {
+    base: "bg-yellow-500",
+    hover: "hover:bg-yellow-400",
+    disabled: "bg-yellow-700",
+    pending: "bg-yellow-700",
+  },
 };
 
 export function TradeAction({
-  tradeId, sellerId, exchanged, affordable
-}: { tradeId: string; sellerId: string; exchanged: boolean; affordable: boolean }) {
+  tradeId, sellerId, exchanged, affordable, tradeUnknown
+}: { tradeId: string; sellerId: string; exchanged: boolean; affordable: boolean, tradeUnknown:(yesNo:boolean)=>void }) {
   const { user } = useSession();
   const [completed, setCompletion] = useState(false);
+  const { processEventData } = useTools();
 
   const ownedByMe = sellerId === user._id;
 
@@ -51,7 +61,7 @@ export function TradeAction({
 
   if (completed) {
     pending = "completed!";
-    tone = "green";
+    tone = "yellow";
     off = true;
   } else if (ownedByMe) {
     if (exchanged) {
@@ -82,7 +92,18 @@ export function TradeAction({
   const cls = BTN[tone];
 
   return (
-    <Requester request={route} onSuccess={() => setCompletion(true)}>
+    <Requester
+      request={route}
+      onSend={()=>tradeUnknown?.(true)}
+      onFinish={(eventData)=>{
+        if(!eventData || eventData.success === false){
+          tradeUnknown?.(false);
+        }else{
+          processEventData(eventData);
+          setCompletion(true);
+        }
+      }}
+    >
       <SubmitBtn
         styling={`${disabled ? cls.disabled : cls.base} ${disabled ? "" : cls.hover} text-white px-4 py-2 rounded relative z-30 no-parent-hover`}
         pendingText={pending || text}
@@ -95,5 +116,4 @@ export function TradeAction({
     </Requester>
   );
 }
-
 

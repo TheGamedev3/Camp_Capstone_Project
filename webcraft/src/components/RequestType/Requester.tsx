@@ -30,6 +30,7 @@ export type RequesterType<T = unknown> = {
     body?: () => Record<string, string>;
     goTo?: string,
     children: React.ReactNode,
+    onSend?: () => void,
     onSuccess?: (result:T) => void | Promise<void>;
     onFinish?: ({success, result, err}:{success:boolean, result:T, err:Record<string, string>}) => void | Promise<void>;
     exitEditField: boolean; triggerOnStart: boolean;
@@ -42,7 +43,7 @@ import { useEditArea } from './Editable';
 
 export function Requester<T = unknown>({
     forumName,
-    clientValidation, request, body, fields, goTo, children, onSuccess, onFinish,
+    clientValidation, request, body, fields, goTo, children, onSend, onSuccess, onFinish,
     exitEditField=true, triggerOnStart=false,
 
     debounceCheck
@@ -79,7 +80,8 @@ export function Requester<T = unknown>({
         // chooses to process/ what to send in the body args of the request
         let sendBody = bodyArgs.current;
         if(body)sendBody = body(sendBody);
-
+        onSend?.();
+        
         const{success, result, err} = await getRoute({
             route: request,
             body: sendBody

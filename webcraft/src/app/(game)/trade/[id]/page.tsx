@@ -6,6 +6,7 @@ import { useEffect, useState } from "react";
 import ItemRack from "@/Gameplay/Trades/ItemRack";
 import { IngredientsList } from "@/Gameplay/Recipes/Recipe";
 import Link from "next/link";
+import { TradeAction } from "@/Gameplay/Trades/TradeAction";
 
 type TradeType = unknown;
 
@@ -17,6 +18,8 @@ export default function Profile({ params }: ProfileProps) {
 
   const { id } = React.use(params);
   const[trade, setTrade]=useState<'loading' | 'notfound' | TradeType>('loading');
+  const[affordable, setAff] = useState(false);
+  
   useEffect(()=>{
     let stillMounted = true;
     (async()=>{
@@ -58,7 +61,7 @@ export default function Profile({ params }: ProfileProps) {
         <ItemRack itemCmd={trade.buy}/>
 
         <div className="text-black text-2xl">Cost:</div>
-        <IngredientsList cost={trade.sell} />
+        <IngredientsList cost={trade.sell} isAffordable={setAff} />
 
         <div className="text-xs text-gray-600">
           by:{" "}
@@ -70,6 +73,13 @@ export default function Profile({ params }: ProfileProps) {
             {trade.seller.username}
           </Link>
         </div>
+
+        <TradeAction
+          tradeId={trade._id}
+          sellerId={trade.seller._id}
+          exchanged={trade.exchanged}
+          affordable={affordable}
+        />
       </div>
     </div>
   );

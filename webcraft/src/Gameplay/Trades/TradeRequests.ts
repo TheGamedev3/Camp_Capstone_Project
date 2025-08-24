@@ -39,7 +39,7 @@ const Claim = ReqFit(async({session, trade})=>{
     // reap rewards
     if(!trade.exchanged)return{success: false}
 
-    ItemCmd({session, cmd: trade.buy}).give();
+    ItemCmd({session, cmd: trade.sell}).give();
     await Trade.deleteOne({ _id: trade._id });
     return{success: true, result: session.ejectChanges()}
 });
