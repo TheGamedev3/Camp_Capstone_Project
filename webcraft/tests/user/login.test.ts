@@ -1,6 +1,6 @@
 // $env:TEST_PATH="tests/user/login.test.ts"; npm run unitTests
 
-import { expect, TEST } from '@SiteEnv';
+import { TEST } from '@SiteEnv';
 
 TEST('🪵 Login Test', async({
   GoTo,
@@ -52,7 +52,7 @@ TEST('🪵 Login Test', async({
         },
         expectErrors:[]
       },
-    ),
+    );
 
     // now at Ryan's profile
     await ExpectUrl(/\/myProfile$/);

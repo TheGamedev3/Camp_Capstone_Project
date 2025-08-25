@@ -39,6 +39,7 @@ type StripThis<T> = {
 };
 
 export type BoundHelpers = StripThis<TestHelpers>;
+import { getRoute } from '@/utils/request';
 
 /* -------------------------------------------------------------------- */
 /* 3️⃣  Factory that binds `this` and returns fully-typed helpers        */
@@ -46,6 +47,7 @@ export type BoundHelpers = StripThis<TestHelpers>;
 function Helpers({ page }: { page: Page }): BoundHelpers {
   const toolbox: TestHelpers = {
     page,
+    getRoute: async(route, body)=>await getRoute({route, body, page}),
     ...expectors,
     ...forum,
     ...interact,

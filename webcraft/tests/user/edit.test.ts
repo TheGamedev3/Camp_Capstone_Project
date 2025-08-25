@@ -1,6 +1,6 @@
 // $env:TEST_PATH="tests/user/edit.test.ts"; npm run unitTests
 
-import { expect, TEST } from '@SiteEnv';
+import { TEST } from '@SiteEnv';
 
 TEST('✏️ Edit Test', async({
   Account, Hover, Click, ClickNav,

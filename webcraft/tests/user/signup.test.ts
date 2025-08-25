@@ -1,6 +1,6 @@
 // $env:TEST_PATH="tests/user/signup.test.ts"; npm run unitTests
 
-import { expect, TEST } from '@SiteEnv';
+import { TEST } from '@SiteEnv';
 
 TEST('📋 Signup Test', async({
   GoTo,

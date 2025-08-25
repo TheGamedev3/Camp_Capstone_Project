@@ -3,6 +3,7 @@ type HTTPMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 type GetRouteArgs = {
   route: string; // e.g. "POST /login"
   body?: Record<string, unknown>;
+  page?: any;
 };
 
 type APIResponse<T = unknown> =
@@ -12,6 +13,7 @@ type APIResponse<T = unknown> =
 export async function getRoute<T = unknown>({
   route,
   body = {},
+  page = null,
 }: GetRouteArgs): Promise<APIResponse<T>> {
   const [method, path] = route.trim().split(" ") as [HTTPMethod, string];
 
@@ -24,13 +26,16 @@ export async function getRoute<T = unknown>({
 
   
   try {
-    const res = await fetch(path, {
-      method,
-      headers: {
-        "Content-Type": "application/json",
-      },
-      ...(method !== "GET" && { body: JSON.stringify({...body, claim: Date.now()}) }),
-    });
+    const res = !page
+      ? await fetch(path, {
+        method,
+        headers: {
+          "Content-Type": "application/json",
+        },
+        ...(method !== "GET" && { body: JSON.stringify({...body, claim: Date.now()}) }),
+      }):
+      await page.request[method.toLowerCase()](path,{data:{...body, claim: Date.now()}});
+
     console.log(method)
 
     const fullResult = await res.json();
@@ -52,3 +57,4 @@ export async function getRoute<T = unknown>({
     };
   }
 }
+

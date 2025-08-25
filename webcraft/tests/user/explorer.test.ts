@@ -1,6 +1,6 @@
 // $env:TEST_PATH="tests/user/explorer.test.ts"; npm run unitTests
 
-import { expect, TEST } from '@SiteEnv';
+import { TEST } from '@SiteEnv';
 
 TEST('🌐 Visit Pages', async ({ 
     Account, Logout,
